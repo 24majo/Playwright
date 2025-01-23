@@ -1,0 +1,10 @@
+//Generales
+    // await page.reload(); // Recargar la página
+    // await page.waitForTimeout(2000); // Asegurar con 2 seg de espera que la página cargó correctamente
+    // await page.waitForSelector(clase o ID) sirve para esperar a que un elemento aparezca en pantalla 
+
+// Diferentes formas para ingresar texto en un elemento teniendo o no algún identificador
+    // await page.locator('[name="cardnumber"]').fill('');
+    // await page.locator('input').first().fill('');
+    // const inputs = await page.locator('.InputElement');
+    // await inputs.nth(0).fill('');
