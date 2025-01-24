@@ -4,7 +4,7 @@ test.describe("CaskrApp", async() => {
     test.beforeEach("Inicios de sesión", async ({ page }) => {
         await page.goto('http://localhost:3000/auth');
         //await page.getByTestId('inputCorreo').fill('majo49@prueba.com'); // Correo 
-        await page.getByTestId('inputCorreo').fill('majo24@prueba.com'); // Número
+        await page.getByTestId('inputCorreo').fill('majo67@prueba.com'); // Número
         await page.getByTestId('inputPassword').fill('12345678');
         await page.getByTestId('crearCuenta').click();
         await page.waitForTimeout(1000); 
@@ -25,7 +25,7 @@ test.describe("CaskrApp", async() => {
             var apellido = apellidos[Math.floor(Math.random() * apellidos.length)];
             await page.locator('//input[@name="apellidos_capitan"]').fill(apellido);
 
-            var telefono = Math.floor(100000000000 + Math.random() * 900000000000).toString();
+            var telefono = Math.floor(1000000000 + Math.random() * 9000000000).toString();
             await page.locator('//input[@name="telefono"]').fill(telefono);
 
             await page.getByLabel('LigaAgregar nuevo equipo').getByRole('button', { name: 'Agregar equipo' }).click();

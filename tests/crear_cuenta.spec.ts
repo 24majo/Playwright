@@ -13,7 +13,7 @@ test("Correo", async ({ page }) => {
     await page.waitForTimeout(2000); 
 
     await page.locator('//input[@name="customerName"]').fill('Alondra Guerrero');
-    var numero = Math.floor(100000000000 + Math.random() * 900000000000).toString();
+    var numero = Math.floor(1000000000 + Math.random() * 9000000000).toString();
     console.log("Teléfono: " + numero);
     await page.locator('//input[@name="phoneCustomer"]').fill(numero);
     await page.getByRole('button', { name: 'Siguiente' }).click();
@@ -52,7 +52,7 @@ test("Correo", async ({ page }) => {
 test("Numero", async ({ page }) => {
     await page.goto('http://localhost:3000/auth');
     await page.getByRole('button', { name: 'Crear cuenta' }).click();
-    var numero = Math.floor(100000000000 + Math.random() * 900000000000).toString();
+    var numero = Math.floor(1000000000 + Math.random() * 9000000000).toString();
     console.log("Teléfono: " + numero);
     await page.getByTestId('inputCorreo').fill(numero);
 
