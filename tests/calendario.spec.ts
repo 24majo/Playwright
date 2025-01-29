@@ -31,10 +31,9 @@ test.describe("CaskrApp", async() => {
         }
         
         if(!visible){
-            console.log("Botón no visible")
             await page.pause()
             await page.getByRole('tab', { name: 'Por jornadas' }).click({ force: true })
-            //await page.getByRole('tab', { name: 'Todos los partidos' }).click({ force: true })
+            
             await page.getByRole('button', { name: 'Programar' }).click({ force: true })
             await page.getByLabel('día').click({ force: true })
             await page.getByRole('cell', { name: '31 enero' }).click({ force: true })
@@ -49,6 +48,15 @@ test.describe("CaskrApp", async() => {
             await page.getByRole('button', { name: 'Guardar y enviar' })
 
             // getByRole('banner').getByRole('button') // Este es para cerrar en la "x"
+
+            //await page.getByRole('tab', { name: 'Todos los partidos' }).click({ force: true })
+            await page.getByRole('button', { name: 'Programar fecha y hora' }).click({ force: true })
+            await page.getByLabel('día').click({ force: true })
+            // Hacer un tab para ver si reconoce el campo de hora
+            await page.getByPlaceholder('Selecciona la cancha').click({ force: true })
+            await page. getByRole('option', { name: 'Cancha 3' }).first().click({ force: true })
+            await page.getByPlaceholder('Selecciona al árbitro').click({ force: true })
+
         }
     })
 })
