@@ -14,7 +14,7 @@ test.describe("CaskrApp", async() => {
         //await page.pause()
         await page.getByLabel('LigaAñadir nueva cancha').locator('img').waitFor({ state: 'visible' });
         await page.waitForTimeout(3000)
-        var n_cancha = Math.floor(1 + Math.random() * 20)
+        var n_cancha = Math.floor(1 + Math.random() * 20).toString()
         await page.locator('//input[@name="nombre"]').fill("Cancha " + n_cancha);
         await page.waitForTimeout(2000)
         var lugar = ['Deportiva', "Calle", "Estadio", "Deportivo", "Puerto"];
@@ -51,7 +51,7 @@ test.describe("CaskrApp", async() => {
         var editar = page.locator('button').nth(3)
         await editar.click()
         // var nombre = await page.getByTestId('inputCancha')
-         var n_cancha = Math.floor(Math.random() * 20)
+         var n_cancha = Math.floor(Math.random() * 20).toString()
         // await nombre.fill("Cancha " + n_cancha)
         await page.locator('//input[@name="nombre"]').fill("Cancha " + n_cancha);
         var lugar = ['Deportiva', "Calle", "Estadio", "Deportivo", "Puerto", 'Estadio'];
