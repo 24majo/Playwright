@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe("CaskrApp", async() => {
     test.beforeEach("Inicios de sesión", async ({ page }) => {
         await page.goto('http://localhost:3000/auth');
-        await page.getByTestId('inputCorreo').fill('majo84@prueba.com'); 
+        await page.getByTestId('inputCorreo').fill('majo90@prueba.com'); 
         await page.getByTestId('inputPassword').fill('12345678');
         await page.getByTestId('crearCuenta').click();
         await page.waitForTimeout(1000); 
@@ -38,7 +38,7 @@ test.describe("CaskrApp", async() => {
 
             var participantes = await page.getByLabel('Equipos participantes').innerText()
             var p_lista = participantes.match(/Equipo \d+/g)
-            p_lista!.includes("Equipo " + n_equipo)
+            p_lista?.includes("Equipo " + n_equipo)
 
             var todos = await page.getByLabel('Todos los equipos').innerText()
             var t_lista = todos.match(/Equipo \d+/g)
@@ -112,15 +112,23 @@ test.describe("CaskrApp", async() => {
         // Caso 1: Eliminar equipo con éxito
         // Caso 2: No eliminar equipo por pendientes de agenda
         await page.getByRole('link', { name: 'Equipos' }).click()
-        var participantes = await page.getByLabel('Equipos participantes').innerText();
-        var equipo = participantes.match(/Equipo \d+/g);
-        console.log("Lista: " + equipo);
-        var random = equipo![Math.floor(Math.random() * equipo!.length)];
+        var participantes = await page.getByLabel('Equipos participantes').innerText()
+        var equipo = participantes.match(/Equipo \d+/g)
+        console.log("Lista: " + equipo)
+        var random = equipo![Math.floor(Math.random() * equipo!.length)]
         console.log(random)
         await page.waitForTimeout(2000)
-        await page.getByRole('row', { name: new RegExp(`escudo ${random} .+`) }).getByRole('button').click({ force: true });
+        await page.getByRole('row', { name: new RegExp(`escudo ${random} .+`) }).getByRole('button').click({ force: true })
         await page.waitForTimeout(2000)
-        await page.getByRole('button', { name: 'Eliminar' }).nth(equipo!.length - 1).click();
+        await page.getByRole('button', { name: 'Eliminar' }).nth(equipo!.length - 1).click({ force: true })
+
+        const msj = await page.locator('p:text("No puedes eliminar este equipo porque tiene partidos agendados")')
+    
+        if(await msj.isVisible())
+            console.log("Caso 2")
+        else
+            console.log("Caso 1")
+
         await page.pause()
     })
 })
