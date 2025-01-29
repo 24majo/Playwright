@@ -8,3 +8,7 @@
     // await page.locator('input').first().fill('');
     // const inputs = await page.locator('.InputElement');
     // await inputs.nth(0).fill('');
+
+// Manejo de errores
+    // throw new Error("Texto de muestra en caso de error")
+    // process.exit(0); // 0 sin errores, 1 con error
