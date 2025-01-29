@@ -7,14 +7,13 @@ test.describe("CaskrApp", async() => {
         await page.getByTestId('inputPassword').fill('12345678');
         await page.getByTestId('crearCuenta').click();
         await page.waitForTimeout(1000); 
+        await page.getByRole('link', { name: 'Equipos' }).click()
     })
 
     test("Agregar", async ({ page }) => {
         // Caso 1: Agregar un equipo con éxito
         // Caso 2: No es posible agregar por partidos agendados
         // Caso 3: Límite de equipos alcanzado 
-
-        await page.getByRole('link', { name: 'Equipos' }).click()
 
         for(var i = 0; i < 3; i++){
             await page.click('//span[text()="Agregar equipo"]')
@@ -51,7 +50,6 @@ test.describe("CaskrApp", async() => {
     })
 
     test("Inactivo", async ({ page }) => {
-        await page.getByRole('link', { name: 'Equipos' }).click()
         // var contar = await page.getByLabel('Equipos participantes').getByText(/Equipo \d+/).count()
         //const equipo = await page.getByLabel('Equipos participantes').locator('text=/Equipo \d+/').count()
         var participantes = await page.getByLabel('Equipos participantes').innerText();
@@ -80,7 +78,6 @@ test.describe("CaskrApp", async() => {
         // Caso 1: Varios equipos, habilitar uno de ellos
         // Caso 2: Un equipo, no es visible pestaña de equipos inactivos
         // Caso 3: No hay equipos inactivos. Error válido.
-        await page.getByRole('link', { name: 'Equipos' }).click()
         await page.getByRole('tab', {name: 'Equipos inactivos'}).click()
         await page.pause()
         var inactivos = await page.getByLabel('Equipos inactivos').innerText();
@@ -111,7 +108,6 @@ test.describe("CaskrApp", async() => {
     test("Eliminar", async ({ page }) => {
         // Caso 1: Eliminar equipo con éxito
         // Caso 2: No eliminar equipo por pendientes de agenda
-        await page.getByRole('link', { name: 'Equipos' }).click()
         var participantes = await page.getByLabel('Equipos participantes').innerText()
         var equipo = participantes.match(/Equipo \d+/g)
         console.log("Lista: " + equipo)
