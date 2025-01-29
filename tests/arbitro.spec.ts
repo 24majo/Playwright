@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe("CaskrApp", async() => {
     test.beforeEach("Inicios de sesión", async ({ page }) => {
         await page.goto('http://localhost:3000/auth');
-        await page.getByTestId('inputCorreo').fill('majo84@prueba.com');
+        await page.getByTestId('inputCorreo').fill('majo90@prueba.com');
         await page.getByTestId('inputPassword').fill('12345678');
         await page.getByTestId('crearCuenta').click();
         await page.getByRole('link', { name: 'Arbitros' }).click();
