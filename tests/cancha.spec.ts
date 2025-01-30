@@ -11,9 +11,16 @@ test.describe("CaskrApp", async() => {
     test("Agregar", async ({ page }) => {
         await page.getByRole('link', { name: 'Canchas' }).click();
         await page.click('//span[text()="Agregar cancha"]');
-        //await page.pause()
-        await page.getByLabel('LigaAñadir nueva cancha').locator('img').waitFor({ state: 'visible' });
-        await page.waitForTimeout(3000)
+        await page.waitForTimeout(1000)
+        //var subir = await page.getByRole('button', { name: 'Subir imagen' })
+        //await subir.click({ force: true })
+
+        // Imagen
+        var file = await page.locator('input[type="file"]')
+        var imagen = 'C:/Users/E015/Downloads/cancha.jpg'
+        await file.setInputFiles(imagen)
+        await page.waitForTimeout(1500)
+
         var n_cancha = Math.floor(1 + Math.random() * 20).toString()
         await page.locator('//input[@name="nombre"]').fill("Cancha " + n_cancha);
         await page.waitForTimeout(2000)
@@ -23,15 +30,12 @@ test.describe("CaskrApp", async() => {
         await page.getByPlaceholder('Ubicación').fill(ubicacion);
         var num = Math.floor(1 + Math.random() * 4);
         console.log("Numero: " + num)
-        //await page.pause()
-        await page.waitForTimeout(2000)
-        //await page.locator('div:nth-child(24) > div:nth-child('+num+') > .pac-icon').click();
-        //await page.locator('div:nth-child('+num+') > .pac-icon').first().click();
+        await page.waitForTimeout(1000)
         await page.getByText(ubicacion, { exact: false }).nth(num).click({ force: true });
-        //await page.getByLabel('LigaAñadir nueva cancha').getByRole('img').nth(num).click();
         await page.getByTestId('inputDescripcion').fill('Pasto sintético');
-        await page.waitForTimeout(3000)
+        await page.waitForTimeout(2000)
         await page.getByLabel('LigaAñadir nueva cancha').getByRole('button', { name: 'Agregar cancha' }).click();
+        await page.pause()
     })
 
     test("Eliminar", async ({ page }) => {
@@ -45,11 +49,17 @@ test.describe("CaskrApp", async() => {
     })
 
     test("Editar", async ({ page }) => {
-        await page.waitForTimeout(2000)
         await page.getByRole('link', { name: 'Canchas' }).click()
         await page.waitForTimeout(1000)
-        var editar = page.locator('button').nth(3)
-        await editar.click()
+        await page.locator('button').nth(3).click()
+        await page.waitForTimeout(1500)
+
+        // Cambiar imagen
+        var file = await page.locator('input[type="file"]')
+        var imagen = 'C:/Users/E015/Downloads/cancha_editar.jpg'
+        await file.setInputFiles(imagen)
+        await page.waitForTimeout(1500)
+
         // var nombre = await page.getByTestId('inputCancha')
          var n_cancha = Math.floor(Math.random() * 20).toString()
         // await nombre.fill("Cancha " + n_cancha)
