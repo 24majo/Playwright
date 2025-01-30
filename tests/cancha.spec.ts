@@ -5,11 +5,13 @@ test.describe("CaskrApp", async() => {
         await page.goto('http://localhost:3000/auth');
         await page.getByTestId('inputCorreo').fill('majo90@prueba.com');
         await page.getByTestId('inputPassword').fill('12345678');
-        await page.getByTestId('crearCuenta').click();
+        await page.getByTestId('crearCuenta').click({ force: true });
+        await page.pause()
+        await page.getByRole('link', { name: 'Canchas' }).click({ force: true });
+
     })
 
     test("Agregar", async ({ page }) => {
-        await page.getByRole('link', { name: 'Canchas' }).click();
         await page.click('//span[text()="Agregar cancha"]');
         await page.waitForTimeout(1000)
         //var subir = await page.getByRole('button', { name: 'Subir imagen' })
@@ -22,6 +24,7 @@ test.describe("CaskrApp", async() => {
         await page.waitForTimeout(1500)
 
         var n_cancha = Math.floor(1 + Math.random() * 20).toString()
+        console.log("Cancha " + n_cancha)
         await page.locator('//input[@name="nombre"]').fill("Cancha " + n_cancha);
         await page.waitForTimeout(2000)
         var lugar = ['Deportiva', "Calle", "Estadio", "Deportivo", "Puerto"];
@@ -29,27 +32,26 @@ test.describe("CaskrApp", async() => {
         console.log("Ubicación: " + ubicacion)
         await page.getByPlaceholder('Ubicación').fill(ubicacion);
         var num = Math.floor(1 + Math.random() * 4);
-        console.log("Numero: " + num)
+        //console.log("Numero: " + num)
         await page.waitForTimeout(1000)
         await page.getByText(ubicacion, { exact: false }).nth(num).click({ force: true });
         await page.getByTestId('inputDescripcion').fill('Pasto sintético');
         await page.waitForTimeout(2000)
-        await page.getByLabel('LigaAñadir nueva cancha').getByRole('button', { name: 'Agregar cancha' }).click();
+        await page.getByLabel('LigaAñadir nueva cancha').getByRole('button', { name: 'Agregar cancha' }).click({ force: true });
         await page.pause()
     })
 
     test("Eliminar", async ({ page }) => {
-        await page.getByRole('link', { name: 'Canchas' }).click()
+        await page.pause()
         var borrar = page.locator('button:nth-child(2)').nth(2)
         await expect(borrar).toBeVisible()
         await borrar.click({ force: true })
-        await page.getByRole('button', { name: 'Eliminar' }).click()
+        await page.getByRole('button', { name: 'Eliminar' }).click({ force: true })
         await page.waitForTimeout(2000)
         // await page.pause()
     })
 
     test("Editar", async ({ page }) => {
-        await page.getByRole('link', { name: 'Canchas' }).click()
         await page.waitForTimeout(1000)
         await page.locator('button').nth(3).click()
         await page.waitForTimeout(1500)
