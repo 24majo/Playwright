@@ -38,15 +38,15 @@ test.describe("CaskrApp", async() => {
             var participantes = await page.getByLabel('Equipos participantes').innerText()
             var p_lista = participantes.match(/Equipo \d+/g)
             p_lista?.includes("Equipo " + n_equipo)
+            await page.waitForTimeout(1000)
 
             var todos = await page.getByLabel('Todos los equipos').innerText()
             var t_lista = todos.match(/Equipo \d+/g)
-            t_lista!.includes("Equipo " + n_equipo)
+            t_lista?.includes("Equipo " + n_equipo)
 
             await page.pause()
             // await page.locator('//span[text()="Cancelar"]').click(); // Botón para cancelar acción
         }
-        // await page.pause();
     })
 
     test("Inactivo", async ({ page }) => {
@@ -122,9 +122,14 @@ test.describe("CaskrApp", async() => {
     
         if(await msj.isVisible())
             console.log("Caso 2")
+
         else
             console.log("Caso 1")
 
+        await page.pause()
+    })
+
+    test("Calendario", async ({ page }) => {
         await page.pause()
     })
 })
