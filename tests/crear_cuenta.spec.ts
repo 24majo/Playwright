@@ -17,10 +17,10 @@ test("Correo", async ({ page }) => {
     console.log("Teléfono: " + numero);
     await page.locator('//input[@name="phoneCustomer"]').fill(numero);
     await page.getByRole('button', { name: 'Siguiente' }).click();
-    await page.waitForTimeout(2000); 
+    await page.waitForTimeout(1000); 
 
     await page.locator('//input[@name="nombre"]').fill('Liga');
-    await page.waitForTimeout(2000); 
+    await page.waitForTimeout(1000); 
 
     var formato = ['Eliminación directa','Eliminación directa (ida y vuelta)','Liga','Liga (ida y vuelta)'];
     var t_formato = formato[Math.floor(Math.random() * formato.length)];
@@ -36,7 +36,7 @@ test("Correo", async ({ page }) => {
     await page.getByPlaceholder('Ej. Varonil').click();
     await page.waitForTimeout(1000); 
     await page.getByRole('option', { name: categoria }).click();
-    await page.waitForTimeout(2000); 
+    await page.waitForTimeout(1000); 
 
     await page.getByLabel('dd-mm-aaaa').click();
     await page.getByRole('cell', { name: '29 enero' }).click();
@@ -58,7 +58,7 @@ test("Numero", async ({ page }) => {
 
     await page.getByTestId('inputPassword').fill('12345678');
     await page.getByTestId('crearCuenta').click();
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(1000)
 
     await page.locator('//input[@name="customerName"]').fill('Alondra Guerrero')
     var nombre = await page.locator('//input[@name="customerName"]').inputValue()
@@ -70,7 +70,7 @@ test("Numero", async ({ page }) => {
 
     await page.locator('//input[@name="phoneCustomer"]').fill(numero)
     await page.getByRole('button', { name: 'Siguiente' }).click()
-    await page.waitForTimeout(2000); 
+    await page.waitForTimeout(1000); 
 
     await page.locator('//input[@name="nombre"]').fill('Liga');
     await page.waitForTimeout(1000); 
@@ -100,5 +100,4 @@ test("Numero", async ({ page }) => {
     await page.getByRole('button', { name: 'Siguiente' }).click();
     await page.getByRole('button', { name: 'Finalizar Registro' }).click();
     await page.pause();
-    //await page.waitForTimeout(2000); 
 })
