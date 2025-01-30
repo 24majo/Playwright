@@ -10,7 +10,7 @@ test.describe("CaskrApp", async() => {
     })
 
     test("Generar", async ({ page }) => {
-        // Caso 1: Generar calendario cumpliendo el número de equipos par para un torneo
+        // Caso 1: Generar calendario cumpliendo con los requisitos del torneo
         // Caso 2: Opción inhabilitada por falta de equipos
         var boton = page.getByRole('button', { name: 'Crear el calendario' })
         
