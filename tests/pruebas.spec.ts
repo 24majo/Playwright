@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test("Número aletatorio", async ({  page }) => {
+test("Pruebas", async ({  page }) => {
     // const numero = Math.random();
     // console.log(numero);
 
