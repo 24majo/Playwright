@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import exp from 'constants';
  
 test.describe("CaskrApp", async() => {
     test.beforeEach("Inicios de sesión", async ({ page }) => {
@@ -15,37 +16,58 @@ test.describe("CaskrApp", async() => {
         // Caso 2: No es posible agregar por partidos agendados
         // Caso 3: Límite de equipos alcanzado 
 
-        for(var i = 0; i < 3; i++){
-            await page.click('//span[text()="Agregar equipo"]')
-            await page.waitForTimeout(2000)
-            var n_equipo = Math.floor(Math.random() * 20)
-            await page.locator('//input[@name="nombre"]').fill("Equipo " + n_equipo);
+        await page.pause()
+        var agregar = await page.getByRole('button', { name: 'Agregar equipo' })
+        await expect(agregar).toBeVisible() // Si no es visible, es por Caso 2
+        var boton = await agregar.isVisible() 
+        console.log(boton)
+        
+        if(boton){
+            await agregar.click()
+            var button = await page.getByRole('button', { name: 'Sí, estoy seguro' }).isVisible()
+            console.log("Boton calendario: " + button)
 
-            var nombres = ['Lucero', 'Sofía', 'Frida', 'Matías', 'Eliseo', 'Cinthia', 'Édgar', 'Enrique', 'Julio', 'César', 'Leonardo', 'Ramses', 'Juan', 'David'];
-            var nombre = nombres[Math.floor(Math.random() * nombres.length)];
-            await page.locator('//input[@name="nombre_capitan"]').fill(nombre);
+            if(button){
+                console.log("Caso 2")
+                process.exit(0);
+                //await page.pause()
+            }
 
-            var apellidos = ['Albor', 'Salazar', 'Rodríguez', 'Cuevas', 'Solórzano', 'Ramos', 'Delgado', 'Ávalos', 'Ruiz', 'Segoviano'];
-            var apellido = apellidos[Math.floor(Math.random() * apellidos.length)];
-            await page.locator('//input[@name="apellidos_capitan"]').fill(apellido);
+            else{
+                console.log("Caso 1")
+                for(var i = 0; i < 2; i++){
+                    await page.waitForTimeout(2000)
+                    var n_equipo = Math.floor(Math.random() * 20)
+                    await page.locator('//input[@name="nombre"]').fill("Equipo " + n_equipo);
 
-            var telefono = Math.floor(1000000000 + Math.random() * 9000000000).toString();
-            await page.locator('//input[@name="telefono"]').fill(telefono);
+                    var nombres = ['Lucero', 'Sofía', 'Frida', 'Matías', 'Eliseo', 'Cinthia', 'Édgar', 'Enrique', 'Julio', 'César', 'Leonardo', 'Ramses', 'Juan', 'David'];
+                    var nombre = nombres[Math.floor(Math.random() * nombres.length)];
+                    await page.locator('//input[@name="nombre_capitan"]').fill(nombre);
 
-            await page.getByLabel('LigaAgregar nuevo equipo').getByRole('button', { name: 'Agregar equipo' }).click();
-            await page.waitForTimeout(5000)
+                    var apellidos = ['Albor', 'Salazar', 'Rodríguez', 'Cuevas', 'Solórzano', 'Ramos', 'Delgado', 'Ávalos', 'Ruiz', 'Segoviano'];
+                    var apellido = apellidos[Math.floor(Math.random() * apellidos.length)];
+                    await page.locator('//input[@name="apellidos_capitan"]').fill(apellido);
 
-            var participantes = await page.getByLabel('Equipos participantes').innerText()
-            var p_lista = participantes.match(/Equipo \d+/g)
-            p_lista?.includes("Equipo " + n_equipo)
-            await page.waitForTimeout(1000)
+                    var telefono = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+                    await page.locator('//input[@name="telefono"]').fill(telefono);
 
-            var todos = await page.getByLabel('Todos los equipos').innerText()
-            var t_lista = todos.match(/Equipo \d+/g)
-            t_lista?.includes("Equipo " + n_equipo)
+                    await page.getByLabel('LigaAgregar nuevo equipo').getByRole('button', { name: 'Agregar equipo' }).click();
+                    await page.waitForTimeout(5000)
 
-            await page.pause()
-            // await page.locator('//span[text()="Cancelar"]').click(); // Botón para cancelar acción
+                    var participantes = await page.getByLabel('Equipos participantes').innerText()
+                    var p_lista = participantes.match(/Equipo \d+/g)
+                    p_lista?.includes("Equipo " + n_equipo)
+                    await page.waitForTimeout(1000)
+
+                    var todos = await page.getByLabel('Todos los equipos').innerText()
+                    var t_lista = todos.match(/Equipo \d+/g)
+                    t_lista?.includes("Equipo " + n_equipo)
+
+                    await page.pause()
+                    await page.click('//span[text()="Agregar equipo"]')
+                    // await page.locator('//span[text()="Cancelar"]').click(); // Botón para cancelar acción
+                }
+            }
         }
     })
 
@@ -60,7 +82,7 @@ test.describe("CaskrApp", async() => {
         //var num = equipos!.match(/\d+/)?.[0]; // Con ! afirmamos que el elemento no es null
         console.log(random)
         await page.pause()
-        await page.getByRole('row', { name: new RegExp(`escudo ${random} .+`) }).getByRole('button').click({ force: true });
+        await page.getByRole('row', { name: new RegExp(`escudo ${random} .+`) }).getByRole('button').first().click({ force: true });
         await page.waitForTimeout(2000)
         await page.locator('div').filter({ hasText: /^Activo$/ }).locator('span').nth(1).click({ force: true });
         await page.waitForTimeout(2000)
@@ -114,7 +136,7 @@ test.describe("CaskrApp", async() => {
         var random = equipo![Math.floor(Math.random() * equipo!.length)]
         console.log(random)
         await page.waitForTimeout(2000)
-        await page.getByRole('row', { name: new RegExp(`escudo ${random} .+`) }).getByRole('button').click({ force: true })
+        await page.getByRole('row', { name: new RegExp(`escudo ${random} .+`) }).getByRole('button').first().click({ force: true })
         await page.waitForTimeout(2000)
         await page.getByRole('button', { name: 'Eliminar' }).nth(equipo!.length - 1).click({ force: true })
 
@@ -126,10 +148,6 @@ test.describe("CaskrApp", async() => {
         else
             console.log("Caso 1")
 
-        await page.pause()
-    })
-
-    test("Calendario", async ({ page }) => {
         await page.pause()
     })
 })
