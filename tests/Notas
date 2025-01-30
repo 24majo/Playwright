@@ -12,3 +12,4 @@
 // Manejo de errores
     // throw new Error("Texto de muestra en caso de error")
     // process.exit(0); // 0 sin errores, 1 con error
+    // await browser.close(); // Cerrar el navegador
