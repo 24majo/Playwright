@@ -12,7 +12,7 @@ test.describe("CaskrApp", async() => {
     test("Agregar", async ({ page }) => {
         for(var i = 0; i < 5; i++) {
             await page.click('//span[text()="Agregar árbitro"]');
-            await page.waitForTimeout(2000)
+            await page.waitForTimeout(1500)
 
             var nombres = ['Lucero', 'Sofía', 'Frida', 'Matías', 'Eliseo', 'Cinthia', 'Édgar', 'Enrique', 'Julio', 'César', 'Leonardo', 'Ramses', 'Juan', 'David'];
             var nombre = nombres[Math.floor(Math.random() * nombres.length)];
@@ -29,7 +29,6 @@ test.describe("CaskrApp", async() => {
             await page.click('//span[text()="Agregar arbitro"]');
             await page.pause()
         }
-        await page.pause()
     })
 
     test("Eliminar", async ({ page }) => {
@@ -47,6 +46,9 @@ test.describe("CaskrApp", async() => {
         var nombre = nombres[Math.floor(Math.random() * nombres.length)];
         var apellido = apellidos[Math.floor(Math.random() * apellidos.length)];
         var telefono = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+
+        console.log(nombre + " " + apellido)
+        console.log(telefono)
         
         await page.locator('//input[@name="nombres"]').nth(4).fill(nombre)
         await page.locator('//input[@name="apellidos"]').nth(4).fill(apellido)
