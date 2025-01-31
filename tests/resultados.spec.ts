@@ -1,11 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test'
+import { fa, faker } from '@faker-js/faker'
+import { login } from './cuenta.spec'
 
-test.beforeEach("Inicios de sesión", async ({ page }) => {
-    await page.goto('http://localhost:3000/auth');
-    await page.getByTestId('inputCorreo').fill('majo90@prueba.com');
-    await page.getByTestId('inputPassword').fill('12345678');
-    await page.getByTestId('crearCuenta').click();
-    await page.getByRole('link', { name: 'Resultados' }).click();
+test.beforeEach(async ({ page }) => {
+    await login(page)
 })
 
 test("Resultados", async ({ page }) => {

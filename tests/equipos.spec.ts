@@ -1,14 +1,11 @@
-import { test, expect } from '@playwright/test';
-import exp from 'constants';
+import { test, expect } from '@playwright/test'
+import { faker } from '@faker-js/faker'
+import { login } from './cuenta.spec'
+
  
 test.describe("CaskrApp", async() => {
-    test.beforeEach("Inicios de sesión", async ({ page }) => {
-        await page.goto('http://localhost:3000/auth');
-        await page.getByTestId('inputCorreo').fill('majo90@prueba.com'); 
-        await page.getByTestId('inputPassword').fill('12345678');
-        await page.getByTestId('crearCuenta').click();
-        await page.waitForTimeout(1000); 
-        await page.getByRole('link', { name: 'Equipos' }).click()
+    test.beforeEach(async ({ page }) => {
+        await login(page)
     })
 
     test("Agregar", async ({ page }) => {
@@ -35,17 +32,15 @@ test.describe("CaskrApp", async() => {
 
             else{
                 console.log("Caso 1")
-                for(var i = 0; i < 2; i++){
+                for(var i = 0; i < 4; i++){
                     await page.waitForTimeout(2000)
                     var n_equipo = Math.floor(Math.random() * 20)
                     await page.locator('//input[@name="nombre"]').fill("Equipo " + n_equipo);
 
-                    var nombres = ['Lucero', 'Sofía', 'Frida', 'Matías', 'Eliseo', 'Cinthia', 'Édgar', 'Enrique', 'Julio', 'César', 'Leonardo', 'Ramses', 'Juan', 'David'];
-                    var nombre = nombres[Math.floor(Math.random() * nombres.length)];
+                    var nombre = faker.name.firstName()
                     await page.locator('//input[@name="nombre_capitan"]').fill(nombre);
 
-                    var apellidos = ['Albor', 'Salazar', 'Rodríguez', 'Cuevas', 'Solórzano', 'Ramos', 'Delgado', 'Ávalos', 'Ruiz', 'Segoviano'];
-                    var apellido = apellidos[Math.floor(Math.random() * apellidos.length)];
+                    var apellido = faker.name.lastName()
                     await page.locator('//input[@name="apellidos_capitan"]').fill(apellido);
 
                     var telefono = Math.floor(1000000000 + Math.random() * 9000000000).toString();

@@ -1,11 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test'
+import { fa, faker } from '@faker-js/faker'
+import { login } from './cuenta.spec'
 
 test.describe("CaskrApp", async() => {
-    test.beforeEach("Inicios de sesión", async ({ page }) => {
-        await page.goto('http://localhost:3000/auth');
-        await page.getByTestId('inputCorreo').fill('majo70@prueba.com');
-        await page.getByTestId('inputPassword').fill('12345678');
-        await page.getByTestId('crearCuenta').click();
+    test.beforeEach(async ({ page }) => {
+        await login(page)
     })
 
     test("Método de pago", async ({ page }) => {
