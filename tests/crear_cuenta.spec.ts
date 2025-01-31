@@ -39,7 +39,7 @@ test("Correo", async ({ page }) => {
     await page.waitForTimeout(1000); 
 
     await page.getByLabel('dd-mm-aaaa').click();
-    await page.getByRole('cell', { name: '31 enero' }).click();
+    await page.getByRole('cell', { name: '1 febrero' }).click();
     await page.getByRole('button', { name: 'Siguiente' }).click();
     await page.getByRole('button', { name: 'Se parece a este' }).first().click();
     await page.getByRole('button', { name: 'Siguiente' }).click();
