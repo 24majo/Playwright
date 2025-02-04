@@ -1,10 +1,12 @@
+import { tr } from '@faker-js/faker';
 import { test, expect } from '@playwright/test';
+import { agregar_arbitro, agregar_equipo, agregar_cancha } from './cuenta.spec'
 
 test("Correo", async ({ page }) => {
     await page.goto('http://localhost:3000/auth');
     await page.getByRole('button', { name: 'Crear cuenta' }).click();
 
-    var n_cuenta = Math.floor(10 + Math.random() * 100).toString();
+    var n_cuenta = Math.floor(1 + Math.random() * 200).toString();
     var correo = 'majo' + n_cuenta + '@prueba.com';
     console.log("Correo: " + correo);
     await page.getByTestId('inputCorreo').fill(correo);
@@ -39,7 +41,11 @@ test("Correo", async ({ page }) => {
     await page.waitForTimeout(1000); 
 
     await page.getByLabel('dd-mm-aaaa').click();
-    await page.getByRole('cell', { name: '1 febrero' }).click();
+    var fecha = new Date()
+    var dia = fecha.getDate() 
+    var mes = fecha.toLocaleString('es-ES', { month: 'long' }) 
+    await page.getByRole('cell', { name: dia + " " + mes }).first().click();
+
     await page.getByRole('button', { name: 'Siguiente' }).click();
     await page.getByRole('button', { name: 'Se parece a este' }).first().click();
     await page.getByRole('button', { name: 'Siguiente' }).click();
@@ -91,13 +97,36 @@ test("Numero", async ({ page }) => {
     await page.getByRole('option', { name: categoria }).click();
     await page.waitForTimeout(1000); 
 
-    await page.getByLabel('dd-mm-aaaa').click();
-    await page.getByRole('cell', { name: '31 enero' }).click();
-    await page.getByRole('button', { name: 'Siguiente' }).click();
-    await page.getByRole('button', { name: 'Se parece a este' }).first().click();
-    await page.getByRole('button', { name: 'Siguiente' }).click();
-    await page.getByRole('button', { name: 'Siguiente' }).click();
-    await page.getByRole('button', { name: 'Siguiente' }).click();
-    await page.getByRole('button', { name: 'Finalizar Registro' }).click();
-    await page.pause();
+    await page.getByLabel('dd-mm-aaaa').click()
+    await page.getByRole('cell', { name: '31 enero' }).click()
+    await page.getByRole('button', { name: 'Siguiente' }).click()
+    await page.getByRole('button', { name: 'Se parece a este' }).first().click()
+    await page.getByRole('button', { name: 'Siguiente' }).click()
+    await page.getByRole('button', { name: 'Siguiente' }).click()
+    await page.getByRole('button', { name: 'Siguiente' }).click()
+    await page.getByRole('button', { name: 'Finalizar Registro' }).click()
+    await page.pause()
 })
+
+async function AgregarEquipo({ page }){
+    await page.locator('input[type="checkbox"]').first().click()
+    await page.getByRole('button', { name: 'Agregar equipo' })
+    var n_equipo = await agregar_equipo(page, n_equipo)
+    console.log(n_equipo)
+    await page.getByLabel('Registro de equiposNuevo').getByRole('button', { name: 'Agregar equipo' }).click({ force: true })
+    await page.pause()
+}
+
+async function AgregarArbitro({ page }) {
+    await page.locator('input[type="checkbox"]').first().click()
+    await page.getByRole('button', { name: 'Agregar árbitro' }).click({ force: true })
+    await agregar_arbitro(page)
+    await page.getByRole('button', { name: 'Agregar arbitro' }).click({ force: true })
+}
+
+async function AgregarCancha({ page }) {
+    await page.locator('input[type="checkbox"]').first().click()
+    await page.getByRole('button', { name: 'Añadir Cancha' }).click({ force: true })
+    await agregar_cancha(page)
+    await page.getByRole('button', { name: 'Agregar cancha' }).click({ force: true })
+}

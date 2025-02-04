@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { fa, faker } from '@faker-js/faker'
 import { login } from './cuenta.spec'
+import { agregar_arbitro } from './cuenta.spec'
 
 test.describe("CaskrApp", async() => {
 
@@ -15,14 +16,7 @@ test.describe("CaskrApp", async() => {
         for(var i = 0; i < 5; i++) {
             await page.click('//span[text()="Agregar árbitro"]');
             await page.waitForTimeout(1500)
-
-            await page.locator('//input[@name="nombres"]').fill(nombre);
-            await page.locator('//input[@name="apellidos"]').fill(apellido);
-
-            var telefono = Math.floor(1000000000 + Math.random() * 9000000000).toString();
-            await page.locator('//input[@name="telefono"]').fill(telefono);
-
-            await page.locator('//input[@name="email"]').fill(nombre + '_' + apellido + '@arbitro.com');
+            await agregar_arbitro(page)
             await page.click('//span[text()="Agregar arbitro"]');
             await page.pause()
         }

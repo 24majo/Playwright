@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test'
+import { login } from './cuenta.spec'
 
 test("Pruebas", async ({  page }) => {
     // const numero = Math.random();
@@ -9,8 +10,14 @@ test("Pruebas", async ({  page }) => {
     // await page.goto('http://localhost:3000/auth');
     // await page.pause()
 
-    var arreglo = [1,2,3,4]
-    var largo = arreglo.length
-    console.log(largo)
+    // var fecha = new Date()
+    // var dia = fecha.getDate() // Para obtener el día en número
+    // var mes = fecha.toLocaleString('es-ES', { month: 'long' }) // nombre del mes
+    // console.log(dia + " " + mes)
+
+
+    await page.goto('http://localhost:3000/auth')
+    await login(page)
+    await page.pause()
 })
 

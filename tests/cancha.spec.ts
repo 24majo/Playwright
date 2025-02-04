@@ -1,38 +1,18 @@
 import { test, expect } from '@playwright/test';
 import { fa, faker } from '@faker-js/faker'
 import { login } from './cuenta.spec'
+import { agregar_cancha } from './cuenta.spec';
 
 test.describe("CaskrApp", async() => {
     test.beforeEach(async ({ page }) => {
-        await login(page);
+        await login(page)
+        await page.getByRole('link', { name: 'Canchas' }).click()
     })
 
     test("Agregar", async ({ page }) => {
         await page.click('//span[text()="Agregar cancha"]');
         await page.waitForTimeout(1000)
-        //var subir = await page.getByRole('button', { name: 'Subir imagen' })
-        //await subir.click({ force: true })
-
-        // Imagen
-        var file = await page.locator('input[type="file"]')
-        var imagen = 'C:/Users/E015/Downloads/cancha.jpg'
-        await file.setInputFiles(imagen)
-        await page.waitForTimeout(1500)
-
-        var n_cancha = Math.floor(1 + Math.random() * 20).toString()
-        console.log("Cancha " + n_cancha)
-        await page.locator('//input[@name="nombre"]').fill("Cancha " + n_cancha);
-        await page.waitForTimeout(2000)
-        var lugar = ['Deportiva', "Calle", "Estadio", "Deportivo", "Puerto"];
-        var ubicacion = lugar[Math.floor(Math.random() * lugar.length)];
-        console.log("Ubicación: " + ubicacion)
-        await page.getByPlaceholder('Ubicación').fill(ubicacion);
-        var num = Math.floor(1 + Math.random() * 4);
-        //console.log("Numero: " + num)
-        await page.waitForTimeout(1000)
-        await page.getByText(ubicacion, { exact: false }).nth(num).click({ force: true });
-        await page.getByTestId('inputDescripcion').fill('Pasto sintético');
-        await page.waitForTimeout(2000)
+        await agregar_cancha(page)
         await page.getByLabel('LigaAñadir nueva cancha').getByRole('button', { name: 'Agregar cancha' }).click({ force: true });
         await page.pause()
     })

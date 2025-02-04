@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test'
 import { faker } from '@faker-js/faker'
-import { login } from './cuenta.spec'
-
+import { login, agregar_equipo } from './cuenta.spec'
  
 test.describe("CaskrApp", async() => {
     test.beforeEach(async ({ page }) => {
         await login(page)
+        await page.getByRole('link', { name: 'Equipos' }).click()
     })
 
     test("Agregar", async ({ page }) => {
@@ -32,22 +32,11 @@ test.describe("CaskrApp", async() => {
 
             else{
                 console.log("Caso 1")
-                for(var i = 0; i < 4; i++){
-                    await page.waitForTimeout(2000)
-                    var n_equipo = Math.floor(Math.random() * 20)
-                    await page.locator('//input[@name="nombre"]').fill("Equipo " + n_equipo);
-
-                    var nombre = faker.name.firstName()
-                    await page.locator('//input[@name="nombre_capitan"]').fill(nombre);
-
-                    var apellido = faker.name.lastName()
-                    await page.locator('//input[@name="apellidos_capitan"]').fill(apellido);
-
-                    var telefono = Math.floor(1000000000 + Math.random() * 9000000000).toString();
-                    await page.locator('//input[@name="telefono"]').fill(telefono);
+                //for(var i = 0; i < 4; i++){
+                    var n_equipo = await agregar_equipo(page, n_equipo)
 
                     await page.getByLabel('LigaAgregar nuevo equipo').getByRole('button', { name: 'Agregar equipo' }).click();
-                    await page.waitForTimeout(5000)
+                    await page.waitForTimeout(2000)
 
                     var participantes = await page.getByLabel('Equipos participantes').innerText()
                     var p_lista = participantes.match(/Equipo \d+/g)
@@ -61,7 +50,7 @@ test.describe("CaskrApp", async() => {
                     await page.pause()
                     await page.click('//span[text()="Agregar equipo"]')
                     // await page.locator('//span[text()="Cancelar"]').click(); // Botón para cancelar acción
-                }
+                //}
             }
         }
     })
