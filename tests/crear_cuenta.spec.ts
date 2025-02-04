@@ -1,5 +1,4 @@
-import { tr } from '@faker-js/faker';
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { agregar_arbitro, agregar_equipo, agregar_cancha } from './cuenta.spec'
 
 test("Correo", async ({ page }) => {

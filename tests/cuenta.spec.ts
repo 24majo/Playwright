@@ -1,15 +1,20 @@
 import { Page } from '@playwright/test';
-import { faker, tr } from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 
 export const login = async (page: Page) => {
   await page.goto('http://localhost:3000/auth')
-  await page.getByTestId('inputCorreo').fill('majo18@prueba.com')
+  await page.getByTestId('inputCorreo').fill('majo01@prueba.com')
   await page.getByTestId('inputPassword').fill('12345678')
   await page.getByTestId('crearCuenta').click()
 }
 
 export const agregar_equipo = async (page: Page, n_equipo) => {
   await page.waitForTimeout(2000)
+  // await page.locator('img[src="https://rfgspzjirszjxyddzfqy.supabase.co/storage/v1/object/public/generic-image/genericTeam.png"]')
+  // .evaluate((img: HTMLImageElement) => {
+  //   img.src = 'C:/Users/E015/Downloads/escudo.png'
+  // })
+  // await page.pause()
   n_equipo = Math.floor(Math.random() * 20)
   await page.locator('//input[@name="nombre"]').fill("Equipo " + n_equipo)
   await page.locator('//input[@name="nombre_capitan"]').fill(faker.person.firstName())
@@ -20,8 +25,8 @@ export const agregar_equipo = async (page: Page, n_equipo) => {
 }
 
 export const agregar_arbitro = async (page: Page) => {
-  var nombre = faker.name.firstName()
-  var apellido = faker.name.lastName()
+  var nombre = faker.person.firstName()
+  var apellido = faker.person.lastName()
   await page.waitForTimeout(2000)
   await page.getByRole('button', { name: 'Agregar árbitro' }).click({ force: true })
   await page.locator('//input[@name="nombres"]').fill(nombre)

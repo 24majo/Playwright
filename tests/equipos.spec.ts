@@ -48,11 +48,14 @@ test.describe("CaskrApp", async() => {
                     t_lista?.includes("Equipo " + n_equipo)
 
                     await page.pause()
-                    await page.click('//span[text()="Agregar equipo"]')
                     // await page.locator('//span[text()="Cancelar"]').click(); // Botón para cancelar acción
                 //}
             }
         }
+    })
+
+    test("Editar", async ({ page }) => {
+        
     })
 
     test("Inactivo", async ({ page }) => {
