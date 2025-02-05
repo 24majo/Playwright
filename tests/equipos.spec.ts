@@ -20,42 +20,46 @@ test.describe("CaskrApp", async() => {
         console.log(boton)
         
         if(boton){
-            await agregar.click()
-            var button = await page.getByRole('button', { name: 'Sí, estoy seguro' }).isVisible()
-            console.log("Boton calendario: " + button)
+            for(var i = 0; i < 4; i++){
+                await agregar.click()
+                var button = await page.getByRole('button', { name: 'Sí, estoy seguro' }).isVisible()
+                console.log("Boton calendario: " + button)
 
-            if(button){
-                console.log("Caso 2")
-                process.exit(0);
-                //await page.pause()
-            }
+                if(button){
+                    console.log("Caso 2")
+                    process.exit(0);
+                    //await page.pause()
+                }
 
-            else{
-                console.log("Caso 1")
-                //for(var i = 0; i < 4; i++){
+                else{
+                    console.log("Caso 1")
                     var n_equipo = await agregar_equipo(page, n_equipo)
-
                     await page.getByLabel('LigaAgregar nuevo equipo').getByRole('button', { name: 'Agregar equipo' }).click();
                     await page.waitForTimeout(2000)
-
                     var participantes = await page.getByLabel('Equipos participantes').innerText()
                     var p_lista = participantes.match(/Equipo \d+/g)
                     p_lista?.includes("Equipo " + n_equipo)
                     await page.waitForTimeout(1000)
-
                     var todos = await page.getByLabel('Todos los equipos').innerText()
                     var t_lista = todos.match(/Equipo \d+/g)
                     t_lista?.includes("Equipo " + n_equipo)
-
                     await page.pause()
-                    // await page.locator('//span[text()="Cancelar"]').click(); // Botón para cancelar acción
-                //}
+                }
             }
         }
     })
 
     test("Editar", async ({ page }) => {
-        
+        await page.getByRole('row', { name: 'escudo Equipo ', exact: false }).getByRole('button').first().click({ force: true })
+        await page.waitForTimeout(2000)
+        var n_equipo = Math.floor(Math.random() * 20)
+        await page.getByPlaceholder("Escribe el nombre del equipo").nth(4).fill("Equipo " + n_equipo)
+        await page.getByPlaceholder("Nombre(s)").nth(4).fill(faker.person.firstName())
+        await page.getByPlaceholder("Apellido(s)").nth(4).fill(faker.person.lastName())
+        var telefono = Math.floor(1000000000 + Math.random() * 9000000000).toString()
+        await page.locator('//input[@name="telefono"]').nth(4).fill(telefono)
+        await page.getByRole('button', { name: 'Guardar cambios' }).nth(4).click({ force: true })
+        await page.pause()
     })
 
     test("Inactivo", async ({ page }) => {

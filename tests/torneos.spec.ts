@@ -1,13 +1,13 @@
-import { test, expect } from '@playwright/test'
-import { fa, faker } from '@faker-js/faker'
+import { test } from '@playwright/test'
 import { login } from './cuenta.spec'
 
 test.beforeEach(async ({ page }) => {
     await login(page)
+    await page.getByRole('link', { name: 'Mis torneos' }).click({ force: true })
 })
 
 test("Crear", async ({ page }) => {
-    for (var i = 0; i < 6; i++){
+    for (var i = 0; i < 4; i++){
         await page.getByRole('button', {name: 'Crear torneo'}).click({ force: true})
         await page.locator('//input[@name="nombre"]').fill('Liga');
         await page.waitForTimeout(1000); 
@@ -29,16 +29,19 @@ test("Crear", async ({ page }) => {
         await page.waitForTimeout(1000); 
 
         await page.getByLabel('dd-mm-aaaa').click();
-        await page.getByRole('cell', { name: '29 enero' }).click();
-        await page.getByRole('button', { name: 'Siguiente' }).click();
-        await page.getByRole('button', { name: 'Se parece a este' }).first().click();
-        await page.getByRole('button', { name: 'Siguiente' }).click();
-        await page.getByRole('button', { name: 'Siguiente' }).click();
-        await page.getByRole('button', { name: 'Siguiente' }).click();
-        await page.getByRole('button', { name: 'Finalizar Registro' }).click();
-        await page.pause();
+        var fecha = new Date()
+        var dia = fecha.getDate() 
+        var mes = fecha.toLocaleString('es-ES', { month: 'long' }) 
+        await page.getByRole('cell', { name: dia + " " + mes }).first().click()
+
+        await page.getByRole('button', { name: 'Siguiente' }).click()
+        await page.getByRole('button', { name: 'Se parece a este' }).first().click()
+        await page.getByRole('button', { name: 'Siguiente' }).click()
+        await page.getByRole('button', { name: 'Siguiente' }).click()
+        await page.getByRole('button', { name: 'Siguiente' }).click()
+        await page.getByRole('button', { name: 'Finalizar Registro' }).click()
+        await page.pause()
     }
-    await page.pause();
 })
 
 test("Editar", async ({ page }) => {
