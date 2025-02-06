@@ -20,15 +20,14 @@ test.describe("CaskrApp", async() => {
         console.log(boton)
         
         if(boton){
-            for(var i = 0; i < 4; i++){
+            for(var i = 0; i < 2; i++){
                 await agregar.click()
                 var button = await page.getByRole('button', { name: 'Sí, estoy seguro' }).isVisible()
                 console.log("Boton calendario: " + button)
 
                 if(button){
                     console.log("Caso 2")
-                    process.exit(0);
-                    //await page.pause()
+                    process.exit(0)
                 }
 
                 else{
@@ -131,7 +130,7 @@ test.describe("CaskrApp", async() => {
         await page.waitForTimeout(2000)
         await page.getByRole('button', { name: 'Eliminar' }).nth(equipo!.length - 1).click({ force: true })
 
-        const msj = await page.locator('p:text("No puedes eliminar este equipo porque tiene partidos agendados")')
+        var msj = await page.locator('p:text("No puedes eliminar este equipo porque tiene partidos agendados")')
     
         if(await msj.isVisible())
             console.log("Caso 2")

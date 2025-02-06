@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker'
 
 export const login = async (page: Page) => {
   await page.goto('http://localhost:3000/auth')
-  await page.getByTestId('inputCorreo').fill('majo108@prueba.com')
+  await page.getByTestId('inputCorreo').fill('majo89@prueba.com')
   await page.getByTestId('inputPassword').fill('12345678')
   await page.getByTestId('crearCuenta').click()
 }
@@ -15,7 +15,8 @@ export const agregar_equipo = async (page: Page, n_equipo) => {
   //   img.src = 'C:/Users/E015/Downloads/escudo.png'
   // })
   // await page.pause()
-  n_equipo = Math.floor(Math.random() * 20)
+  //n_equipo = Math.floor(Math.random() * 20)
+  n_equipo = faker.company.name()
   await page.locator('//input[@name="nombre"]').fill("Equipo " + n_equipo)
   await page.locator('//input[@name="nombre_capitan"]').fill(faker.person.firstName())
   await page.locator('//input[@name="apellidos_capitan"]').fill(faker.person.lastName())
@@ -57,4 +58,37 @@ export const agregar_cancha = async (page: Page) => {
   await page.getByText(ubicacion, { exact: false }).nth(num).click({ force: true });
   await page.getByTestId('inputDescripcion').fill('Pasto sintético');
   await page.waitForTimeout(2000)
+}
+
+export const crear_torneo = async (page: Page) => {
+  await page.locator('//input[@name="nombre"]').fill('Liga');
+  await page.waitForTimeout(1000); 
+  var formato = ['Eliminación directa','Eliminación directa (ida y vuelta)','Liga','Liga (ida y vuelta)'];
+  var t_formato = formato[Math.floor(Math.random() * formato.length)];
+  console.log("Formato: " + t_formato)
+  await page.getByPlaceholder('Ej. Liga + Liguilla, Eliminacion directa').click();
+  await page.waitForTimeout(1000); 
+  await page.getByRole('option', { name: t_formato, exact: true }).click();
+  await page.waitForTimeout(1000); 
+
+  var sexo = ['Varonil', 'Femenil']
+  var categoria = sexo[Math.floor(Math.random() * sexo.length)]
+  console.log("Categoría: " + categoria)
+  await page.getByPlaceholder('Ej. Varonil').click();
+  await page.waitForTimeout(1000); 
+  await page.getByRole('option', { name: categoria }).click();
+  await page.waitForTimeout(1000); 
+
+  await page.getByLabel('dd-mm-aaaa').click();
+  var fecha = new Date()
+  var dia = fecha.getDate() 
+  var mes = fecha.toLocaleString('es-ES', { month: 'long' }) 
+  await page.getByRole('cell', { name: dia + " " + mes }).first().click()
+
+  await page.getByRole('button', { name: 'Siguiente' }).click()
+  await page.getByRole('button', { name: 'Se parece a este' }).first().click()
+  await page.getByRole('button', { name: 'Siguiente' }).click()
+  await page.getByRole('button', { name: 'Siguiente' }).click()
+  await page.getByRole('button', { name: 'Siguiente' }).click()
+  await page.getByRole('button', { name: 'Finalizar Registro' }).click()
 }
