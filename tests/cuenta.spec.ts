@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker'
 
 export const login = async (page: Page) => {
   await page.goto('http://localhost:3000/auth')
-  await page.getByTestId('inputCorreo').fill('majo89@prueba.com')
+  await page.getByTestId('inputCorreo').fill('majo143@prueba.com')
   await page.getByTestId('inputPassword').fill('12345678')
   await page.getByTestId('crearCuenta').click()
 }
@@ -16,12 +16,13 @@ export const agregar_equipo = async (page: Page, n_equipo) => {
   // })
   // await page.pause()
   //n_equipo = Math.floor(Math.random() * 20)
-  n_equipo = faker.company.name()
+  var equipo = faker.company.name()
+  n_equipo = equipo.replace(/[^a-zA-Z0-9]/g, ' ');
   await page.locator('//input[@name="nombre"]').fill("Equipo " + n_equipo)
   await page.locator('//input[@name="nombre_capitan"]').fill(faker.person.firstName())
   await page.locator('//input[@name="apellidos_capitan"]').fill(faker.person.lastName())
-  var telefono = Math.floor(1000000000 + Math.random() * 9000000000).toString()
-  await page.locator('//input[@name="telefono"]').fill(telefono)
+  //var telefono = Math.floor(1000000000 + Math.random() * 9000000000).toString()
+  await page.locator('//input[@name="telefono"]').fill(faker.phone.number())
   return n_equipo
 }
 
@@ -32,8 +33,7 @@ export const agregar_arbitro = async (page: Page) => {
   await page.getByRole('button', { name: 'Agregar árbitro' }).click({ force: true })
   await page.locator('//input[@name="nombres"]').fill(nombre)
   await page.locator('//input[@name="apellidos"]').fill(apellido)
-  var telefono = Math.floor(1000000000 + Math.random() * 9000000000).toString()
-  await page.locator('//input[@name="telefono"]').fill(telefono)
+  await page.locator('//input[@name="telefono"]').fill(faker.phone.number())
   await page.locator('//input[@name="email"]').fill(nombre + '_' + apellido + '@arbitro.com')
 }
 
@@ -44,19 +44,20 @@ export const agregar_cancha = async (page: Page) => {
   await file.setInputFiles(imagen)
   await page.waitForTimeout(1500)
 
-  var n_cancha = Math.floor(1 + Math.random() * 20).toString()
+  var n_cancha = faker.location.city()
   console.log("Cancha " + n_cancha)
-  await page.locator('//input[@name="nombre"]').fill("Cancha " + n_cancha);
+  await page.locator('//input[@name="nombre"]').fill("Cancha " + n_cancha)
   await page.waitForTimeout(2000)
-  var lugar = ['Deportiva', "Calle", "Estadio", "Deportivo", "Puerto"];
-  var ubicacion = lugar[Math.floor(Math.random() * lugar.length)];
+  var lugar = ['Deportiva', "Calle", "Estadio", "Deportivo", "Puerto"]
+  var ubicacion = lugar[Math.floor(Math.random() * lugar.length)]
+  //var ubicacion = faker.location.city()
   console.log("Ubicación: " + ubicacion)
-  await page.getByPlaceholder('Ubicación').fill(ubicacion);
-  var num = Math.floor(1 + Math.random() * 4);
-  //console.log("Numero: " + num)
-  await page.waitForTimeout(1000)
-  await page.getByText(ubicacion, { exact: false }).nth(num).click({ force: true });
-  await page.getByTestId('inputDescripcion').fill('Pasto sintético');
+  await page.getByPlaceholder('Ubicación').fill(ubicacion)
+  var num = Math.floor(Math.random() * 4)
+  console.log("Numero: " + num)
+  await page.waitForTimeout(1500)
+  await page.getByText(ubicacion, { exact: false }).nth(num).click({ force: true })
+  await page.getByTestId('inputDescripcion').fill('Pasto sintético')
   await page.waitForTimeout(2000)
 }
 

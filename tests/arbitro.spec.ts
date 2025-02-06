@@ -6,16 +6,15 @@ import { agregar_arbitro } from './cuenta.spec'
 test.describe("CaskrApp", async() => {
 
     test.beforeEach(async ({ page }) => {
-        await login(page); 
+        await login(page)
+        await page.getByRole('link', { name: 'Arbitros' }).click()
     })
 
-    var nombre = faker.name.firstName()
-    var apellido = faker.name.lastName()
+    var nombre = faker.person.firstName()
+    var apellido = faker.person.lastName()
     
     test("Agregar", async ({ page }) => {
         for(var i = 0; i < 5; i++) {
-            await page.click('//span[text()="Agregar árbitro"]');
-            await page.waitForTimeout(1500)
             await agregar_arbitro(page)
             await page.click('//span[text()="Agregar arbitro"]');
             await page.pause()

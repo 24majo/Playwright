@@ -17,7 +17,7 @@ test.describe("CaskrApp", async() => {
         var agregar = await page.getByRole('button', { name: 'Agregar equipo' })
         await expect(agregar).toBeVisible() // Si no es visible, es por Caso 2
         var boton = await agregar.isVisible() 
-        console.log(boton)
+        console.log("Botón agregar equipo: " + boton)
         
         if(boton){
             for(var i = 0; i < 2; i++){
@@ -27,7 +27,24 @@ test.describe("CaskrApp", async() => {
 
                 if(button){
                     console.log("Caso 2")
-                    process.exit(0)
+                    var si = page.getByRole('button', { name: 'Sí, estoy seguro' })
+                    var no = page.getByRole('button', { name: 'No, Cancelar' })
+                    var botones = [si]
+                    var elegir = botones[Math.floor(Math.random() * botones.length)]
+                    await elegir.click({ force: true })
+
+                    if(elegir == si){
+                        console.log("Agregó equipos con calendario agendado")
+                        var n_equipo = await agregar_equipo(page, n_equipo)
+                        await page.getByLabel('LigaAgregar nuevo equipo').getByRole('button', { name: 'Agregar equipo' }).click();
+                        await page.waitForTimeout(2000)
+                        await page.pause()
+                        process.exit(0)
+                    }
+                    else{
+                        console.log("No agregó equipos por calendario agendado")
+                        process.exit(0)
+                    }
                 }
 
                 else{

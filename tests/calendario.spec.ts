@@ -6,6 +6,7 @@ test.describe("CaskrApp", async() => {
     
     test.beforeEach(async ({ page }) => {
         await login(page)
+        await page.getByRole('link', { name: 'Calendario' }).click()
     })
 
     test("Generar", async ({ page }) => {
@@ -22,12 +23,12 @@ test.describe("CaskrApp", async() => {
             console.log(disponible)
 
             if(disponible){
-                console.log("Caso 2")
+                console.log("Caso 2: Opción inhabilitada por falta de equipos")
                 process.exit(0); // 0 sin errores, 1 con error
             }
 
             if(disponible == null){
-                console.log("Caso 1")
+                console.log("Caso 1: Generar calendario cumpliendo con los requisitos del torneo")
                 await page.getByRole('button', { name: 'Crear el calendario' }).click({ force: true })
                 await page.getByRole('link', { name: 'Calendario' }).click({ force: true });
                 await page.pause()
@@ -41,21 +42,22 @@ test.describe("CaskrApp", async() => {
         var j_num = await page.getByRole('tab', { name: 'J - ', exact: false }).count()
         console.log("Jornadas: " + j_num)
 
-        for(var i = 3; i <= j_num; i++){
-            await page.getByRole('tab', { name: new RegExp(`J - ${i}`)}).first().click({ force: true })
+        //for(var i = 2; i <= j_num; i++){
+            await page.getByRole('tab', { name: new RegExp(`J - ${3}`)}).first().click({ force: true })
             
             // Programar partido
-            await page.getByRole('button', { name: 'Programar' }).nth(1).click({ force: true })
+            await page.getByRole('button', { name: 'Programar' }).first().click({ force: true })
             await page.waitForTimeout(1000)
             Agregar({ page })
             await page.pause()
-        }
+        //}
         await page.pause()
 
     })
 
     test("Todos", async ({ page }) => {
         await page.getByRole('tab', { name: 'Todos los partidos' }).click({ force: true })
+        await page.pause()
         var boton = page.getByRole('row', { name: new RegExp(`.+ NO PROGRAMADO .+`) }).getByRole('button').first()
         var visible = await boton.isHidden()
         console.log(visible)
@@ -72,7 +74,7 @@ test.describe("CaskrApp", async() => {
 
                 if(!visible){ // Hay partidos por programar en la siguiente pestaña
                     boton.click({ force: true })
-                    Agregar({ page })
+                    await Agregar({ page })
                 }
                 await page.pause()
             }
@@ -86,36 +88,39 @@ test.describe("CaskrApp", async() => {
         }
         else{
             boton.click({ force: true })
-            Agregar({ page })
+            await page.waitForTimeout(1500)
+            await Agregar({ page })
         }
-        
-        // await boton.first().click()
-        // Agregar({ page })
-        //await page.pause()
     })
-
-    
 })
 
 async function Agregar({ page }){
     await page.getByLabel('día').click({ force: true })
     await page.waitForTimeout(1000)
-    var fecha = [Math.floor(1 + Math.random() * 25)].toString() + ' enero'
+    var fecha1 = new Date()
+    var mes = fecha1.toLocaleString('es-ES', { month: 'long' }) 
+    var fecha = [Math.floor(1 + Math.random() * 25)].toString() + " " + mes 
     console.log(fecha)
     await page.getByRole('cell', { name: fecha }).first().click({ force: true })
     await page.waitForTimeout(1000)
-    var hora = [Math.floor(10 + Math.random() * 15)]
-    var minuto = [Math.floor(10 + Math.random() * 48)]
+    //var hora = [Math.floor(10 + Math.random() * 15)]
+    //var minuto = [Math.floor(10 + Math.random() * 48)]
+
+    var fechaAleatoria = faker.date.recent()
+    var horas = fechaAleatoria.getHours()
+    var minutos = fechaAleatoria.getMinutes()
+    var hora = horas.toString().padStart(2, '0');
+    var minuto = minutos.toString().padStart(2, '0')
     console.log("Hora: " + hora + ":" + minuto)
     await page.locator('input[type="time"]').fill(hora + ':' + minuto)
     await page.waitForTimeout(1000)
     await page.getByPlaceholder('Selecciona la cancha').click({ force: true })
     await page.waitForTimeout(1000)
     
-    var cancha = await page.getByRole('option', { name: new RegExp(`Cancha `) })
+    var cancha = await page.getByRole('option', { name: new RegExp(`Cancha .+`)})
     var n_cancha = await cancha.count()
     console.log("Canchas: " + n_cancha)
-    var random = Math.floor(Math.random() * n_cancha - 1)
+    var random = Math.floor(Math.random() * n_cancha)
     await cancha.nth(random).click()
     await page.waitForTimeout(1000)
 
@@ -127,9 +132,11 @@ async function Agregar({ page }){
     }
     await page.getByPlaceholder('Selecciona al árbitro').press('Enter')
     await page.waitForTimeout(1000)
-    await page.getByRole('button', { name: 'Guardar y enviar', exact: false }).click({ force: true })
-    await page.waitForTimeout(1000)
-    await page.getByRole('button', { name: 'Si, envíales el mensaje' }).click({ force: true })
-    await page.waitForTimeout(1000)
-    await page.getByLabel('LigaProgramar partido —').getByRole('button').click({ force: true })
+    await page.getByRole('button', { name: "Guardar enfrentamiento" }).click({ force: true })
+    await page.pause()
+    // await page.getByRole('button', { name: 'Guardar y enviar', exact: false }).click({ force: true })
+    // await page.waitForTimeout(1000)
+    // await page.getByRole('button', { name: 'Si, envíales el mensaje' }).click({ force: true })
+    // await page.waitForTimeout(1000)
+    //await page.getByLabel('LigaProgramar partido —').getByRole('button').click({ force: true })
 }
