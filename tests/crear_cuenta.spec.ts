@@ -15,7 +15,7 @@ test("Correo", async ({ page }) => {
     await page.waitForTimeout(2000);
 
     await page.locator('//input[@name="customerName"]').fill('Alondra Guerrero')
-    await page.locator('//input[@name="phoneCustomer"]').fill(faker.phone.number())
+    await page.locator('//input[@name="phoneCustomer"]').fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
     await page.getByRole('button', { name: 'Siguiente' }).click()
     await page.waitForTimeout(1000);
     await crear_torneo(page)
@@ -25,8 +25,8 @@ test("Correo", async ({ page }) => {
 test("Numero", async ({ page }) => {
     await page.goto('http://localhost:3000/auth')
     await page.getByRole('button', { name: 'Crear cuenta' }).click()
-    var numero = faker.phone.number()
-    await page.getByTestId('inputCorreo').fill(faker.phone.number())
+    var numero = faker.number.int({ min: 1000000000, max: 9999999999 }).toString()
+    await page.getByTestId('inputCorreo').fill(numero)
 
     await page.getByTestId('inputPassword').fill('12345678')
     await page.getByTestId('crearCuenta').click()
@@ -42,7 +42,7 @@ test("Numero", async ({ page }) => {
 
     await page.locator('//input[@name="phoneCustomer"]').fill(numero)
     await page.getByRole('button', { name: 'Siguiente' }).click()
-    await page.waitForTimeout(1000); 
+    await page.waitForTimeout(1000)
 
     await crear_torneo(page)
     await page.pause()

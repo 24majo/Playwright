@@ -7,11 +7,11 @@ test.beforeEach(async ({ page }) => {
 })
 
 test("Crear", async ({ page }) => {
-    for (var i = 0; i < 4; i++){
+    //for (var i = 0; i < 4; i++){
         await page.getByRole('button', {name: 'Crear torneo'}).click({ force: true})
         await crear_torneo(page)
         await page.pause()
-    }
+    //}
 })
 
 test("Editar", async ({ page }) => {

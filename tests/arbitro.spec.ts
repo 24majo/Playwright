@@ -14,7 +14,7 @@ test.describe("CaskrApp", async() => {
     var apellido = faker.person.lastName()
     
     test("Agregar", async ({ page }) => {
-        for(var i = 0; i < 5; i++) {
+        for(var i = 0; i < 8; i++) {
             await agregar_arbitro(page)
             await page.click('//span[text()="Agregar arbitro"]');
             await page.pause()
@@ -30,7 +30,7 @@ test.describe("CaskrApp", async() => {
 
     test("Editar", async ({ page }) => {
         await page.locator('role=row[name=/@arbitro.com$/]').locator('role=button').first().click({ force: true })
-        var telefono = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+        var telefono = faker.number.int({ min: 1000000000, max: 9999999999 }).toString()
         console.log(nombre + " " + apellido)
         console.log(telefono)
         await page.locator('//input[@name="nombres"]').nth(4).fill(nombre)

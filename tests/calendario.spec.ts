@@ -24,7 +24,7 @@ test.describe("CaskrApp", async() => {
 
             if(disponible){
                 console.log("Caso 2: Opción inhabilitada por falta de equipos")
-                process.exit(0); // 0 sin errores, 1 con error
+                process.exit(0) // 0 sin errores, 1 con error
             }
 
             if(disponible == null){
@@ -91,6 +91,11 @@ test.describe("CaskrApp", async() => {
             await page.waitForTimeout(1500)
             await Agregar({ page })
         }
+    })
+
+    test("Liguilla", async ({ page }) => {
+        await page.getByRole('button', { name: 'Vamos' }).click({ force: true })
+        await page.getByRole('button', { name: 'Continuar' }).click({ force: true })
     })
 })
 

@@ -14,6 +14,7 @@ test("Resultados", async ({ page }) => {
 
 test("Todos", async ({ page }) => {
     await page.getByRole('tab', { name: 'Todos los partidos' }).click({ force: true })
+    await page.waitForTimeout(2000)
     await Registro({ page })
 })
 
@@ -24,19 +25,24 @@ test("Editar", async({ page }) => {
 
 async function Registro({ page }){
     var registrar = page.getByRole('row', { name: new RegExp(`.+ Registrar`)}).getByRole('button')
-    var btn_registro = registrar.first()
+    //var btn_registro = registrar.first()
     var num_btn = await registrar.count()
-    var button = await btn_registro.getAttribute('data-disabled')
-
     console.log("Botones: " + num_btn)
 
     for(var i = 0; i < num_btn; i++){
-        await btn_registro.click()
-        var random = Math.floor(Math.random() * 10).toString()
-        await page.locator('input[name="puntos_local"]').fill(random)
-        random = Math.floor(Math.random() * 10).toString()
-        await page.locator('input[name="puntos_visitante"]').fill(random)
-        await page.getByRole('button', { name: 'Guardar' }).click({ force: true })
-        await page.pause()
+        var btn_registro = registrar.nth(i)
+        var desactivado = await btn_registro.getAttribute('data-disabled') // true o null
+        console.log(i + ": " + desactivado)
+
+        if(desactivado === null){
+            btn_registro.click({ force: true })
+            var random = Math.floor(Math.random() * 10).toString()
+            await page.locator('input[name="puntos_local"]').fill(random)
+            random = Math.floor(Math.random() * 10).toString()
+            await page.locator('input[name="puntos_visitante"]').fill(random)
+            await page.getByRole('button', { name: 'Guardar' }).click({ force: true })
+            await page.pause()
+        }
     }
+    await page.pause()
 }

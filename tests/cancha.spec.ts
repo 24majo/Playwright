@@ -9,7 +9,7 @@ test.describe("CaskrApp", async() => {
     })
 
     test("Agregar", async ({ page }) => {
-        for(var i = 0; i < 3; i++){
+        for(var i = 0; i < 4; i++){
             await page.click('//span[text()="Agregar cancha"]');
             await page.waitForTimeout(1000)
             await agregar_cancha(page)
