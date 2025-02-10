@@ -62,11 +62,11 @@ test.describe("CaskrApp", async() => {
                     await page.getByLabel('LigaAgregar nuevo equipo').getByRole('button', { name: 'Agregar equipo' }).click();
                     await page.waitForTimeout(2000)
                     var participantes = await page.getByLabel('Equipos participantes').innerText()
-                    var p_lista = participantes.match(/Equipo \d+/g)
+                    var p_lista = participantes.match(/Equipo \w+/g)
                     p_lista?.includes("Equipo " + n_equipo)
                     await page.waitForTimeout(1000)
                     var todos = await page.getByLabel('Todos los equipos').innerText()
-                    var t_lista = todos.match(/Equipo \d+/g)
+                    var t_lista = todos.match(/Equipo \w+/g)
                     t_lista?.includes("Equipo " + n_equipo)
                     await page.pause()
                 }
@@ -81,8 +81,7 @@ test.describe("CaskrApp", async() => {
         await page.getByPlaceholder("Escribe el nombre del equipo").nth(4).fill("Equipo " + n_equipo)
         await page.getByPlaceholder("Nombre(s)").nth(4).fill(faker.person.firstName())
         await page.getByPlaceholder("Apellido(s)").nth(4).fill(faker.person.lastName())
-        var telefono = Math.floor(1000000000 + Math.random() * 9000000000).toString()
-        await page.locator('//input[@name="telefono"]').nth(4).fill(telefono)
+        await page.locator('//input[@name="telefono"]').nth(4).fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
         await page.getByRole('button', { name: 'Guardar cambios' }).nth(4).click({ force: true })
         await page.pause()
     })
@@ -91,7 +90,7 @@ test.describe("CaskrApp", async() => {
         // var contar = await page.getByLabel('Equipos participantes').getByText(/Equipo \d+/).count()
         //const equipo = await page.getByLabel('Equipos participantes').locator('text=/Equipo \d+/').count()
         var participantes = await page.getByLabel('Equipos participantes').innerText();
-        var equipo = participantes.match(/Equipo \d+/g);
+        var equipo = participantes.match(/Equipo \w+/g);
         console.log(equipo);
         var random = equipo![Math.floor(Math.random() * equipo!.length)];
         //var equipos = await page.getByLabel('Equipos participantes').getByText(/Equipo \d+/).nth(2).textContent()
@@ -119,7 +118,7 @@ test.describe("CaskrApp", async() => {
         await page.getByRole('tab', {name: 'Equipos inactivos'}).click()
         await page.pause()
         var inactivos = await page.getByLabel('Equipos inactivos').innerText();
-        var equipo = inactivos.match(/Equipo \d+/g);
+        var equipo = inactivos.match(/Equipo \w+/g);
         console.log(equipo);
         var random = equipo![Math.floor(Math.random() * equipo!.length)];
         console.log(random)
@@ -137,7 +136,7 @@ test.describe("CaskrApp", async() => {
             !(await page.getByText('Equipos inactivos').getByText(random).isVisible())
             !(await page.getByText('Equipos registrados').isVisible())
             var participantes = await page.getByLabel('Equipos participantes').innerText();
-            var lista = participantes.match(/Equipo \d+/g);
+            var lista = participantes.match(/Equipo \w+/g);
             var equ = lista!.includes(random)
             console.log(equ)
         }
