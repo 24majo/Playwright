@@ -10,8 +10,9 @@ test.describe("CaskrApp", async() => {
 
     test("Agregar", async ({ page }) => {
         // Caso 1: Agregar un equipo con éxito
-        // Caso 2: No es posible agregar por partidos agendados
+        // Caso 2: Torneo activo
         // Caso 3: Límite de equipos alcanzado 
+        // Caso 4: No es posible agregar por partidos agendados
 
         await page.pause()
         var agregar = await page.getByRole('button', { name: 'Agregar equipo' })
@@ -20,6 +21,14 @@ test.describe("CaskrApp", async() => {
         console.log("Botón agregar equipo: " + boton)
         
         if(boton){
+            var bloqueado = await agregar.getAttribute('data-disabled')
+            console.log("Botón bloqueado: " + bloqueado)
+            
+            if(bloqueado){
+                console.log("Caso 4")
+                process.exit(0)
+            }
+
             for(var i = 0; i < 2; i++){
                 await agregar.click()
                 var button = await page.getByRole('button', { name: 'Sí, estoy seguro' }).isVisible()
@@ -137,8 +146,9 @@ test.describe("CaskrApp", async() => {
     test("Eliminar", async ({ page }) => {
         // Caso 1: Eliminar equipo con éxito
         // Caso 2: No eliminar equipo por pendientes de agenda
+        var msj = page.locator('p:has-text("No puedes eliminar este")')
         var participantes = await page.getByLabel('Equipos participantes').innerText()
-        var equipo = participantes.match(/Equipo \d+/g)
+        var equipo = participantes.match(/Equipo \w+/g)
         console.log("Lista: " + equipo)
         var random = equipo![Math.floor(Math.random() * equipo!.length)]
         console.log(random)
@@ -146,15 +156,16 @@ test.describe("CaskrApp", async() => {
         await page.getByRole('row', { name: new RegExp(`escudo ${random} .+`) }).getByRole('button').first().click({ force: true })
         await page.waitForTimeout(2000)
         await page.getByRole('button', { name: 'Eliminar' }).nth(equipo!.length - 1).click({ force: true })
+        await msj.waitFor({ state: 'visible' })
+        var visible = await msj.isVisible()
+        console.log("Mensaje: " + visible)
 
-        var msj = await page.locator('p:text("No puedes eliminar este equipo porque tiene partidos agendados")')
-    
-        if(await msj.isVisible())
+        if(msj)
             console.log("Caso 2")
-
+        
         else
             console.log("Caso 1")
-
+        
         await page.pause()
     })
 })
