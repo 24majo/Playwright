@@ -14,7 +14,7 @@ test.describe("CaskrApp", async() => {
     var apellido = faker.person.lastName()
     
     test("Agregar", async ({ page }) => {
-        for(var i = 0; i < 8; i++) {
+        for(var i = 0; i < 2; i++) {
             await agregar_arbitro(page)
             await page.click('//span[text()="Agregar arbitro"]');
             await page.pause()
@@ -22,24 +22,20 @@ test.describe("CaskrApp", async() => {
     })
 
     test("Eliminar", async ({ page }) => {
-        //await page.getByRole('row', { name: 'Leonardo_Ávalos@arbitro.com' }).getByRole('button').nth(1).click();
-        await page.locator('role=row[name=/@arbitro.com$/]').locator('role=button').nth(1).click({ force: true })
+        await page.pause()
+        await page.locator('role=row[name=/@.+\..+$/]').locator('role=button').nth(1).click({ force: true })
         await page.locator('//button[text()="Sí, Eliminar"]').click({ force: true })
         //await page.pause()
     })
 
     test("Editar", async ({ page }) => {
-        await page.locator('role=row[name=/@arbitro.com$/]').locator('role=button').first().click({ force: true })
-        var telefono = faker.number.int({ min: 1000000000, max: 9999999999 }).toString()
-        console.log(nombre + " " + apellido)
-        console.log(telefono)
-        await page.locator('//input[@name="nombres"]').nth(4).fill(nombre)
-        await page.locator('//input[@name="apellidos"]').nth(4).fill(apellido)
-        await page.locator('//input[@name="telefono"]').nth(4).fill(telefono)
-        //await page.locator('//input[@name="email"]').nth(4).fill(nombre + '_' + apellido + '@arbitro.com')
-        await page.getByRole('button', { name: 'Guardar cambios' }).nth(4).click({ force: true })
         await page.pause()
-        //await page.click('//span[text()="Guardar cambios"]');
-        
+        await page.locator('role=row[name=/@.+\..+$/]').locator('role=button').first().click({ force: true })
+        await page.locator('//input[@name="nombres"]').nth(3).fill(faker.person.firstName())
+        await page.locator('//input[@name="apellidos"]').nth(3).fill(faker.person.lastName())
+        await page.locator('//input[@name="telefono"]').nth(3).fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
+        await page.locator('//input[@name="email"]').nth(3).fill(faker.internet.email())
+        await page.getByRole('button', { name: 'Guardar cambios' }).nth(3).click({ force: true })
+        await page.pause()
     })
 })
