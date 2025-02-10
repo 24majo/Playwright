@@ -30,6 +30,8 @@ test("Editar", async ({ page }) => {
 })
 
 test("Eliminar", async ({ page }) => {
+    // Caso 1: Eliminación exitosa
+    // Caso 2: No se puede eliminar por tener partidos agendados
     await page.getByRole('button', {name: 'Crear torneo'}).click({ force: true})
     await page.getByRole('row', { name: /^formal/ }).getByRole('button').nth(2).click({ force: true })
     await page.pause()

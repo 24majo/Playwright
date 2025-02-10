@@ -1,5 +1,4 @@
-import { test, expect } from '@playwright/test'
-import { fa, faker } from '@faker-js/faker'
+import { test } from '@playwright/test'
 import { login } from './cuenta.spec'
 
 test.beforeEach(async ({ page }) => {
@@ -7,15 +6,17 @@ test.beforeEach(async ({ page }) => {
     await page.getByRole('link', { name: 'Resultados' }).click()
 })
 
-test("Resultados", async ({ page }) => {
+test("Eliminacion", async ({ page }) => {
     await page.pause()
-    await Registro({ page })        
+    var registrar = page.getByRole('button', { name: 'Registrar' })
+    await Registro({ page, registrar })        
 })
 
 test("Todos", async ({ page }) => {
     await page.getByRole('tab', { name: 'Todos los partidos' }).click({ force: true })
+    var registrar = page.getByRole('row', { name: new RegExp(`.+ Registrar`)}).getByRole('button')
     await page.waitForTimeout(2000)
-    await Registro({ page })
+    await Registro({ page, registrar })
 })
 
 test("Editar", async({ page }) => {
@@ -23,8 +24,7 @@ test("Editar", async({ page }) => {
     await page.getByRole('row', { name: new RegExp(`Equipo \\d Equipo local .+`)}).getByRole('button').click()
 })
 
-async function Registro({ page }){
-    var registrar = page.getByRole('row', { name: new RegExp(`.+ Registrar`)}).getByRole('button')
+async function Registro({ page, registrar }){
     //var btn_registro = registrar.first()
     var num_btn = await registrar.count()
     console.log("Botones: " + num_btn)

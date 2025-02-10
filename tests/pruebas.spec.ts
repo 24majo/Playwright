@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { login } from './cuenta.spec'
+import { faker } from '@faker-js/faker'
 
 test("Pruebas", async ({  page }) => {
     // const numero = Math.random();
@@ -15,6 +16,10 @@ test("Pruebas", async ({  page }) => {
     // var mes = fecha.toLocaleString('es-ES', { month: 'long' }) // nombre del mes
     // console.log(dia + " " + mes)
 
+    // for(var i = 0; i < 8; i++){
+    //     var numero = faker.number.int({ min: 1000000000, max: 9999999999 }).toString()
+    //     console.log("Núm: " + numero)
+    // }
 
     await page.goto('http://localhost:3000/auth')
     await login(page)

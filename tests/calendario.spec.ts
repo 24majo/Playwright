@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { fa, faker } from '@faker-js/faker'
+import { test } from '@playwright/test';
+import { faker } from '@faker-js/faker'
 import { login } from './cuenta.spec'
 
 test.describe("CaskrApp", async() => {
@@ -42,17 +42,32 @@ test.describe("CaskrApp", async() => {
         var j_num = await page.getByRole('tab', { name: 'J - ', exact: false }).count()
         console.log("Jornadas: " + j_num)
 
-        //for(var i = 2; i <= j_num; i++){
-            await page.getByRole('tab', { name: new RegExp(`J - ${3}`)}).first().click({ force: true })
-            
-            // Programar partido
-            await page.getByRole('button', { name: 'Programar' }).first().click({ force: true })
-            await page.waitForTimeout(1000)
-            Agregar({ page })
-            await page.pause()
-        //}
-        await page.pause()
+        for(var i = 2; i <= j_num; i++){
+            await page.getByRole('tab', { name: new RegExp(`J - ${i}`)}).first().click({ force: true })
+            var programar = page.getByRole('button', { name: 'Programar' })
+            var count = await programar.count()
+            console.log("Boton por jornada: " + count)
 
+            for(var j = 0; i <= count; i++) {
+                await page.getByRole('button', { name: 'Programar' }).nth(j).click({ force: true })
+                await Agregar({ page })
+            }
+        }
+        await page.pause()
+    })
+
+    test("Rondas", async ({ page }) => {
+        await page.pause()
+        await page.getByRole('tab', { name: 'Por rondas' }).click({ force: true })
+        var btn_program = page.getByRole('button', { name: 'Programar partido' })
+        var count = await btn_program.count()
+        console.log("Btn Programar: " + count)
+
+        for(var i = 0; i < count; i++){
+            await btn_program.nth(i).click({ force: true })
+            //await Agregar({ page })
+        }
+        await page.pause()
     })
 
     test("Todos", async ({ page }) => {
@@ -108,8 +123,6 @@ async function Agregar({ page }){
     console.log(fecha)
     await page.getByRole('cell', { name: fecha }).first().click({ force: true })
     await page.waitForTimeout(1000)
-    //var hora = [Math.floor(10 + Math.random() * 15)]
-    //var minuto = [Math.floor(10 + Math.random() * 48)]
 
     var fechaAleatoria = faker.date.recent()
     var horas = fechaAleatoria.getHours()
