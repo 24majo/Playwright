@@ -19,6 +19,14 @@ test("Todos", async ({ page }) => {
     await Registro({ page, registrar })
 })
 
+test("Partes", async ({ page }) => {
+    await page.getByRole('tab', { name: 'Resultados' }).click({ force: true })
+    await page.pause()
+    var registrar = page.getByRole('row', { name: new RegExp(`.+ Registrar`)}).getByRole('button')
+    await page.waitForTimeout(2000)
+    await Registro({ page, registrar })
+})
+
 test("Editar", async({ page }) => {
     await page.pause()
     await page.getByRole('row', { name: new RegExp(`Equipo \\d Equipo local .+`)}).getByRole('button').click()

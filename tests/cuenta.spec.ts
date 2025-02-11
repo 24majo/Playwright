@@ -3,7 +3,8 @@ import { faker } from '@faker-js/faker'
 
 export const login = async (page: Page) => {
   await page.goto('http://localhost:3000/auth')
-  await page.getByTestId('inputCorreo').fill('majo127@prueba.com')
+  await page.getByTestId('inputCorreo').fill('majo118@prueba.com')
+  //await page.getByTestId('inputCorreo').fill('4731201250')
   await page.getByTestId('inputPassword').fill('12345678')
   await page.getByTestId('crearCuenta').click()
 }
@@ -21,20 +22,17 @@ export const agregar_equipo = async (page: Page, n_equipo) => {
   await page.locator('//input[@name="nombre"]').fill("Equipo " + n_equipo)
   await page.locator('//input[@name="nombre_capitan"]').fill(faker.person.firstName())
   await page.locator('//input[@name="apellidos_capitan"]').fill(faker.person.lastName())
-  //var telefono = Math.floor(1000000000 + Math.random() * 9000000000).toString()
   await page.locator('//input[@name="telefono"]').fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
   return n_equipo
 }
 
 export const agregar_arbitro = async (page: Page) => {
-  var nombre = faker.person.firstName()
-  var apellido = faker.person.lastName()
   await page.waitForTimeout(2000)
   await page.getByRole('button', { name: 'Agregar árbitro' }).click({ force: true })
-  await page.locator('//input[@name="nombres"]').fill(nombre)
-  await page.locator('//input[@name="apellidos"]').fill(apellido)
+  await page.locator('//input[@name="nombres"]').fill(faker.person.firstName())
+  await page.locator('//input[@name="apellidos"]').fill(faker.person.lastName())
   await page.locator('//input[@name="telefono"]').fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
-  await page.locator('//input[@name="email"]').fill(nombre + '_' + apellido + '@arbitro.com')
+  await page.locator('//input[@name="email"]').fill(faker.internet.email())
 }
 
 export const agregar_cancha = async (page: Page) => {
@@ -50,7 +48,6 @@ export const agregar_cancha = async (page: Page) => {
   await page.waitForTimeout(2000)
   var lugar = ['Deportiva', "Calle", "Estadio", "Deportivo", "Puerto"]
   var ubicacion = lugar[Math.floor(Math.random() * lugar.length)]
-  //var ubicacion = faker.location.city()
   console.log("Ubicación: " + ubicacion)
   await page.getByPlaceholder('Ubicación').fill(ubicacion)
   var num = Math.floor(Math.random() * 4)
