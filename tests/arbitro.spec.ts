@@ -12,7 +12,7 @@ var nombre = faker.person.firstName()
 var apellido = faker.person.lastName()
 
 test("Agregar", async ({ page }) => {
-    for(var i = 0; i < 2; i++) {
+    for(var i = 0; i < 6; i++) {
         await agregar_arbitro(page)
         await page.click('//span[text()="Agregar arbitro"]');
         await page.pause()
@@ -20,6 +20,8 @@ test("Agregar", async ({ page }) => {
 })
 
 test("Eliminar", async ({ page }) => {
+    // Caso 1: Eliminar exitosamente
+    // Caso 2: No se puede eliminar porque ya está asignado a un partido
     await page.pause()
     await page.locator('role=row[name=/@.+\..+$/]').locator('role=button').nth(1).click({ force: true })
     await page.locator('//button[text()="Sí, Eliminar"]').click({ force: true })

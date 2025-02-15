@@ -49,7 +49,8 @@ test("Jornada", async({ page }) => {
 
         for(var j = 1; j <= count; j++) {
             console.log("Botón: " + j)
-            await page.getByRole('button', { name: 'Programar' }).nth(j - 1).click({ force: true })
+            //await page.getByRole('button', { name: 'Programar' }).nth(j - 1).click({ force: true })
+            await page.getByRole('button', { name: 'Programar' }).first().click({ force: true })
             //await Agregar({ page })
         }
     }

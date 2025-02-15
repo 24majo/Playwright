@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker'
 
 export const login = async (page: Page) => {
   await page.goto('http://localhost:3000/auth')
-  await page.getByTestId('inputCorreo').fill('majo118@prueba.com')
+  await page.getByTestId('inputCorreo').fill('majo175@prueba.com')
   //await page.getByTestId('inputCorreo').fill('4731201250')
   await page.getByTestId('inputPassword').fill('12345678')
   await page.getByTestId('crearCuenta').click()

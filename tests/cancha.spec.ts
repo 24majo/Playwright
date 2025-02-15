@@ -9,7 +9,7 @@ test.describe("CaskrApp", async() => {
     })
 
     test("Agregar", async ({ page }) => {
-        for(var i = 0; i < 4; i++){
+        for(var i = 0; i < 2; i++){
             await page.click('//span[text()="Agregar cancha"]');
             await page.waitForTimeout(1000)
             await agregar_cancha(page)
@@ -19,6 +19,8 @@ test.describe("CaskrApp", async() => {
     })
 
     test("Eliminar", async ({ page }) => {
+        // Caso 1: Eliminar exitosamente
+        // Caso 2: No es posible eliminar porque tiene partidos registrados en ella
         await page.pause()
         var borrar = page.locator('button:nth-child(2)').nth(2)
         await expect(borrar).toBeVisible()
