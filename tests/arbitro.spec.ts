@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test'
-import { fa, faker } from '@faker-js/faker'
+import { test } from '@playwright/test'
+import { faker } from '@faker-js/faker'
 import { login } from './cuenta.spec'
 import { agregar_arbitro } from './cuenta.spec'
 
@@ -25,7 +25,15 @@ test("Eliminar", async ({ page }) => {
     await page.pause()
     await page.locator('role=row[name=/@.+\..+$/]').locator('role=button').nth(1).click({ force: true })
     await page.locator('//button[text()="Sí, Eliminar"]').click({ force: true })
-    //await page.pause()
+    await page.waitForTimeout(3000)
+    var error = await page.getByRole('heading', { name: 'Error' }).isVisible()
+    
+    if(error)
+        console.log("Caso 2")
+    else
+        console.log("Caso 1")
+    
+    await page.pause()
 })
 
 test("Editar", async ({ page }) => {

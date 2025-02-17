@@ -27,7 +27,14 @@ test.describe("CaskrApp", async() => {
         await borrar.click({ force: true })
         await page.getByRole('button', { name: 'Eliminar' }).click({ force: true })
         await page.waitForTimeout(2000)
-        // await page.pause()
+
+        var error = await page.locator('text=Está cancha no puede ser').isVisible()
+        
+        if(error)
+            console.log("Caso 2")
+        else
+            console.log("Caso 1")
+        await page.pause()
     })
 
     test("Editar", async ({ page }) => {

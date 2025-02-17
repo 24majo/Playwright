@@ -21,13 +21,13 @@ test("Pruebas", async ({  page }) => {
     //     console.log("Núm: " + numero)
     // }
 
-    // await page.goto('http://localhost:3000/auth')
-    // await login(page)
-    // await page.pause()
+    await page.goto('http://localhost:3000/auth')
+    await login(page)
+    await page.pause()
 
-    for(var i = 0; i < 10; i++){
-        var email = faker.internet.email()
-        console.log(email)
-    }
+    // for(var i = 0; i < 10; i++){
+    //     var email = faker.internet.email()
+    //     console.log(email)
+    // }
 })
 

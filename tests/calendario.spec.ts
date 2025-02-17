@@ -1,5 +1,5 @@
 import { test } from '@playwright/test'
-import { faker } from '@faker-js/faker'
+import { en, faker } from '@faker-js/faker'
 import { login } from './cuenta.spec'
 
 test.beforeEach(async ({ page }) => {
@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
 
 test("Generar", async ({ page }) => {
     // Caso 1: Generar calendario cumpliendo con los requisitos del torneo
-    // Caso 2: Opción inhabilitada por falta de equipos
+    // Caso 2: Opción inhabilitada por de requisitos
 
     await page.pause()
     var boton = page.getByRole('button', { name: 'Crear el calendario' })
@@ -49,9 +49,13 @@ test("Jornada", async({ page }) => {
 
         for(var j = 1; j <= count; j++) {
             console.log("Botón: " + j)
-            //await page.getByRole('button', { name: 'Programar' }).nth(j - 1).click({ force: true })
-            await page.getByRole('button', { name: 'Programar' }).first().click({ force: true })
-            //await Agregar({ page })
+            await page.getByRole('button', { name: 'Programar' }).nth(j - 1).click({ force: true })
+            //await page.getByRole('button', { name: 'Programar' }).first().click({ force: true })
+            await Agregar({ page })
+            if(j != count){
+                await page.getByRole('tab', { name: new RegExp(`J - ${i}`)}).first().click({ force: true })
+                await page.waitForTimeout(1000)
+            }
         }
     }
     await page.pause()
@@ -158,11 +162,20 @@ async function Agregar({ page }){
     }
     await page.getByPlaceholder('Selecciona al árbitro').press('Enter')
     await page.waitForTimeout(1000)
-    await page.getByRole('button', { name: "Guardar enfrentamiento" }).click({ force: true })
+
+    var save_send = await page.getByRole('button', { name: 'Guardar y enviar'})
+    var enviar = await save_send.getAttribute('data-disabled')
+
+    if(enviar)
+        await page.getByRole('button', { name: "Guardar enfrentamiento" }).click({ force: true })
+
+    else{
+        await save_send.click({ force: true })
+        await page.waitForTimeout(1000)
+        await page.getByRole('button', { name: 'Si, envíales el mensaje' }).click({ force: true })
+        await page.waitForTimeout(1000)
+    }
+        
     await page.pause()
-    // await page.getByRole('button', { name: 'Guardar y enviar', exact: false }).click({ force: true })
-    // await page.waitForTimeout(1000)
-    // await page.getByRole('button', { name: 'Si, envíales el mensaje' }).click({ force: true })
-    // await page.waitForTimeout(1000)
     //await page.getByLabel('LigaProgramar partido —').getByRole('button').click({ force: true })
 }
