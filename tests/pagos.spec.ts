@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
     await page.getByRole('link', { name: 'Mis pagos' }).click()
 })
 
-test.describe("Resumen", async() => {
+test.describe("Resumen", async() => { // Pendiente
     test("Addons", async ({ page }) => {
         await page.getByRole('tab', { name: 'Resumen' }).click()
         await page.getByRole('button', { name: 'Comprar elementos' }).click({ force: true })
@@ -75,11 +75,11 @@ test.describe("Resumen", async() => {
         await page.pause()
     })
 
-    test("Factura", async ({ page }) => { // Este ya está
+    test("Factura", async ({ page }) => { 
         await page.getByRole('button', { name: 'Descargar última factura' }).click()
     })
 
-    test("Historial", async ({ page }) => { // Este ya está
+    test("Historial", async ({ page }) => {
         await page.getByRole('button', { name: 'Ver historial' }).click()
     })
 })

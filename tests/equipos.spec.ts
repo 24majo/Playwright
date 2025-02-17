@@ -13,7 +13,8 @@ test.describe("CaskrApp", async() => {
         // Caso 2: Torneo activo
         // Caso 3: Límite de equipos alcanzado 
         // Caso 4: No es posible agregar por partidos agendados
-
+        // Caso 5: Desactivar equipo
+        
         await page.pause()
         var agregar = await page.getByRole('button', { name: 'Agregar equipo' })
         await expect(agregar).toBeVisible() // Si no es visible, es por Caso 2

@@ -3,10 +3,48 @@ import { faker } from '@faker-js/faker'
 
 export const login = async (page: Page) => {
   await page.goto('http://localhost:3000/auth')
-  await page.getByTestId('inputCorreo').fill('majo175@prueba.com')
+  await page.getByTestId('inputCorreo').fill('majo199@prueba.com')
   //await page.getByTestId('inputCorreo').fill('4731201250')
   await page.getByTestId('inputPassword').fill('12345678')
   await page.getByTestId('crearCuenta').click()
+  await page.pause()
+  await desactivar(page)
+}
+
+export const desactivar = async (page: Page) => {
+  var equipos = await page.locator('text=Seleccionar los equipos').isVisible()
+  if(equipos){
+    console.log("Equipos Caso 5: Desactivar equipo")
+    var seleccionar = await page.locator('text=/\\d+ de \\d+ equipos/').innerText()
+    var numeros = seleccionar.match(/\d+/g)
+    var numero = numeros?.[1] ? parseInt(numeros[1]) : null
+    console.log("Datos a desactivar: " + numero)
+    await page.waitForTimeout(1000)
+
+    for (var i = 0; i <= numero!; i++)
+      await page.getByRole('checkbox', { name: 'Escudo equipo Equipo: ', exact: false }).nth(i).click()
+    
+    await page.getByRole('button', { name: 'Continuar' }).click()
+    await page.getByRole('button', { name: 'Si, continuar' }).click()
+    await page.pause()
+  }
+
+  var torneos = await page.locator('text=Seleccionar los torneos').isVisible()
+  if(torneos){
+    console.log("Torneos Caso 3: Límite de torneos activos")
+    var seleccionar = await page.locator('text=/\\d+ de \\d+ torneos/').innerText()
+    var numeros = seleccionar.match(/\d+/g)
+    var numero = numeros?.[1] ? parseInt(numeros[1]) : null
+    console.log("Datos a desactivar: " + numero)
+    await page.waitForTimeout(1000)
+
+    for (var i = 0; i <= numero!; i++)
+      await page.getByRole('checkbox', { name: 'Liga Inicio: ', exact: false }).nth(i).click()
+    
+    await page.getByRole('button', { name: 'Continuar' }).click()
+    await page.getByRole('button', { name: 'Si, continuar' }).click()
+    await page.pause()
+  }
 }
 
 export const agregar_equipo = async (page: Page, n_equipo) => {

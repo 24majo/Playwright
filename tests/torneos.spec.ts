@@ -1,17 +1,24 @@
 import { test } from '@playwright/test'
-import { login, crear_torneo } from './cuenta.spec'
+import { login, crear_torneo, desactivar } from './cuenta.spec'
 
 test.beforeEach(async ({ page }) => {
     await login(page)
-    await page.getByRole('link', { name: 'Mis torneos' }).click({ force: true })
+    //await page.getByRole('link', { name: 'Mis torneos' }).click({ force: true })
 })
 
 test("Crear", async ({ page }) => {
-    //for (var i = 0; i < 4; i++){
+    // Caso 1: Creación de torneo
+    // Caso 2: Límite de torneos alcanzado para crear
+    // Caso 3: Límite de torneos activos
+    await page.pause()
+    for (var i = 0; i < 6; i++){
         await page.getByRole('button', {name: 'Crear torneo'}).click({ force: true})
         await crear_torneo(page)
+        console.log("Caso 1")
         await page.pause()
-    //}
+    }
+
+    await desactivar(page)
 })
 
 test("Editar", async ({ page }) => {
@@ -33,6 +40,7 @@ test("Active Delete", async ({ page }) => {
     // Caso 1: Eliminación exitosa
     // Caso 2: No se puede eliminar por tener partidos agendados
     // Caso 3: Torneo actual en el perfil
+    
     await page.pause()
     // var formal = page.getByRole('row', { name: new RegExp('formal .+')}).getByRole('button').nth(2)
     // var flexible = page.getByRole('row', { name:  new RegExp('flexible .+')}).getByRole('button').nth(2)
