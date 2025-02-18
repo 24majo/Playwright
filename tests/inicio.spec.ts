@@ -1,5 +1,4 @@
 import { test } from '@playwright/test'
-import { en, faker } from '@faker-js/faker'
 import { login, programar_partido, registrar_resultado } from './cuenta.spec'
 
 test.beforeEach(async ({ page }) => {

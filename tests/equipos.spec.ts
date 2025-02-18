@@ -39,7 +39,7 @@ test.describe("CaskrApp", async() => {
                     console.log("Caso 2")
                     var si = page.getByRole('button', { name: 'Sí, estoy seguro' })
                     var no = page.getByRole('button', { name: 'No, Cancelar' })
-                    var botones = [si]
+                    var botones = [si, no]
                     var elegir = botones[Math.floor(Math.random() * botones.length)]
                     await elegir.click({ force: true })
 
