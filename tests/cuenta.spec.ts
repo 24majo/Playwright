@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker'
 
 export const login = async (page: Page) => {
   await page.goto('http://localhost:3000/auth')
-  await page.getByTestId('inputCorreo').fill('majo199@prueba.com')
+  await page.getByTestId('inputCorreo').fill('majo162@prueba.com')
   //await page.getByTestId('inputCorreo').fill('4731201250')
   await page.getByTestId('inputPassword').fill('12345678')
   await page.getByTestId('crearCuenta').click()
@@ -53,8 +53,6 @@ export const agregar_equipo = async (page: Page, n_equipo) => {
   // .evaluate((img: HTMLImageElement) => {
   //   img.src = 'C:/Users/E015/Downloads/escudo.png'
   // })
-  // await page.pause()
-  //n_equipo = Math.floor(Math.random() * 20)
   var equipo = faker.company.name()
   n_equipo = equipo.replace(/[^a-zA-Z0-9]/g, ' ');
   await page.locator('//input[@name="nombre"]').fill("Equipo " + n_equipo)
@@ -127,4 +125,80 @@ export const crear_torneo = async (page: Page) => {
   await page.getByRole('button', { name: 'Siguiente' }).click()
   await page.getByRole('button', { name: 'Siguiente' }).click()
   await page.getByRole('button', { name: 'Finalizar Registro' }).click()
+}
+
+export const registrar_resultado = async (page: Page, registrar) => {
+  var num_btn = await registrar.count()
+  console.log("Botones: " + num_btn)
+
+  for(var i = 0; i < num_btn; i++){
+    var btn_registro = registrar.nth(i)
+    var desactivado = await btn_registro.getAttribute('data-disabled') // true o null
+    console.log(i + ": " + desactivado)
+
+    if(desactivado === null){
+      btn_registro.click({ force: true })
+      var random = Math.floor(Math.random() * 10).toString()
+      await page.locator('input[name="puntos_local"]').fill(random)
+      random = Math.floor(Math.random() * 10).toString()
+      await page.locator('input[name="puntos_visitante"]').fill(random)
+      await page.waitForTimeout(1000)
+      await page.getByRole('button', { name: 'Guardar' }).click({ force: true })
+      await page.pause()
+    }
+  }
+  await page.pause()
+}
+
+export const programar_partido = async (page: Page) => {
+  await page.getByLabel('día').click({ force: true })
+  await page.waitForTimeout(1000)
+  var fecha1 = new Date()
+  var mes = fecha1.toLocaleString('es-ES', { month: 'long' }) 
+  var fecha = [Math.floor(1 + Math.random() * 25)].toString() + " " + mes 
+  console.log(fecha)
+  await page.getByRole('cell', { name: fecha }).first().click({ force: true })
+  await page.waitForTimeout(1000)
+
+  var fechaAleatoria = faker.date.recent()
+  var horas = fechaAleatoria.getHours()
+  var minutos = fechaAleatoria.getMinutes()
+  var hora = horas.toString().padStart(2, '0');
+  var minuto = minutos.toString().padStart(2, '0')
+  console.log("Hora: " + hora + ":" + minuto)
+  await page.locator('input[type="time"]').fill(hora + ':' + minuto)
+  await page.waitForTimeout(1000)
+  await page.getByPlaceholder('Selecciona la cancha').click({ force: true })
+  await page.waitForTimeout(1000)
+  
+  var cancha = await page.getByRole('option', { name: new RegExp(`Cancha .+`)})
+  var n_cancha = await cancha.count()
+  console.log("Canchas: " + n_cancha)
+  var random = Math.floor(Math.random() * n_cancha)
+  await cancha.nth(random).click()
+  await page.waitForTimeout(1000)
+
+  await page.getByPlaceholder('Selecciona al árbitro').click({ force: true })
+  await page.waitForTimeout(1000)
+  for(var y = 0; y < random; y++){
+    await page.getByPlaceholder('Selecciona al árbitro').press('ArrowDown')
+    await page.waitForTimeout(1000)
+  }
+  await page.getByPlaceholder('Selecciona al árbitro').press('Enter')
+  await page.waitForTimeout(1000)
+
+  var save_send = await page.getByRole('button', { name: 'Guardar y enviar'})
+  var enviar = await save_send.getAttribute('data-disabled')
+
+  if(enviar)
+    await page.getByRole('button', { name: "Guardar enfrentamiento" }).click({ force: true })
+
+  else{
+    await save_send.click({ force: true })
+    await page.waitForTimeout(1000)
+    await page.getByRole('button', { name: 'Si, envíales el mensaje' }).click({ force: true })
+    await page.waitForTimeout(1000)
+  }
+      
+  await page.pause()
 }
