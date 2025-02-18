@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { login, agregar_cancha } from './cuenta.spec'
-import { faker } from '@faker-js/faker'
 
 test.describe("CaskrApp", async() => {
     test.beforeEach(async ({ page }) => {
@@ -27,13 +26,13 @@ test.describe("CaskrApp", async() => {
         await borrar.click({ force: true })
         await page.getByRole('button', { name: 'Eliminar' }).click({ force: true })
         await page.waitForTimeout(2000)
-
         var error = await page.locator('text=Está cancha no puede ser').isVisible()
         
         if(error)
             console.log("Caso 2")
         else
             console.log("Caso 1")
+
         await page.pause()
     })
 

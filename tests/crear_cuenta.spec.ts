@@ -9,7 +9,7 @@ test.beforeEach("Iniciar", async ({ page }) => {
 
 test("Correo", async ({ page }) => {
     var tipo = "Correo"
-    var n_cuenta = Math.floor(1 + Math.random() * 200).toString()
+    var n_cuenta = Math.floor(1 + Math.random() * 300).toString()
     var cuenta = 'majo' + n_cuenta + '@prueba.com'
     console.log("Correo: " + cuenta)
     await Cuenta({ page, cuenta, tipo })
@@ -18,6 +18,7 @@ test("Correo", async ({ page }) => {
 test("Numero", async ({ page }) => {
     var tipo = "Numero"
     var cuenta = faker.number.int({ min: 1000000000, max: 9999999999 }).toString()
+    console.log("Número: " + cuenta)
     await Cuenta({ page, cuenta, tipo })
 })
 
