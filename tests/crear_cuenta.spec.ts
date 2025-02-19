@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { agregar_arbitro, agregar_equipo, agregar_cancha, crear_torneo } from './cuenta.spec'
-import { faker } from '@faker-js/faker'
+import { faker, fakerES_MX } from '@faker-js/faker'
 
 test.beforeEach("Iniciar", async ({ page }) => {
     await page.goto('http://localhost:3000/auth');
@@ -30,7 +30,11 @@ async function Cuenta({ page, cuenta, tipo }) {
     await page.locator('//input[@name="customerName"]').fill('Alondra Guerrero')
 
     if(tipo === "Correo"){
-        await page.locator('//input[@name="phoneCustomer"]').fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
+        if(Math.floor(Math.random() * 2) === 1){
+            console.log("Ingreso de teléfono")
+            await page.locator('//input[@name="phoneCustomer"]').fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
+        }
+            
     }
 
     if(tipo === "Numero"){

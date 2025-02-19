@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import { login } from './cuenta.spec'
 import { faker } from '@faker-js/faker'
 
-test("Pruebas", async ({  page }) => {
+test("Cuenta", async ({  page }) => {
     // const numero = Math.random();
     // console.log(numero);
 
@@ -29,5 +29,10 @@ test("Pruebas", async ({  page }) => {
     //     var email = faker.internet.email()
     //     console.log(email)
     // }
+})
+
+test("Inicio", async ({ page }) => {
+    await page.goto('http://localhost:3000/auth')
+    await page.pause()
 })
 

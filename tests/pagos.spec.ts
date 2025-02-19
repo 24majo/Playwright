@@ -1,5 +1,6 @@
-import { test } from '@playwright/test'
+import { Page, test } from '@playwright/test'
 import { login } from './cuenta.spec'
+import { count } from 'console'
 
 test.beforeEach(async ({ page }) => {
     await login(page)
@@ -10,6 +11,24 @@ test.describe("Resumen", async() => { // Pendiente
     test("Addons", async ({ page }) => {
         await page.getByRole('tab', { name: 'Resumen' }).click()
         await page.getByRole('button', { name: 'Comprar elementos' }).click({ force: true })
+        var addon = await page.getByRole('button', { name: 'Comprar' })
+        var count = await addon.count()
+        console.log(count)
+        var random = Math.floor(Math.random() * count)
+        await addon.nth(random).click()
+        await Pagar({page})
+        await page.pause()
+    })
+
+    test("CancelAddon", async ({ page }) => {
+        await page.getByRole('tab', { name: 'Suscripción' }).click()
+        var addon = page.locator('div').filter({ hasText: /^Addons/ }).getByRole('button')
+        var count = await addon.count()
+        console.log(count)
+        var random = Math.floor(Math.random() * count)
+        await addon.nth(random).click()
+        await page.pause()
+        await page.getByRole('button', { name: 'Si, continuar' }).click({ force: true })
         await page.pause()
     })
 
@@ -50,15 +69,7 @@ test.describe("Resumen", async() => { // Pendiente
             await page.getByRole('button', { name: 'Si, continuar' }).click()
         }
 
-        var radio = await page.locator('input[type="radio"]')
-        var contar = await radio.count()
-        console.log("Radios: " + contar)
-        random = Math.floor(Math.random() * contar)
-        await radio.nth(random).click()
-        await page.locator('input[type="checkbox"]').check()
-        await page.getByRole('button', { name: 'Pagar' }).click()
-        await page.getByRole('button', { name: 'Continuar' }).click()
-        await page.pause()
+        await Pagar({page})
     })
 
     test("CancelarSub", async ({ page }) => { // Este ya está
@@ -104,3 +115,15 @@ test.describe("Suscripcion", async() => {
     })
 })
 
+async function Pagar({ page }) {
+    var radio = await page.locator('input[type="radio"]')
+    var contar = await radio.count()
+    console.log("Radios: " + contar)
+    var random = Math.floor(Math.random() * contar)
+    await radio.nth(random).click()
+    await page.locator('input[type="checkbox"]').check()
+    await page.getByRole('button', { name: 'Pagar' }).click()
+    await page.waitForTimeout(2000)
+    await page.getByRole('button', { name: 'Continuar' }).click()
+    await page.pause()
+}
