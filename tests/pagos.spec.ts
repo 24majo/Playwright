@@ -1,6 +1,5 @@
-import { Page, test } from '@playwright/test'
+import { test } from '@playwright/test'
 import { login } from './cuenta.spec'
-import { count } from 'console'
 
 test.beforeEach(async ({ page }) => {
     await login(page)
@@ -12,10 +11,7 @@ test.describe("Resumen", async() => { // Pendiente
         await page.getByRole('tab', { name: 'Resumen' }).click()
         await page.getByRole('button', { name: 'Comprar elementos' }).click({ force: true })
         var addon = await page.getByRole('button', { name: 'Comprar' })
-        var count = await addon.count()
-        console.log(count)
-        var random = Math.floor(Math.random() * count)
-        await addon.nth(random).click()
+        await Random(addon)
         await Pagar({page})
         await page.pause()
     })
@@ -23,10 +19,7 @@ test.describe("Resumen", async() => { // Pendiente
     test("CancelAddon", async ({ page }) => {
         await page.getByRole('tab', { name: 'Suscripción' }).click()
         var addon = page.locator('div').filter({ hasText: /^Addons/ }).getByRole('button')
-        var count = await addon.count()
-        console.log(count)
-        var random = Math.floor(Math.random() * count)
-        await addon.nth(random).click()
+        await Random(addon)
         await page.pause()
         await page.getByRole('button', { name: 'Si, continuar' }).click({ force: true })
         await page.pause()
@@ -78,10 +71,7 @@ test.describe("Resumen", async() => { // Pendiente
         await page.getByRole('button', { name: 'Cancelar suscripción' }).click({ force: true })
         await page.getByPlaceholder('Selecciona un motivo').click({ force: true })
         var opciones = page.locator('[role="option"]')
-        var count = await opciones.count()
-        console.log(count)
-        var random = Math.floor(Math.random() * count)
-        await opciones.nth(random).click({force: true })
+        await Random(opciones)
         await page.getByRole('button', { name: 'Cancelar la suscripción' }).click({ force: true })
         await page.pause()
     })
@@ -106,14 +96,18 @@ test.describe("Suscripcion", async() => {
         await page.getByRole('tab', { name: 'Suscripción' }).click()
         await page.pause()
         var tarjetas = await page.locator('button', { hasText: new RegExp('\\*{4}\\d{4}') })
-        var count = await tarjetas.count()
-        console.log(count)
-        var random = Math.floor(Math.random() * count)
-        await tarjetas.nth(random).click({force: true })
+        await Random(tarjetas)
         await page.getByRole('button', { name: 'Sí, estoy seguro' }).click({ force: true })
         await page.pause()
     })
 })
+
+async function Random(boton) {
+    var count = await boton.count()
+    console.log(count)
+    var random = Math.floor(Math.random() * count)
+    await boton.nth(random).click({force: true })
+}
 
 async function Pagar({ page }) {
     var radio = await page.locator('input[type="radio"]')
