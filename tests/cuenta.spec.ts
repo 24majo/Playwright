@@ -3,8 +3,7 @@ import { faker } from '@faker-js/faker'
 
 export const login = async (page: Page) => {
   await page.goto('http://localhost:3000/auth')
-  await page.getByTestId('inputCorreo').fill('2majo@prueba.com')
-  //await page.getByTestId('inputCorreo').fill('4731201250')
+  await page.getByTestId('inputCorreo').fill('majo171@prueba.com')
   await page.getByTestId('inputPassword').fill('12345678')
   await page.getByTestId('crearCuenta').click()
   await page.pause()
@@ -123,7 +122,7 @@ export const crear_torneo = async (page: Page) => {
   //await page.getByPlaceholder('Selecciona el rango de edad').click()
   await page.locator('[aria-haspopup="listbox"]').nth(2).click({force: true})
   await page.waitForTimeout(1000)
-  var options = await page.locator('[aria-haspopup="listbox"] [role="option"]').nth(2).all()
+  var options = await page.locator('[data-combobox-option="true"][role="option"]').all()
   var random = Math.floor(Math.random() * options.length)
   await options[random].click()
   await page.waitForTimeout(1000)
@@ -133,7 +132,7 @@ export const crear_torneo = async (page: Page) => {
 
   await page.getByPlaceholder('Seleccione la opción').click()
   await page.pause()
-  var options = await page.locator('[aria-haspopup="listbox"] [role="option"]').all()
+  var options = await page.locator('[data-combobox-option="true"][role="option"]').all()
   var random = Math.floor(Math.random() * options.length)
   await options[random].click()
 

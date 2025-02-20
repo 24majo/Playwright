@@ -5,9 +5,9 @@ test("Unirme", async ({ page }) => {
     // Caso 1: Registro correcto
     // Caso 2: Límite de edad excedido
     // Caso 3: CURP inválido
-    // Caso 4: CURP registrado
+    // Caso 4: CURP registrado previamente (Pendiente)
 
-    await page.goto('http://localhost:3000/registroJugador/1740067785953')
+    await page.goto('http://localhost:3000/registroJugador/1740080290800')
     await page.getByRole('button', { name: 'Unirme al equipo' }).click()
     await page.getByPlaceholder('Nombre').fill(fakerES_MX.person.firstName())
     await page.getByPlaceholder('Apellido').fill(fakerES_MX.person.lastName())
@@ -41,6 +41,11 @@ test("Unirme", async ({ page }) => {
     await page.getByPlaceholder('ejemplo: AACM651123MTSLLR06').fill('1234567891234')
     await page.getByRole('button', { name: 'Continuar' }).click()
     await page.pause()
+    var fake = await page.getByText('¡CURP fuera de juego! No').isVisible()
+    if(fake){
+        console.log("Caso 3")
+        process.exit(1)
+    }
     var message = await page.getByText('¡Fuera de categoría! Excedes').isVisible()
     if(message){
         console.log("Caso 2")
