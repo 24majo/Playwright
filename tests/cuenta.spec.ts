@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker'
 
 export const login = async (page: Page) => {
   await page.goto('http://localhost:3000/auth')
-  await page.getByTestId('inputCorreo').fill('prueba@gmail.com')
+  await page.getByTestId('inputCorreo').fill('2majo@prueba.com')
   //await page.getByTestId('inputCorreo').fill('4731201250')
   await page.getByTestId('inputPassword').fill('12345678')
   await page.getByTestId('crearCuenta').click()
@@ -108,19 +108,36 @@ export const crear_torneo = async (page: Page) => {
   var sexo = ['Varonil', 'Femenil']
   var categoria = sexo[Math.floor(Math.random() * sexo.length)]
   console.log("Categoría: " + categoria)
-  await page.getByPlaceholder('Ej. Varonil').click();
-  await page.waitForTimeout(1000); 
-  await page.getByRole('option', { name: categoria }).click();
-  await page.waitForTimeout(1000); 
+  await page.getByPlaceholder('Ej. Varonil').click()
+  await page.waitForTimeout(1000)
+  await page.getByRole('option', { name: categoria }).click()
+  await page.waitForTimeout(1000);
 
-  await page.getByLabel('dd-mm-aaaa').click();
+  await page.getByLabel('dd-mm-aaaa').click()
   var fecha = new Date()
   var dia = fecha.getDate() 
   var mes = fecha.toLocaleString('es-ES', { month: 'long' }) 
   await page.getByRole('cell', { name: dia + " " + mes }).first().click()
 
+  await page.pause()
+  //await page.getByPlaceholder('Selecciona el rango de edad').click()
+  await page.locator('[aria-haspopup="listbox"]').nth(2).click({force: true})
+  await page.waitForTimeout(1000)
+  var options = await page.locator('[aria-haspopup="listbox"] [role="option"]').nth(2).all()
+  var random = Math.floor(Math.random() * options.length)
+  await options[random].click()
+  await page.waitForTimeout(1000)
+  
   await page.getByRole('button', { name: 'Siguiente' }).click()
   await page.getByRole('button', { name: 'Se parece a este' }).first().click()
+
+  await page.getByPlaceholder('Seleccione la opción').click()
+  await page.pause()
+  var options = await page.locator('[aria-haspopup="listbox"] [role="option"]').all()
+  var random = Math.floor(Math.random() * options.length)
+  await options[random].click()
+
+  await page.getByRole('button', { name: 'Siguiente' }).click()
   await page.getByRole('button', { name: 'Siguiente' }).click()
   await page.getByRole('button', { name: 'Siguiente' }).click()
   await page.getByRole('button', { name: 'Siguiente' }).click()

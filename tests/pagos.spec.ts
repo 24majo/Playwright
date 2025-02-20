@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
     await page.getByRole('link', { name: 'Mis pagos' }).click()
 })
 
-test.describe("Resumen", async() => { // Pendiente
+test.describe("Resumen", async() => { 
     test("Addons", async ({ page }) => {
         await page.getByRole('tab', { name: 'Resumen' }).click()
         await page.getByRole('button', { name: 'Comprar elementos' }).click({ force: true })

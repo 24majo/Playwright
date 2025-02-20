@@ -30,7 +30,7 @@ test.describe("CaskrApp", async() => {
                 process.exit(0)
             }
 
-            for(var i = 0; i < 4; i++){
+            //for(var i = 0; i < 4; i++){
                 await agregar.click()
                 var button = await page.getByRole('button', { name: 'Sí, estoy seguro' }).isVisible()
                 console.log("Boton calendario: " + button)
@@ -71,7 +71,7 @@ test.describe("CaskrApp", async() => {
                     t_lista?.includes("Equipo " + n_equipo)
                     await page.pause()
                 }
-            }
+            //}
         }
     })
 

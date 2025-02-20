@@ -18,12 +18,12 @@ test("Crear", async ({ page }) => {
     console.log("Botón agregar equipo: " + boton)
 
     if(boton){
-        for (var i = 0; i < 11; i++){
+        //for (var i = 0; i < 1; i++){
             await torneo.click({ force: true})
             console.log("Caso 1")
             await crear_torneo(page)
             await page.pause()
-        }
+        //}
     }
     else{
         console.log("Caso 2")
