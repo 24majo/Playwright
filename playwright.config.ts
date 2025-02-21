@@ -39,17 +39,35 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { 
+        ...devices['Desktop Chrome'], 
+        headless: false,
+      },
     },
 
     // {
     //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
+    //   use: { 
+    //     ...devices['Desktop Firefox'], 
+    //     headless: false, 
+    //   },
     // },
 
     // {
     //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
+    //   use: { 
+    //     ...devices['Desktop Safari'], 
+    //     headless: false, 
+    //   },
+    // },
+
+    // {
+    //   name: 'Microsoft Edge',
+    //   use: { 
+    //     ...devices['Desktop Edge'], 
+    //     headless: false, 
+    //     channel: 'msedge' 
+    //   },
     // },
 
     /* Test against mobile viewports. */

@@ -25,8 +25,9 @@ test("Unirme", async ({ page }) => {
         await page.locator('[inputmode="numeric"]').fill(num)
         await page.getByRole('button', { name: 'Continuar' }).click()
     }
+    // Pide CURP
     await page.getByRole('button', { name: 'Lo haré después' }).click()
     await page.getByRole('button', { name: 'Terminar' }).click()
-    await page.getByRole('button', { name: 'Enviar invitación '}).click()
+    await page.getByRole('button', { name: 'En otro momento '}).click()
     await page.pause()
 })

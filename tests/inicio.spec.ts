@@ -5,12 +5,12 @@ test.beforeEach(async ({ page }) => {
     await login(page)
 })
 
-test("Registro", async ({ page }) => {
+test("Jornada", async ({ page }) => {
     var jornada = await page.getByRole('tab', { name: 'J- ', exact: false })
     var c_jornada = await jornada.count()
     console.log("Jornadas: " + c_jornada)
 
-    for(var i = 3; i <= c_jornada; i++){
+    for(var i = 2; i <= c_jornada; i++){
         await jornada.nth(i-1).click()
         var dia = await page.getByRole('button', { name: 'Programar fecha y hora' })
         var c_dia = await dia.count()

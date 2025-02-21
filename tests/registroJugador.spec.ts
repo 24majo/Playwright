@@ -7,12 +7,12 @@ test("Unirme", async ({ page }) => {
     // Caso 3: CURP inválido
     // Caso 4: CURP registrado previamente (Pendiente)
 
-    await page.goto('http://localhost:3000/registroJugador/1740080290800')
+    await page.goto('http://localhost:3000/registroJugador/1740178196446')
+    await page.pause()
     await page.getByRole('button', { name: 'Unirme al equipo' }).click()
     await page.getByPlaceholder('Nombre').fill(fakerES_MX.person.firstName())
     await page.getByPlaceholder('Apellido').fill(fakerES_MX.person.lastName())
     await page.getByRole('button', { name: 'Continuar' }).click()
-    await page.pause()
     var tel = faker.number.int({ min: 1000000000, max: 9999999999 })
     await page.getByPlaceholder('Telefono').fill(tel.toString())
     console.log("Teléfono: " + tel)
@@ -25,7 +25,7 @@ test("Unirme", async ({ page }) => {
     var random = Math.floor(Math.random() * options.length)
     await options[random].click()
     await page.waitForTimeout(1000)
-    var num = Math.floor(Math.random() * 30).toString()
+    var num = Math.floor(Math.random() * 90).toString()
     await page.locator('[inputmode="numeric"]').fill(num)
     await page.getByRole('button', { name: 'Continuar' }).click()
     await page.waitForTimeout(500)
@@ -36,10 +36,11 @@ test("Unirme", async ({ page }) => {
         await page.locator('[inputmode="numeric"]').fill(num)
         await page.getByRole('button', { name: 'Continuar' }).click()
     }
-    await page.getByRole('button', { name: 'Lo háre desués' }).click()
-    await page.pause()
-    await page.getByPlaceholder('ejemplo: AACM651123MTSLLR06').fill('1234567891234')
+    await page.getByPlaceholder('ejemplo: AACM651123MTSLLR06').fill('GUAA100624MGTRRLA5')
     await page.getByRole('button', { name: 'Continuar' }).click()
+    await page.pause()
+    await page.getByRole('button', { name: 'Continuar' }).click()
+    await page.getByRole('button', { name: 'Lo háre desués' }).click()
     await page.pause()
     var fake = await page.getByText('¡CURP fuera de juego! No').isVisible()
     if(fake){
@@ -53,6 +54,7 @@ test("Unirme", async ({ page }) => {
     }
     else{
         console.log("Caso 1")
+        await page.getByRole('button', { name: 'Terminar' }).click()
         await page.getByRole('button', { name: 'Terminar' }).click()
         await page.pause()
     }

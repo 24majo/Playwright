@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker'
 
 export const login = async (page: Page) => {
   await page.goto('http://localhost:3000/auth')
-  await page.getByTestId('inputCorreo').fill('majo171@prueba.com')
+  await page.getByTestId('inputCorreo').fill('majo133@prueba.com')
   await page.getByTestId('inputPassword').fill('12345678')
   await page.getByTestId('crearCuenta').click()
   await page.pause()
@@ -117,9 +117,6 @@ export const crear_torneo = async (page: Page) => {
   var dia = fecha.getDate() 
   var mes = fecha.toLocaleString('es-ES', { month: 'long' }) 
   await page.getByRole('cell', { name: dia + " " + mes }).first().click()
-
-  await page.pause()
-  //await page.getByPlaceholder('Selecciona el rango de edad').click()
   await page.locator('[aria-haspopup="listbox"]').nth(2).click({force: true})
   await page.waitForTimeout(1000)
   var options = await page.locator('[data-combobox-option="true"][role="option"]').all()
@@ -135,7 +132,7 @@ export const crear_torneo = async (page: Page) => {
   var options = await page.locator('[data-combobox-option="true"][role="option"]').all()
   var random = Math.floor(Math.random() * options.length)
   await options[random].click()
-
+  await page.pause()
   await page.getByRole('button', { name: 'Siguiente' }).click()
   await page.getByRole('button', { name: 'Siguiente' }).click()
   await page.getByRole('button', { name: 'Siguiente' }).click()
@@ -212,7 +209,7 @@ export const programar_partido = async (page: Page) => {
   else{
     await save_send.click({ force: true })
     await page.waitForTimeout(1000)
-    await page.getByRole('button', { name: 'Si, envíales el mensaje' }).click({ force: true })
+    await page.getByRole('button', { name: 'Sí, envíales el mensaje' }).click({ force: true })
     await page.waitForTimeout(1000)
   }
       

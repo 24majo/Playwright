@@ -8,9 +8,6 @@ test.beforeEach(async ({ page }) => {
     await page.getByRole('link', { name: 'Arbitros' }).click()
 })
 
-var nombre = faker.person.firstName()
-var apellido = faker.person.lastName()
-
 test("Agregar", async ({ page }) => {
     for(var i = 0; i < 6; i++) {
         await agregar_arbitro(page)
