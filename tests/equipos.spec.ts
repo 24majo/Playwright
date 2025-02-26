@@ -15,7 +15,6 @@ test.describe("CaskrApp", async() => {
         // Caso 4: No es posible agregar por partidos agendados
         // Caso 5: Desactivar equipo (excedente por tipo de plan)
         
-        await page.pause()
         var agregar = await page.getByRole('button', { name: 'Agregar equipo' })
         await expect(agregar).toBeVisible() // Si no es visible, es por Caso 2
         var boton = await agregar.isVisible() 
@@ -30,7 +29,7 @@ test.describe("CaskrApp", async() => {
                 process.exit(0)
             }
 
-            for(var i = 0; i < 3; i++){
+            for(var i = 0; i < 4; i++){
                 await agregar.click()
                 var button = await page.getByRole('button', { name: 'Sí, estoy seguro' }).isVisible()
                 console.log("Boton calendario: " + button)

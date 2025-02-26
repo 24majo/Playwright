@@ -44,3 +44,15 @@ test("Otros", async ({ page }) => {
     }
 })
 
+test("Produccion", async ({ page }) => {
+    await page.goto('https://caskr.app/auth')
+    await page.getByTestId('inputCorreo').fill('4731001010')
+    await page.getByTestId('inputPassword').fill('12345678')
+    await page.pause()
+    await page.getByTestId('crearCuenta').click()
+    await page.waitForTimeout(2000)
+    await page.getByRole('link', { name: 'Calendario' }).click()
+    await page.getByRole('tab', { name: 'Todos los partidos' }).click({ force: true })
+    await page.pause()
+})
+
