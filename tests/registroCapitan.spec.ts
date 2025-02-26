@@ -1,33 +1,41 @@
-import { test, Browser } from '@playwright/test'
-import { fakerES_MX, faker } from '@faker-js/faker'
+import { test } from '@playwright/test'
+import { registro_jugador, EditInfo } from './cuenta.spec'
+import { fakerEL, fakerES_MX } from '@faker-js/faker'
 
 test("Unirme", async ({ page }) => {
-    await page.goto('http://localhost:3000/registroCapitan/176/19')
+    // Caso 1: Registro correcto
+    // Caso 2: CURP inválido
+    await page.goto('http://localhost:3000/registroCapitan/1740441366451/1740441366452')
     await page.pause()
     await page.getByRole('button', { name: 'Unirme al equipo' }).click()
-    await page.getByPlaceholder('********').fill('12345678')
-    await page.getByRole('button', { name: 'Continuar' }).click()
-    await page.pause()
-    await page.getByPlaceholder('Portero').click()
-    await page.waitForTimeout(1000)
-    var options = await page.locator('[data-combobox-option="true"][role="option"]').all()
-    var random = Math.floor(Math.random() * options.length)
-    await options[random].click()
-    await page.waitForTimeout(1000)
-    var num = Math.floor(Math.random() * 30).toString()
-    await page.locator('[inputmode="numeric"]').fill(num)
-    await page.getByRole('button', { name: 'Continuar' }).click()
-    await page.waitForTimeout(500)
-    var msg = await page.getByText('El dorsal ya esta en uso').isVisible()
-    console.log("Número en uso: " + msg)
-    if(msg){
-        var num = Math.floor(Math.random() * 30).toString()
-        await page.locator('[inputmode="numeric"]').fill(num)
-        await page.getByRole('button', { name: 'Continuar' }).click()
-    }
-    // Pide CURP
+    
+    await registro_jugador(page)
     await page.getByRole('button', { name: 'Lo haré después' }).click()
     await page.getByRole('button', { name: 'Terminar' }).click()
     await page.getByRole('button', { name: 'En otro momento '}).click()
     await page.pause()
+})
+
+test("EditInfo", async ({ page }) => {
+    await EditInfo( page )
+})
+
+test("EditTeam", async ({ page }) => {
+    await page.goto('http://localhost:3000/auth')
+    await page.getByTestId('inputCorreo').fill('524522217332')
+    await page.getByTestId('inputPassword').fill('12345678')
+    await page.getByTestId('crearCuenta').click()
+    await page.pause()
+    await page.getByRole('button').nth(2).click()
+    var equipo = fakerES_MX.company.name()
+    var n_equipo = equipo.replace(/[^a-zA-Z0-9 ]/g, '');
+    await page.locator('//input[@name="nombre"]').fill("Equipo " + n_equipo)
+    var r = Math.floor(Math.random() * 255) + 1;  
+    var g = Math.floor(Math.random() * 255) + 1; 
+    var b = Math.floor(Math.random() * 255) + 1; 
+    var a = (Math.random()).toFixed(1)
+    var rgba = 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')'
+    await page.getByPlaceholder('Selecciona un color').fill(rgba)
+    await page.pause()
+    await page.getByRole('button', { name: 'Listo' }).click()
 })

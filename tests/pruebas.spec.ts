@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { login } from './cuenta.spec'
+import { login, generar_curp } from './cuenta.spec'
 import { faker } from '@faker-js/faker'
 
 test("Cuenta", async ({  page }) => {
@@ -34,5 +34,13 @@ test("Cuenta", async ({  page }) => {
 test("Inicio", async ({ page }) => {
     await page.goto('http://localhost:3000/auth')
     await page.pause()
+})
+
+test("Otros", async ({ page }) => {
+    for(var i = 0; i < 5; i++){
+        var generarcurp = await generar_curp(page)
+        console.log(generarcurp)
+        console.log(generarcurp.length)
+    }
 })
 

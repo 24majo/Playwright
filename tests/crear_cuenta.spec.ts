@@ -31,7 +31,7 @@ async function Cuenta({ page, cuenta, tipo }) {
 
     if(tipo === "Correo"){
         if(Math.floor(Math.random() * 2) === 1){
-            console.log("Ingreso de teléfono")
+            console.log("Se ingresó teléfono")
             await page.locator('//input[@name="phoneCustomer"]').fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
         }
             
