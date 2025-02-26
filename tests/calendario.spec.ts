@@ -1,5 +1,4 @@
 import { test } from '@playwright/test'
-import { en, faker } from '@faker-js/faker'
 import { login, programar_partido } from './cuenta.spec'
 
 test.beforeEach(async ({ page }) => {
@@ -50,7 +49,6 @@ test("Jornada", async({ page }) => {
         for(var j = 1; j <= count; j++) {
             console.log("Botón: " + j)
             await page.getByRole('button', { name: 'Programar' }).nth(j - 1).click({ force: true })
-            //await page.getByRole('button', { name: 'Programar' }).first().click({ force: true })
             await programar_partido(page)
             if(j != count){
                 await page.getByRole('tab', { name: new RegExp(`J - ${i}`)}).first().click({ force: true })
@@ -92,7 +90,7 @@ test("Todos", async ({ page }) => {
         await programar_partido(page)
     }
 
-    if(visible){ // En caso de que la primera pestaña tenga todos los partidos agendados, ir a la siguiente página si está disponible
+    if(visible){
         var flecha = await page.locator('[aria-label="Next Page"]')
         var activa = await flecha.getAttribute('aria-disabled')
         console.log("Flecha siguiente: " + activa)
@@ -111,7 +109,6 @@ test("Todos", async ({ page }) => {
             }
             await page.pause()
         }
-
         else{
             console.log('Caso 3')
             process.exit(0)

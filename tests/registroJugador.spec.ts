@@ -12,10 +12,12 @@ test("Unirme", async ({ page }) => {
     await page.goto('http://localhost:3000/registroJugador/1740411459905')
     await page.pause()
     var limit = await page.getByText('Tu equipo alcanzó el límite').first().isVisible()
+    
     if(limit){
         console.log("Caso 5")
         process.exit(0)
     }
+    
     await page.getByRole('button', { name: 'Unirme al equipo' }).click()
     await page.pause()
     await page.getByPlaceholder('Nombre').fill(fakerES_MX.person.firstName())
@@ -29,7 +31,6 @@ test("Unirme", async ({ page }) => {
     await page.getByRole('button', { name: 'Terminar' }).click()
     await page.getByRole('button', { name: 'Terminar' }).click()
     await page.pause()
-    
 })
 
 test("EditarInfo", async ({ page }) => {

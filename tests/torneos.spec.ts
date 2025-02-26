@@ -11,7 +11,6 @@ test("Crear", async ({ page }) => {
     // Caso 2: Límite de torneos alcanzado para crear
     // Caso 3: Límite de torneos activos
     await page.pause()
-
     var torneo = await page.getByRole('button', {name: 'Crear torneo'})
     await expect(torneo).toBeVisible() // Si no es visible, es por Caso 2
     var boton = await torneo.isVisible() 
@@ -25,12 +24,7 @@ test("Crear", async ({ page }) => {
             await page.pause()
         //}
     }
-    else{
-        console.log("Caso 2")
-    }
-
-    // Caso 3: Solo puede ocurrir en plan Aficionado
-    await desactivar(page)
+    await desactivar(page) // Caso 3
 })
 
 test("Editar", async ({ page }) => {

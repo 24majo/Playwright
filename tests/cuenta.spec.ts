@@ -242,7 +242,6 @@ export const registro_jugador = async (page: Page) => {
   var curp1 = await generar_curp(page)
   await page.getByPlaceholder('ejemplo: AACM651123MTSLLR06').fill(curp1)
   await page.getByRole('button', { name: 'Continuar' }).click()
-  await page.pause()
 
   if(await page.getByText('¡Este CURP ya tiene dueño en').isVisible()){
     console.log("Caso 4")
@@ -276,7 +275,20 @@ export const generar_curp = async (page: Page) => {
   var maternoF = materno.slice(0, 1)
   var nombre = name.slice(0, 1)
   var date = faker.date.past({ years: 10 })
-  var fecha = `${date.getFullYear().toString().slice(-2)}${(date.getMonth() + 1).toString().padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}`
+  var fecha = 
+              `${
+                date.getFullYear()
+                .toString()
+                .slice(-2)
+              }
+              ${
+                (date.getMonth() + 1).toString()
+                .padStart(2, '0')
+              }
+              ${
+                date.getDate().toString()
+                .padStart(2, '0')
+              }`
   var sexo = faker.helpers.arrayElement(['H', 'M'])
   var entidades = [
       'AS', 'BS', 'CL', 'GT', 'GR', 'HG', 'JC', 'MC', 'MN', 'MS', 'NT', 'NL', 'OC', 'PL', 'QR', 'QO', 'SL', 'SI', 'SM', 'SO', 'TB', 'TL', 'TS', 'VZ', 'YN', 'ZS'
