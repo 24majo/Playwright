@@ -9,7 +9,7 @@ test("Unirme", async ({ page }) => {
     // Caso 4: CURP registrado previamente 
     // Caso 5: Límite de jugadores alcanzaddo
 
-    await page.goto('http://localhost:3000/registroJugador/1740411459905')
+    await page.goto('https://caskr.app/registroJugador/1740584353555')
     await page.pause()
     var limit = await page.getByText('Tu equipo alcanzó el límite').first().isVisible()
     
