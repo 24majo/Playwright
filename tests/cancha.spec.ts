@@ -12,7 +12,7 @@ test.describe("CaskrApp", async() => {
             await page.click('//span[text()="Agregar cancha"]');
             await page.waitForTimeout(1000)
             await agregar_cancha(page)
-            await page.getByLabel('LigaAñadir nueva cancha').getByRole('button', { name: 'Agregar cancha' }).click({ force: true });
+            await page.getByLabel(/Añadir/).getByRole('button', { name: 'Agregar cancha' }).click({ force: true })
             await page.pause()
         }
     })

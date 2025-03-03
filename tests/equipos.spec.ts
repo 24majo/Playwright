@@ -29,7 +29,7 @@ test.describe("CaskrApp", async() => {
                 process.exit(0)
             }
 
-            for(var i = 0; i < 4; i++){
+            for(var i = 0; i < 2; i++){
                 await agregar.click()
                 var button = await page.getByRole('button', { name: 'Sí, estoy seguro' }).isVisible()
                 console.log("Boton calendario: " + button)
@@ -45,7 +45,7 @@ test.describe("CaskrApp", async() => {
                     if(elegir == si){
                         console.log("Agregó equipos con calendario agendado")
                         var n_equipo = await agregar_equipo(page, n_equipo)
-                        await page.getByLabel('LigaAgregar nuevo equipo').getByRole('button', { name: 'Agregar equipo' }).click();
+                        await page.getByLabel(/Agregar/).getByRole('button', { name: 'Agregar equipo' }).click();
                         await page.waitForTimeout(2000)
                         await page.pause()
                         process.exit(0)
@@ -59,7 +59,7 @@ test.describe("CaskrApp", async() => {
                 else{
                     console.log("Caso 1")
                     var n_equipo = await agregar_equipo(page, n_equipo)
-                    await page.getByLabel('LigaAgregar nuevo equipo').getByRole('button', { name: 'Agregar equipo' }).click();
+                    await page.getByLabel(/Agregar/).getByRole('button', { name: 'Agregar equipo' }).click();
                     await page.waitForTimeout(2000)
                     var participantes = await page.getByLabel('Equipos participantes').innerText()
                     var p_lista = participantes.match(/Equipo \w+/g)

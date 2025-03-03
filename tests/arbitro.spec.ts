@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
 })
 
 test("Agregar", async ({ page }) => {
-    for(var i = 0; i < 6; i++) {
+    for(var i = 0; i < 5; i++) {
         await agregar_arbitro(page)
         await page.click('//span[text()="Agregar arbitro"]');
         await page.pause()

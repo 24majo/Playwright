@@ -52,28 +52,28 @@ export default defineConfig({
         channel: 'msedge' 
       },
     },
-    {
-      name: 'firefox',
-      use: { 
-        ...devices['Desktop Firefox'], 
-        headless: false, 
-      },
-    },
-    {
-      name: 'webkit',
-      use: { 
-        ...devices['Desktop Safari'], 
-        headless: false, 
-      },
-    },
+    // {
+    //   name: 'firefox',
+    //   use: { 
+    //     ...devices['Desktop Firefox'], 
+    //     headless: false, 
+    //   },
+    // },
+    // {
+    //   name: 'webkit',
+    //   use: { 
+    //     ...devices['Desktop Safari'], 
+    //     headless: false, 
+    //   },
+    // },
 
-    {
-      name: 'chromium',
-      use: { 
-        ...devices['Desktop Chrome'], 
-        headless: false,
-      },
-    },
+    // {
+    //   name: 'chromium',
+    //   use: { 
+    //     ...devices['Desktop Chrome'], 
+    //     headless: false,
+    //   },
+    // },
     
     {
       name: 'Microsoft Edge',

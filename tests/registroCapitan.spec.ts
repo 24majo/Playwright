@@ -5,7 +5,8 @@ import { fakerEL, fakerES_MX } from '@faker-js/faker'
 test("Unirme", async ({ page }) => {
     // Caso 1: Registro correcto
     // Caso 2: CURP inválido
-    await page.goto('http://localhost:3000/registroCapitan/1740441366451/1740441366452')
+    //await page.goto('http://localhost:3000/registroCapitan/1740441366451/1740441366452')
+    await page.goto('https://caskr.app/registroCapitan/1740584601379/1740584601380')
     await page.pause()
     await page.getByRole('button', { name: 'Unirme al equipo' }).click()
     
