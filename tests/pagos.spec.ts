@@ -1,8 +1,15 @@
 import { test } from '@playwright/test'
 import { login } from './cuenta.spec'
+import { stat } from 'fs'
+
+var inicio, fin
 
 test.beforeEach(async ({ page }) => {
+    inicio = Date.now()
     await login(page)
+    await page.locator('text=Inicio').waitFor({ state: 'visible' })
+    fin = Date.now()
+    console.log("Tiempo de inicio de sesión: " + (fin - inicio) + "ms")
     await page.getByRole('link', { name: 'Mis pagos' }).click()
 })
 
@@ -73,6 +80,12 @@ test.describe("Resumen", async() => {
         var opciones = page.locator('[role="option"]')
         await Random(opciones)
         await page.getByRole('button', { name: 'Cancelar la suscripción' }).click({ force: true })
+        var btn_c = page.getByRole('button', { name: 'Continuar' })
+        inicio = Date.now()
+        await btn_c.waitFor({ state: 'visible' })
+        fin = Date.now()
+        console.log("Tiempo de cancelación de suscripción: " + (fin - inicio) + "ms")
+        await btn_c.click()
         await page.pause()
     })
 
@@ -86,19 +99,31 @@ test.describe("Resumen", async() => {
 })
 
 test.describe("Suscripcion", async() => {
-    test("EliminarT", async ({ page }) => { // Este ya está
+    test("EliminarT", async ({ page }) => { 
         await page.getByRole('tab', { name: 'Suscripción' }).click()
+        await page.locator('text=Suscripcion').waitFor({ state: 'visible' })
         await page.getByRole('button', { name: 'Eliminar' }).click({ force: true })
         await page.getByRole('button', { name: 'Sí, eliminar' }).click({ force: true })
+        inicio = Date.now()
+        var btn_con = page.getByRole('button', { name: 'Continuar'})
+        await btn_con.waitFor({ state: 'visible' })
+        fin = Date.now()
+        console.log('Tiempo de eliminación de tarjeta: ' + (fin - inicio) + 'ms')
+        await btn_con.click()
     })
 
-    test("PredeterminadaT", async ({ page }) => { // Este ya está
+    test("PredeterminadaT", async ({ page }) => {
         await page.getByRole('tab', { name: 'Suscripción' }).click()
-        await page.pause()
+        await page.locator('text=Suscripcion').waitFor({ state: 'visible' })
         var tarjetas = await page.locator('button', { hasText: new RegExp('\\*{4}\\d{4}') })
         await Random(tarjetas)
         await page.getByRole('button', { name: 'Sí, estoy seguro' }).click({ force: true })
-        await page.pause()
+        inicio = Date.now()
+        var btn_con = page.getByRole('button', { name: 'Continuar'})
+        await btn_con.waitFor({ state: 'visible' })
+        fin = Date.now()
+        console.log('Tiempo de eliminación de tarjeta: ' + (fin - inicio) + 'ms')
+        await btn_con.click()
     })
 })
 
@@ -117,7 +142,10 @@ async function Pagar({ page }) {
     await radio.nth(random).click()
     await page.locator('input[type="checkbox"]').check()
     await page.getByRole('button', { name: 'Pagar' }).click()
-    await page.waitForTimeout(2000)
-    await page.getByRole('button', { name: 'Continuar' }).click()
-    await page.pause()
+    inicio = Date.now()
+    var btn_con = page.getByRole('button', { name: 'Continuar' })
+    await btn_con.waitFor({ state: 'visible' })
+    fin = Date.now()
+    console.log("Tiempo de compra de Plan o Addon: " + (fin - inicio) + "ms")
+    await btn_con.click()
 }

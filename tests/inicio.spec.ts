@@ -2,6 +2,7 @@ import { test } from '@playwright/test'
 import { login, programar_partido, registrar_resultado } from './cuenta.spec'
 
 test.beforeEach(async ({ page }) => {
+
     await login(page)
 })
 
@@ -10,7 +11,7 @@ test("Jornada", async ({ page }) => {
     var c_jornada = await jornada.count()
     console.log("Jornadas: " + c_jornada)
 
-    for(var i = 2; i <= c_jornada; i++){
+    for(var i = 1; i <= c_jornada; i++){
         await jornada.nth(i-1).click()
         var dia = await page.getByRole('button', { name: 'Programar fecha y hora' })
         var c_dia = await dia.count()
@@ -24,6 +25,5 @@ test("Jornada", async ({ page }) => {
         
         var registrar = await page.getByRole('button', { name: 'Registrar resultado' })
         await registrar_resultado (page, registrar)
-        await page.pause()
     }
 })

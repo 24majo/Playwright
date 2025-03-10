@@ -1,23 +1,29 @@
 import { test } from '@playwright/test'
 import { login, programar_partido } from './cuenta.spec'
 
+var inicio, fin
+
 test.beforeEach(async ({ page }) => {
+    inicio = Date.now()
     await login(page)
+    await page.locator('text=Inicio').waitFor({ state: 'visible' })
+    fin = Date.now()
+    console.log("Tiempo de inicio de sesión: " + (fin - inicio) + "ms")
     await page.getByRole('link', { name: 'Calendario' }).click()
 })
 
 test("Generar", async ({ page }) => {
     // Caso 1: Generar calendario cumpliendo con los requisitos del torneo
     // Caso 2: Opción inhabilitada por de requisitos
-
-    await page.pause()
     var boton = page.getByRole('button', { name: 'Crear el calendario' })
+    await boton.waitFor()
     var visible = await boton.isVisible()
     console.log("Boton visible: " + visible)
 
     if(visible){
         var disponible = await boton.getAttribute('data-disabled')
-        console.log(disponible)
+        console.log("Deshabilitado: " + disponible)
+        await page.waitForTimeout(500)
 
         if(disponible){
             console.log("Caso 2: Opción inhabilitada por falta de equipos")
@@ -26,22 +32,26 @@ test("Generar", async ({ page }) => {
 
         if(disponible == null){
             console.log("Caso 1: Generar calendario cumpliendo con los requisitos del torneo")
-            await page.getByRole('button', { name: 'Crear el calendario' }).click({ force: true })
-            await page.getByRole('link', { name: 'Calendario' }).click({ force: true });
-            await page.pause()
+            inicio = Date.now()
+            await boton.click({ force: true })
+            await boton.waitFor({ state: 'hidden' })
+            console.log("Tiempo de generación de calendario: " + (fin - inicio) + "ms")
+            fin = Date.now()
         }
     }
 })
 
 test("Jornada", async({ page }) => {
-    await page.pause()
     await page.getByRole('tab', { name: 'Por jornadas' }).click({ force: true })
+    await page.locator('text=Jornadas').nth(1).waitFor({ state: 'visible' })
     var j_num = await page.getByRole('tab', { name: 'J - ', exact: false }).count()
     console.log("Jornadas: " + j_num)
 
     for(var i = 1; i <= j_num; i++){
         console.log("Jornada: " + i)
-        await page.getByRole('tab', { name: new RegExp(`J - ${i}`)}).first().click({ force: true })
+        var btn_j = page.getByRole('tab', { name: new RegExp(`J - ${i}`)}).first()
+        await btn_j.waitFor({ state: 'visible' })
+        await btn_j.click({ force: true })
         var programar = page.getByRole('button', { name: 'Programar' })
         var count = await programar.count()
         console.log("Botones totales: " + count)
@@ -56,7 +66,6 @@ test("Jornada", async({ page }) => {
             }
         }
     }
-    await page.pause()
 })
 
 test("Rondas", async ({ page }) => {
@@ -78,15 +87,13 @@ test("Todos", async ({ page }) => {
     // Caso 2: Agendar partidos en las siguientes pestañas
     // Caso 3: No hay más partidos por agendar 
     await page.getByRole('tab', { name: 'Todos los partidos' }).click({ force: true })
-    await page.pause()
     var boton = page.getByRole('row', { name: new RegExp(`.+ NO PROGRAMADO .+`) }).getByRole('button').first()
     var visible = await boton.isHidden()
     console.log("Botón programar oculto: " + visible)
-    await page.waitForTimeout(1000)
 
     while(!visible){
         boton.click({ force: true })
-        await page.waitForTimeout(1000)
+        await boton.waitFor({ state: 'visible'})
         await programar_partido(page)
     }
 
@@ -113,8 +120,6 @@ test("Todos", async ({ page }) => {
             console.log('Caso 3')
             process.exit(0)
         }
-
-        await page.pause()
     }
 })
 

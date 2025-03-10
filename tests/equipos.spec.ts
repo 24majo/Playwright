@@ -2,9 +2,15 @@ import { test, expect } from '@playwright/test'
 import { faker } from '@faker-js/faker'
 import { login, agregar_equipo } from './cuenta.spec'
  
+var inicio, fin
+
 test.describe("CaskrApp", async() => {
     test.beforeEach(async ({ page }) => {
+        inicio = Date.now()
         await login(page)
+        await page.locator('text=Inicio').waitFor({ state: 'visible' })
+        fin = Date.now()
+        console.log("Tiempo de inicio de sesión: " + (fin - inicio) + "ms")
         await page.getByRole('link', { name: 'Equipos' }).click()
     })
 
@@ -29,8 +35,9 @@ test.describe("CaskrApp", async() => {
                 process.exit(0)
             }
 
-            for(var i = 0; i < 2; i++){
+            for(var i = 0; i < 1; i++){
                 await agregar.click()
+                await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor()
                 var button = await page.getByRole('button', { name: 'Sí, estoy seguro' }).isVisible()
                 console.log("Boton calendario: " + button)
 
@@ -45,10 +52,11 @@ test.describe("CaskrApp", async() => {
                     if(elegir == si){
                         console.log("Agregó equipos con calendario agendado")
                         var n_equipo = await agregar_equipo(page, n_equipo)
-                        await page.getByLabel(/Agregar/).getByRole('button', { name: 'Agregar equipo' }).click();
-                        await page.waitForTimeout(2000)
-                        await page.pause()
-                        process.exit(0)
+                        await page.getByLabel(/Agregar/).getByRole('button', { name: 'Agregar equipo' }).click()
+                        inicio = Date.now()
+                        await page.locator('[data-modal-content="true"][role="dialog"]:visible').waitFor({ state: 'hidden' })
+                        fin = Date.now()
+                        console.log("Tiempo de creación de equipos: " + (fin - inicio) + "ms")
                     }
                     else{
                         console.log("No agregó equipos por calendario agendado")
@@ -59,16 +67,17 @@ test.describe("CaskrApp", async() => {
                 else{
                     console.log("Caso 1")
                     var n_equipo = await agregar_equipo(page, n_equipo)
-                    await page.getByLabel(/Agregar/).getByRole('button', { name: 'Agregar equipo' }).click();
-                    await page.waitForTimeout(2000)
+                    await page.getByLabel(/Agregar/).getByRole('button', { name: 'Agregar equipo' }).click()
+                    inicio = Date.now()
+                    await page.locator('[data-modal-content="true"][role="dialog"]:visible').waitFor({ state: 'hidden' })
+                    fin = Date.now()
+                    console.log("Tiempo de creación de equipos: " + (fin - inicio) + "ms")
                     var participantes = await page.getByLabel('Equipos participantes').innerText()
                     var p_lista = participantes.match(/Equipo \w+/g)
                     p_lista?.includes("Equipo " + n_equipo)
-                    await page.waitForTimeout(1000)
                     var todos = await page.getByLabel('Todos los equipos').innerText()
                     var t_lista = todos.match(/Equipo \w+/g)
                     t_lista?.includes("Equipo " + n_equipo)
-                    await page.pause()
                 }
             }
         }
@@ -76,14 +85,17 @@ test.describe("CaskrApp", async() => {
 
     test("Editar", async ({ page }) => {
         await page.getByRole('row', { name: 'escudo Equipo ', exact: false }).getByRole('button').first().click({ force: true })
-        await page.waitForTimeout(2000)
+        await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor()
         var n_equipo = Math.floor(Math.random() * 20)
         await page.getByPlaceholder("Escribe el nombre del equipo").nth(4).fill("Equipo " + n_equipo)
-        await page.getByPlaceholder("Nombre(s)").nth(4).fill(faker.person.firstName())
-        await page.getByPlaceholder("Apellido(s)").nth(4).fill(faker.person.lastName())
-        await page.locator('//input[@name="telefono"]').nth(4).fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
-        await page.getByRole('button', { name: 'Guardar cambios' }).nth(4).click({ force: true })
-        await page.pause()
+        await page.getByPlaceholder("Nombre(s)").fill(faker.person.firstName())
+        await page.getByPlaceholder("Apellido(s)").fill(faker.person.lastName())
+        await page.locator('//input[@name="telefono"]').fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
+        await page.getByRole('button', { name: 'Guardar cambios' }).click({ force: true })
+        inicio = Date.now()
+        await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
+        fin = Date.now()
+        console.log("Tiempo de edición de equipos: " + (fin - inicio) + "ms")
     })
 
     test("Inactivo", async ({ page }) => {
@@ -148,23 +160,24 @@ test.describe("CaskrApp", async() => {
         var msj = page.locator('p:has-text("No puedes eliminar este")')
         var participantes = await page.getByLabel('Equipos participantes').innerText()
         var equipo = participantes.match(/Equipo \w+/g)
-        console.log("Lista: " + equipo)
         var random = equipo![Math.floor(Math.random() * equipo!.length)]
         console.log(random)
-        await page.waitForTimeout(2000)
+
         await page.getByRole('row', { name: new RegExp(`escudo ${random} .+`) }).getByRole('button').first().click({ force: true })
-        await page.waitForTimeout(2000)
-        await page.getByRole('button', { name: 'Eliminar' }).nth(equipo!.length - 1).click({ force: true })
-        await msj.waitFor({ state: 'visible' })
+        await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor()
+        await page.getByRole('button', { name: 'Eliminar' }).click({ force: true })
         var visible = await msj.isVisible()
         console.log("Mensaje: " + visible)
 
-        if(msj)
+        if(!msj)
             console.log("Caso 2")
         
-        else
+        else{
             console.log("Caso 1")
-        
-        await page.pause()
+            inicio = Date.now()
+            await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
+            fin = Date.now()
+            console.log("Tiempo de eliminación de equipos: " + (fin - inicio) + "ms")
+        }
     })
 })

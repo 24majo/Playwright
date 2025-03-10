@@ -1,8 +1,14 @@
 import { test } from '@playwright/test'
 import { login, registrar_resultado } from './cuenta.spec'
 
+var inicio, fin
+
 test.beforeEach(async ({ page }) => {
+    inicio = Date.now()
     await login(page)
+    await page.locator('text=Inicio').waitFor({ state: 'visible' })
+    fin = Date.now()
+    console.log("Tiempo de inicio de sesión: " + (fin - inicio) + "ms")
     await page.getByRole('link', { name: 'Resultados' }).click()
 })
 
@@ -14,21 +20,13 @@ test("Eliminacion", async ({ page }) => {
 
 test("Todos", async ({ page }) => {
     await page.getByRole('tab', { name: 'Todos los partidos' }).click({ force: true })
-    await page.pause()
+    await page.locator('[placeholder="Busqueda general"]').waitFor({ state: 'visible' })
     var registrar = page.getByRole('row', { name: new RegExp(`.+ Registrar`)}).getByRole('button')
-    await page.waitForTimeout(2000)
     await registrar_resultado (page, registrar)
 })
 
 test("Partes", async ({ page }) => {
     await page.getByRole('tab', { name: 'Resultados' }).click({ force: true })
-    await page.pause()
     var registrar = page.getByRole('row', { name: new RegExp(`.+ Registrar`)}).getByRole('button')
-    await page.waitForTimeout(2000)
     await registrar_resultado (page, registrar)
-})
-
-test("Editar", async({ page }) => {
-    await page.pause()
-    await page.getByRole('row', { name: new RegExp(`Equipo \\d Equipo local .+`)}).getByRole('button').click()
 })

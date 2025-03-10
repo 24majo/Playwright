@@ -28,6 +28,12 @@ test("EditTeam", async ({ page }) => {
     await page.getByTestId('crearCuenta').click()
     await page.pause()
     await page.getByRole('button').nth(2).click()
+    var file = await page.locator('input[type="file"]')
+    var random = Math.floor(Math.random() * 40) + 1
+    var imagen = 'C:/Users/E015/Downloads/Imágenes/Escudos/escudo' + random + '.jpg'
+    console.log(random)
+    await file.setInputFiles(imagen)
+    await page.waitForTimeout(1500)
     var equipo = fakerES_MX.company.name()
     var n_equipo = equipo.replace(/[^a-zA-Z0-9 ]/g, '');
     await page.locator('//input[@name="nombre"]').fill("Equipo " + n_equipo)

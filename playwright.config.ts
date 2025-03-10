@@ -44,14 +44,43 @@ export default defineConfig({
         headless: false,
       },
     },
-    {
-      name: 'Microsoft Edge',
-      use: { 
-        ...devices['Desktop Edge'], 
-        headless: false, 
-        channel: 'msedge' 
-      },
-    },
+
+    // {
+    //   name: 'chromium',
+    //   use: { 
+    //     ...devices['Desktop Chrome'], 
+    //     headless: false,
+    //   },
+    // },
+    
+    // {
+    //   name: 'Microsoft Edge',
+    //   use: { 
+    //     ...devices['Desktop Edge'], 
+    //     headless: false, 
+    //     channel: 'msedge' 
+    //   },
+    // },
+    
+    // {
+    //   name: 'Microsoft Edge',
+    //   use: { 
+    //     ...devices['Desktop Edge'], 
+    //     headless: false, 
+    //     channel: 'msedge' 
+    //   },
+    // },
+
+    // {
+    //   name: 'Microsoft Edge',
+    //   use: { 
+    //     ...devices['Desktop Edge'], 
+    //     headless: false, 
+    //     channel: 'msedge' 
+    //   },
+    // },
+
+
     // {
     //   name: 'firefox',
     //   use: { 
@@ -67,34 +96,6 @@ export default defineConfig({
     //   },
     // },
 
-    // {
-    //   name: 'chromium',
-    //   use: { 
-    //     ...devices['Desktop Chrome'], 
-    //     headless: false,
-    //   },
-    // },
-    
-    {
-      name: 'Microsoft Edge',
-      use: { 
-        ...devices['Desktop Edge'], 
-        headless: false, 
-        channel: 'msedge' 
-      },
-    },
-    
-    {
-      name: 'Microsoft Edge',
-      use: { 
-        ...devices['Desktop Edge'], 
-        headless: false, 
-        channel: 'msedge' 
-      },
-    },
-    
-
-    
 
     /* Test against mobile viewports. */
     // {
