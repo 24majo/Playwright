@@ -6,11 +6,7 @@ var inicio, fin
 
 test.describe("CaskrApp", async() => {
     test.beforeEach(async ({ page }) => {
-        inicio = Date.now()
         await login(page)
-        await page.locator('text=Inicio').waitFor({ state: 'visible' })
-        fin = Date.now()
-        console.log("Tiempo de inicio de sesión: " + (fin - inicio) + "ms")
         await page.getByRole('link', { name: 'Equipos' }).click()
     })
 
@@ -21,8 +17,10 @@ test.describe("CaskrApp", async() => {
         // Caso 4: No es posible agregar por partidos agendados
         // Caso 5: Desactivar equipo (excedente por tipo de plan)
         
+        await page.locator('text=Equipos').waitFor({ state: 'visible' })
+        await page.pause()
         var agregar = await page.getByRole('button', { name: 'Agregar equipo' })
-        await expect(agregar).toBeVisible() // Si no es visible, es por Caso 2
+        await expect(agregar).toBeVisible() // Si no es visible, es por Caso 3
         var boton = await agregar.isVisible() 
         console.log("Botón agregar equipo: " + boton)
         
@@ -35,7 +33,7 @@ test.describe("CaskrApp", async() => {
                 process.exit(0)
             }
 
-            for(var i = 0; i < 1; i++){
+            for(var i = 0; i < 4; i++){
                 await agregar.click()
                 await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor()
                 var button = await page.getByRole('button', { name: 'Sí, estoy seguro' }).isVisible()

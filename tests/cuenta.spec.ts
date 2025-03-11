@@ -6,9 +6,13 @@ var inicio, fin
 export const login = async (page: Page) => {
   await page.goto('http://localhost:3000/auth')
   //await page.goto('https://caskr.app/auth')
-  await page.getByTestId('inputCorreo').fill('majo742@prueba.com')
+  await page.getByTestId('inputCorreo').fill('majo288@prueba.com')
   await page.getByTestId('inputPassword').fill('12345678')
   await page.getByTestId('crearCuenta').click()
+  inicio = Date.now()
+  await page.locator('text=Inicio').waitFor({ state: 'visible' })
+  fin = Date.now()
+  console.log("Tiempo de inicio de sesión: " + (fin - inicio) + "ms")
   await desactivar(page)
 }
 
@@ -140,6 +144,7 @@ export const registrar_resultado = async (page: Page, registrar) => {
   console.log("Botones: " + num_btn)
 
   for(var i = 0; i < num_btn; i++){
+    await registrar.first().waitFor({ state: 'visible' })
     var desactivado = await registrar.first().getAttribute('data-disabled') // true o null
     console.log(i + ": " + desactivado)
 
@@ -211,7 +216,10 @@ export const programar_partido = async (page: Page) => {
     await page.getByRole('button', { name: 'Sí, envíales el mensaje' }).click({ force: true })
   }
   
+  inicio = Date.now()
   await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
+  fin = Date.now()
+  console.log("Tiempo de programación de partido: " + (fin - inicio) + "ms")
 }
 
 export const registro_jugador = async (page: Page) => {

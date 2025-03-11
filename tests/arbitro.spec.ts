@@ -6,11 +6,7 @@ import { agregar_arbitro } from './cuenta.spec'
 var inicio, fin
 
 test.beforeEach(async ({ page }) => {
-    inicio = Date.now()
     await login(page)
-    await page.locator('text=Inicio').waitFor({ state: 'visible' })
-    fin = Date.now()
-    console.log("Tiempo de inicio de sesión: " + (fin - inicio) + "ms")
     await page.getByRole('link', { name: 'Arbitros' }).click()
 })
 

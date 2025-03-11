@@ -4,11 +4,7 @@ import { login, programar_partido } from './cuenta.spec'
 var inicio, fin
 
 test.beforeEach(async ({ page }) => {
-    inicio = Date.now()
     await login(page)
-    await page.locator('text=Inicio').waitFor({ state: 'visible' })
-    fin = Date.now()
-    console.log("Tiempo de inicio de sesión: " + (fin - inicio) + "ms")
     await page.getByRole('link', { name: 'Calendario' }).click()
 })
 
@@ -32,8 +28,8 @@ test("Generar", async ({ page }) => {
 
         if(disponible == null){
             console.log("Caso 1: Generar calendario cumpliendo con los requisitos del torneo")
-            inicio = Date.now()
             await boton.click({ force: true })
+            inicio = Date.now()
             await boton.waitFor({ state: 'hidden' })
             console.log("Tiempo de generación de calendario: " + (fin - inicio) + "ms")
             fin = Date.now()
@@ -86,8 +82,11 @@ test("Todos", async ({ page }) => {
     // Caso 1: Agendar partidos
     // Caso 2: Agendar partidos en las siguientes pestañas
     // Caso 3: No hay más partidos por agendar 
+    await page.locator('text=Calendario').waitFor({ state: 'visible' })
     await page.getByRole('tab', { name: 'Todos los partidos' }).click({ force: true })
+    await page.locator('[placeholder="Busqueda general"]').waitFor({ state: 'visible' })
     var boton = page.getByRole('row', { name: new RegExp(`.+ NO PROGRAMADO .+`) }).getByRole('button').first()
+    await page.pause()
     var visible = await boton.isHidden()
     console.log("Botón programar oculto: " + visible)
 
@@ -101,7 +100,6 @@ test("Todos", async ({ page }) => {
         var flecha = await page.locator('[aria-label="Next Page"]')
         var activa = await flecha.getAttribute('aria-disabled')
         console.log("Flecha siguiente: " + activa)
-        await page.pause()
 
         if(activa){ // Ir a la siguiente página disponible
             console.log("Caso 2")
@@ -114,7 +112,6 @@ test("Todos", async ({ page }) => {
                 await page.waitForTimeout(1000)
                 await programar_partido(page)
             }
-            await page.pause()
         }
         else{
             console.log('Caso 3')

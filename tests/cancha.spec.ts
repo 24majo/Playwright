@@ -5,16 +5,13 @@ var inicio, fin
 
 test.describe("CaskrApp", async() => {
     test.beforeEach(async ({ page }) => {
-        inicio = Date.now()
         await login(page)
-        await page.locator('text=Inicio').waitFor({ state: 'visible' })
-        fin = Date.now()
-        console.log("Tiempo de inicio de sesión: " + (fin - inicio) + "ms")
         await page.getByRole('link', { name: 'Canchas' }).click()
     })
 
     test("Agregar", async ({ page }) => {
-        for(var i = 0; i < 6; i++){
+        await page.locator('text=Canchas').waitFor({ state: 'visible' })
+        for(var i = 0; i < 3; i++){
             await page.click('//span[text()="Agregar cancha"]')
             await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor()
             await agregar_cancha(page)

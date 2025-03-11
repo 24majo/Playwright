@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test'
 import { login, crear_torneo, desactivar } from './cuenta.spec'
 
+var inicio, fin
+
 test.beforeEach(async ({ page }) => {
     await login(page)
     await page.getByRole('link', { name: 'Mis torneos' }).click({ force: true })
@@ -10,7 +12,7 @@ test("Crear", async ({ page }) => {
     // Caso 1: Creación de torneo
     // Caso 2: Límite de torneos alcanzado para crear
     // Caso 3: Límite de torneos activos
-    await page.pause()
+    await page.locator('text=Mis Torneos').waitFor({ state: 'visible' })
     var torneo = await page.getByRole('button', {name: 'Crear torneo'})
     await expect(torneo).toBeVisible() // Si no es visible, es por Caso 2
     var boton = await torneo.isVisible() 
@@ -21,7 +23,11 @@ test("Crear", async ({ page }) => {
             await torneo.click({ force: true})
             console.log("Caso 1")
             await crear_torneo(page)
-            await page.pause()
+            inicio = Date.now()
+            await page.locator('text=Mis Torneos').waitFor({ state: 'visible' })
+            fin = Date.now()
+            console.log("Tiempo de creación de torneo: " + (fin - inicio) + "ms")
+            
         //}
     }
     await desactivar(page) // Caso 3

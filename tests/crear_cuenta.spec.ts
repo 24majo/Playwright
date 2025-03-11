@@ -30,9 +30,9 @@ async function Cuenta({ page, cuenta, tipo }) {
     await page.getByTestId('crearCuenta').click()
     fin = Date.now()
     console.log('Tiempo de creación de cuenta: ' + (fin - inicio) + 'ms')
-    await page.pause()
-    inicio = Date.now()
-    await page.locator('//input[@name="customerName"]').fill('Alondra Guerrero')
+    var name = page.locator('//input[@name="customerName"]')
+    await name.waitFor({ state: 'visible' })
+    await name.fill('Alondra Guerrero')
 
     if(tipo === "Correo"){
         if(Math.floor(Math.random() * 2) === 1){
@@ -49,11 +49,12 @@ async function Cuenta({ page, cuenta, tipo }) {
     }
 
     await page.getByRole('button', { name: 'Siguiente' }).click()
-    await page.waitForTimeout(1000)
+    await page.locator('text=Nuevo Torneo').waitFor({ state: 'visible'})
     await crear_torneo(page)
-    var fin = Date.now()
-    console.log("Tiempo de completar formulario inicial: " + (fin - inicio) + "ms")
-    await page.pause()
+    inicio = Date.now()
+    await page.locator('text=Inicio').waitFor({ state: 'visible' })
+    fin = Date.now()
+    console.log("Tiempo de carga de dashboard: " + (fin - inicio) + "ms")
 }
 
 // async function AgregarEquipo({ page }){

@@ -4,11 +4,8 @@ import { login, registrar_resultado } from './cuenta.spec'
 var inicio, fin
 
 test.beforeEach(async ({ page }) => {
-    inicio = Date.now()
     await login(page)
-    await page.locator('text=Inicio').waitFor({ state: 'visible' })
-    fin = Date.now()
-    console.log("Tiempo de inicio de sesión: " + (fin - inicio) + "ms")
+    await page.locator('text=Registro de resultados').waitFor({ state: 'visible' })
     await page.getByRole('link', { name: 'Resultados' }).click()
 })
 
