@@ -6,7 +6,7 @@ var inicio, fin
 export const login = async (page: Page) => {
   await page.goto('http://localhost:3000/auth')
   //await page.goto('https://caskr.app/auth')
-  await page.getByTestId('inputCorreo').fill('majo288@prueba.com')
+  await page.getByTestId('inputCorreo').fill('majo116@prueba.com')
   await page.getByTestId('inputPassword').fill('12345678')
   await page.getByTestId('crearCuenta').click()
   inicio = Date.now()
@@ -160,6 +160,7 @@ export const registrar_resultado = async (page: Page, registrar) => {
       await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
       fin = Date.now()
       console.log("Tiempo de registro de resultados: " + (fin - inicio) + "ms")
+      await page.waitForTimeout(1000)
     }
   }
 }

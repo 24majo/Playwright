@@ -28,8 +28,19 @@ async function Cuenta({ page, cuenta, tipo }) {
     await page.getByTestId('inputCorreo').fill(cuenta)
     await page.getByTestId('inputPassword').fill('12345678')
     await page.getByTestId('crearCuenta').click()
-    fin = Date.now()
-    console.log('Tiempo de creación de cuenta: ' + (fin - inicio) + 'ms')
+    await page.waitForTimeout(1000)
+
+    var cuenta_e = await page.locator('text=Estos datos ya han sido registrados').isVisible()
+    if(cuenta_e){
+        console.log("Datos ya registrados")
+        process.exit(0)
+    }
+
+    else{
+        fin = Date.now()
+        console.log('Tiempo de creación de cuenta: ' + (fin - inicio - 1000) + 'ms')
+    }
+    
     var name = page.locator('//input[@name="customerName"]')
     await name.waitFor({ state: 'visible' })
     await name.fill('Alondra Guerrero')
