@@ -30,9 +30,10 @@ test("Generar", async ({ page }) => {
             console.log("Caso 1: Generar calendario cumpliendo con los requisitos del torneo")
             await boton.click({ force: true })
             inicio = Date.now()
-            await boton.waitFor({ state: 'hidden' })
-            console.log("Tiempo de generación de calendario: " + (fin - inicio) + "ms")
+            await page.getByRole('tab', { name: 'Por jornadas' }).waitFor({ state: 'visible' })
             fin = Date.now()
+            console.log("Tiempo de generación de calendario: " + (fin - inicio) + "ms")
+            
         }
     }
 })

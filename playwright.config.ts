@@ -58,7 +58,6 @@ export default defineConfig({
     //   use: { 
     //     ...devices['Desktop Edge'], 
     //     headless: false, 
-    //     channel: 'msedge' 
     //   },
     // },
     
@@ -67,7 +66,6 @@ export default defineConfig({
     //   use: { 
     //     ...devices['Desktop Edge'], 
     //     headless: false, 
-    //     channel: 'msedge' 
     //   },
     // },
 
@@ -76,10 +74,8 @@ export default defineConfig({
     //   use: { 
     //     ...devices['Desktop Edge'], 
     //     headless: false, 
-    //     channel: 'msedge' 
     //   },
     // },
-
 
     // {
     //   name: 'firefox',
@@ -88,6 +84,7 @@ export default defineConfig({
     //     headless: false, 
     //   },
     // },
+
     // {
     //   name: 'webkit',
     //   use: { 

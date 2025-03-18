@@ -8,6 +8,7 @@ test.describe("CaskrApp", async() => {
     test.beforeEach(async ({ page }) => {
         await login(page)
         await page.getByRole('link', { name: 'Equipos' }).click()
+        await page.locator('text=Equipos').waitFor({ state: 'visible' })
     })
 
     test("Agregar", async ({ page }) => {
@@ -17,7 +18,6 @@ test.describe("CaskrApp", async() => {
         // Caso 4: No es posible agregar por partidos agendados
         // Caso 5: Desactivar equipo (excedente por tipo de plan)
         
-        await page.locator('text=Equipos').waitFor({ state: 'visible' })
         await page.pause()
         var agregar = await page.getByRole('button', { name: 'Agregar equipo' })
         await expect(agregar).toBeVisible() // Si no es visible, es por Caso 3
@@ -33,7 +33,7 @@ test.describe("CaskrApp", async() => {
                 process.exit(0)
             }
 
-            for(var i = 0; i < 4; i++){
+            for(var i = 0; i < 12; i++){
                 await agregar.click()
                 await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor()
                 var button = await page.getByRole('button', { name: 'Sí, estoy seguro' }).isVisible()
@@ -43,7 +43,7 @@ test.describe("CaskrApp", async() => {
                     console.log("Caso 2")
                     var si = page.getByRole('button', { name: 'Sí, estoy seguro' })
                     var no = page.getByRole('button', { name: 'No, Cancelar' })
-                    var botones = [si, no]
+                    var botones = [si]
                     var elegir = botones[Math.floor(Math.random() * botones.length)]
                     await elegir.click({ force: true })
 
@@ -82,18 +82,21 @@ test.describe("CaskrApp", async() => {
     })
 
     test("Editar", async ({ page }) => {
-        await page.getByRole('row', { name: 'escudo Equipo ', exact: false }).getByRole('button').first().click({ force: true })
-        await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor()
-        var n_equipo = Math.floor(Math.random() * 20)
-        await page.getByPlaceholder("Escribe el nombre del equipo").nth(4).fill("Equipo " + n_equipo)
-        await page.getByPlaceholder("Nombre(s)").fill(faker.person.firstName())
-        await page.getByPlaceholder("Apellido(s)").fill(faker.person.lastName())
-        await page.locator('//input[@name="telefono"]').fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
-        await page.getByRole('button', { name: 'Guardar cambios' }).click({ force: true })
-        inicio = Date.now()
-        await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
-        fin = Date.now()
-        console.log("Tiempo de edición de equipos: " + (fin - inicio) + "ms")
+        for(var i = 0; i < 6; i++){
+            await page.getByRole('row', { name: 'escudo Equipo ', exact: false }).getByRole('button').first().click({ force: true })
+            await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible' })
+            var n_equipo = Math.floor(Math.random() * 20)
+            await page.getByPlaceholder("Escribe el nombre del equipo").fill("Equipo " + n_equipo)
+            await page.getByPlaceholder("Nombre(s)").fill(faker.person.firstName())
+            await page.getByPlaceholder("Apellido(s)").fill(faker.person.lastName())
+            await page.locator('//input[@name="telefono"]').fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
+            await page.getByRole('button', { name: 'Guardar cambios' }).click({ force: true })
+            inicio = Date.now()
+            await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
+            fin = Date.now()
+            console.log("Tiempo de edición de equipos: " + (fin - inicio) + "ms")
+            await page.waitForTimeout(1000)
+        }
     })
 
     test("Inactivo", async ({ page }) => {
@@ -108,11 +111,8 @@ test.describe("CaskrApp", async() => {
         console.log(random)
         await page.pause()
         await page.getByRole('row', { name: new RegExp(`escudo ${random} .+`) }).getByRole('button').first().click({ force: true });
-        await page.waitForTimeout(2000)
         await page.locator('div').filter({ hasText: /^Activo$/ }).locator('span').nth(1).click({ force: true });
-        await page.waitForTimeout(2000)
         await page.locator('//span[text()="Guardar cambios"]').nth(equipo!.length -1).click()
-        await page.waitForTimeout(2000)
         await page.getByText('Equipos registrados').isVisible()
         await page.getByText(random).nth(1).isVisible()
         await page.getByRole('tab', {name: 'Equipos inactivos'}).isVisible()
@@ -155,27 +155,30 @@ test.describe("CaskrApp", async() => {
     test("Eliminar", async ({ page }) => {
         // Caso 1: Eliminar equipo con éxito
         // Caso 2: No eliminar equipo por pendientes de agenda
-        var msj = page.locator('p:has-text("No puedes eliminar este")')
-        var participantes = await page.getByLabel('Equipos participantes').innerText()
-        var equipo = participantes.match(/Equipo \w+/g)
-        var random = equipo![Math.floor(Math.random() * equipo!.length)]
-        console.log(random)
+        for(var i = 0; i < 12; i++){
+            var msj = page.locator('p:has-text("No puedes eliminar este")')
+            var participantes = await page.getByLabel('Equipos participantes').innerText()
+            var equipo = participantes.match(/Equipo \w+/g)
+            var random = equipo![Math.floor(Math.random() * equipo!.length)]
+            console.log(random)
 
-        await page.getByRole('row', { name: new RegExp(`escudo ${random} .+`) }).getByRole('button').first().click({ force: true })
-        await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor()
-        await page.getByRole('button', { name: 'Eliminar' }).click({ force: true })
-        var visible = await msj.isVisible()
-        console.log("Mensaje: " + visible)
+            await page.getByRole('row', { name: new RegExp(`escudo ${random} .+`) }).getByRole('button').first().click({ force: true })
+            await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor()
+            await page.getByRole('button', { name: 'Eliminar' }).click({ force: true })
+            var visible = await msj.isVisible()
+            console.log("Mensaje: " + visible)
 
-        if(!msj)
-            console.log("Caso 2")
-        
-        else{
-            console.log("Caso 1")
-            inicio = Date.now()
-            await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
-            fin = Date.now()
-            console.log("Tiempo de eliminación de equipos: " + (fin - inicio) + "ms")
+            if(!msj)
+                console.log("Caso 2")
+            
+            else{
+                console.log("Caso 1")
+                inicio = Date.now()
+                await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
+                fin = Date.now()
+                console.log("Tiempo de eliminación de equipos: " + (fin - inicio) + "ms")
+                await page.waitForTimeout(1000)
+            }
         }
     })
 })

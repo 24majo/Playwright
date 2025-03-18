@@ -1,20 +1,25 @@
 import { test } from '@playwright/test'
 import { registro_jugador, EditInfo } from './cuenta.spec'
-import { fakerEL, fakerES_MX } from '@faker-js/faker'
+import { fakerES_MX } from '@faker-js/faker'
+
+var inicio, fin
 
 test("Unirme", async ({ page }) => {
     // Caso 1: Registro correcto
     // Caso 2: CURP inválido
-    //await page.goto('http://localhost:3000/registroCapitan/1740441366451/1740441366452')
-    await page.goto('https://caskr.app/registroCapitan/1740584601379/1740584601380')
-    await page.pause()
-    await page.getByRole('button', { name: 'Unirme al equipo' }).click()
-    
+    await page.goto('https://dev.caskr.app/registroCapitan/1741974914351/1741974914352')
+    // await page.goto('https://caskr.app/registroCapitan/1740584601379/1740584601380')
+    var button = page.getByRole('button', { name: 'Unirme al equipo' })
+    await button.waitFor({ state: 'visible' })
+    await button.click()
     await registro_jugador(page)
     await page.getByRole('button', { name: 'Lo haré después' }).click()
     await page.getByRole('button', { name: 'Terminar' }).click()
     await page.getByRole('button', { name: 'En otro momento '}).click()
-    await page.pause()
+    inicio = Date.now()
+    await page.locator('text=Jugadores').waitFor({ state: 'visible' })
+    fin = Date.now()
+    console.log("Tiempo de registro de capitán: " + (fin - inicio) + "ms")
 })
 
 test("EditInfo", async ({ page }) => {
