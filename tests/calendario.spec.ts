@@ -83,7 +83,7 @@ test("Todos", async ({ page }) => {
     // Caso 1: Agendar partidos
     // Caso 2: Agendar partidos en las siguientes pestañas
     // Caso 3: No hay más partidos por agendar 
-    await page.locator('text=Calendario').waitFor({ state: 'visible' })
+    await page.pause()
     await page.getByRole('tab', { name: 'Todos los partidos' }).click({ force: true })
     await page.locator('[placeholder="Busqueda general"]').waitFor({ state: 'visible' })
     var boton = page.getByRole('row', { name: new RegExp(`.+ NO PROGRAMADO .+`) }).getByRole('button').first()

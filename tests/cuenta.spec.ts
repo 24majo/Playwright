@@ -7,7 +7,7 @@ export const login = async (page: Page) => {
   await page.goto('http://localhost:3000/auth')
   //await page.goto('https://caskr.app/auth')
   // await page.goto('https://dev.caskr.app/auth')
-  await page.getByTestId('inputCorreo').fill('aficionado@prueba.com')
+  await page.getByTestId('inputCorreo').fill('majo3@cuenta.com')
   await page.getByTestId('inputPassword').fill('12345678')
   await page.getByTestId('crearCuenta').click()
   inicio = Date.now()
@@ -62,7 +62,7 @@ export const agregar_equipo = async (page: Page, n_equipo) => {
   // await file.setInputFiles(imagen)
   // await page.pause()
   var equipo = fakerES_MX.company.name()
-  n_equipo = equipo.replace(/[^a-zA-Z0-9]/g, ' ');
+  n_equipo = equipo.replace(/[^a-zA-Z0-9]/g, ' ')
   await page.locator('//input[@name="nombre"]').fill("Equipo " + n_equipo)
   await page.locator('//input[@name="nombre_capitan"]').fill(fakerES_MX.person.firstName())
   await page.locator('//input[@name="apellidos_capitan"]').fill(fakerES_MX.person.lastName())
@@ -84,13 +84,13 @@ export const agregar_cancha = async (page: Page) => {
   var file = await page.locator('input[type="file"]')
   var imagen = 'C:/Users/E015/Downloads/cancha.jpg'
   await file.setInputFiles(imagen)
-  var n_cancha = faker.location.city()
-  await page.locator('//input[@name="nombre"]').fill("Cancha " + n_cancha)
+  await page.locator('//input[@name="nombre"]').fill("Cancha " + faker.location.city())
   var lugar = ['Deportiva', "Calle", "Estadio", "Deportivo", "Puerto"]
   var ubicacion = lugar[Math.floor(Math.random() * lugar.length)]
   await page.getByPlaceholder('Ubicación').fill(ubicacion)
-  var num = Math.floor(Math.random() * 4)
-  await page.getByText(ubicacion, { exact: false }).nth(num).click({ force: true })
+  // var num = Math.floor(Math.random() * 4)
+  await page.pause()
+  await page.getByText(ubicacion).nth(1).click({ force: true })
   await page.getByTestId('inputDescripcion').fill('Pasto sintético')
 }
 
