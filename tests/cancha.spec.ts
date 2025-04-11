@@ -1,5 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { login, agregar_cancha } from './cuenta.spec'
+import { test } from '@playwright/test';
+import { login } from './cuenta.spec'
+import { fakerES_MX } from '@faker-js/faker';
 
 var inicio, fin
 
@@ -63,3 +64,18 @@ test.describe("CaskrApp", async() => {
         
     })
 })
+
+// ---------------------------------------------------
+
+export const agregar_cancha = async (page: any) => {
+  var file = await page.locator('input[type="file"]')
+  var imagen = 'C:/Users/E015/Downloads/cancha.jpg'
+  await file.setInputFiles(imagen)
+  await page.locator('//input[@name="nombre"]').fill("Cancha " + fakerES_MX.location.city())
+  var lugar = ['Deportiva', "Calle", "Estadio", "Deportivo", "Puerto"]
+  var ubicacion = lugar[Math.floor(Math.random() * lugar.length)]
+  await page.getByPlaceholder('Ubicación').fill(ubicacion)
+  var num = Math.floor(Math.random() * 4)
+  await page.getByText(ubicacion).nth(1).click({ force: true })
+  await page.getByTestId('inputDescripcion').fill('Pasto sintético')
+}

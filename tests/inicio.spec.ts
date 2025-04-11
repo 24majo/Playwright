@@ -1,5 +1,6 @@
 import { test } from '@playwright/test'
-import { login, programar_partido, registrar_resultado } from './cuenta.spec'
+import { login, programar_partido } from './cuenta.spec'
+import { registrar_resultado } from './resultados.spec'
 
 test.beforeEach(async ({ page }) => {
 

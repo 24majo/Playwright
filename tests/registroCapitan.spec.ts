@@ -7,11 +7,15 @@ var inicio, fin
 test("Unirme", async ({ page }) => {
     // Caso 1: Registro correcto
     // Caso 2: CURP inválido
-    await page.goto('https://dev.caskr.app/registroCapitan/1741974914351/1741974914352')
+
+    await page.goto('https://localhost:3000/registroCapitan/1741974914351/1741974914352')
+    // await page.goto('https://dev.caskr.app/registroCapitan/1741974914351/1741974914352')
     // await page.goto('https://caskr.app/registroCapitan/1740584601379/1740584601380')
+    
     var button = page.getByRole('button', { name: 'Unirme al equipo' })
     await button.waitFor({ state: 'visible' })
     await button.click()
+    await page.getByPlaceholder('********').fill('12345678')
     await registro_jugador(page)
     await page.getByRole('button', { name: 'Lo haré después' }).click()
     await page.getByRole('button', { name: 'Terminar' }).click()

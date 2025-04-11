@@ -1,7 +1,6 @@
 import { test } from '@playwright/test'
-import { faker } from '@faker-js/faker'
+import { faker, fakerES_MX } from '@faker-js/faker'
 import { login } from './cuenta.spec'
-import { agregar_arbitro } from './cuenta.spec'
 
 var inicio, fin
 
@@ -62,5 +61,15 @@ test("Editar", async ({ page }) => {
         console.log("Tiempo de modificación de árbitro: " + (fin - inicio) + "ms")
         await page.waitForTimeout(1000)
     }
-    
 })
+
+// ---------------------------------------------------
+
+export const agregar_arbitro = async (page: any) => {
+  await page.getByRole('button', { name: 'Agregar árbitro' }).click({ force: true })
+  await page.locator('[data-modal-content="true"][role="dialog"]:visible').waitFor()
+  await page.locator('//input[@name="nombres"]').fill(fakerES_MX.person.firstName())
+  await page.locator('//input[@name="apellidos"]').fill(fakerES_MX.person.lastName())
+  await page.locator('//input[@name="telefono"]').fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
+  await page.locator('//input[@name="email"]').fill(fakerES_MX.internet.email())
+}

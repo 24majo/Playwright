@@ -4,11 +4,13 @@ import { faker, fakerES_MX } from '@faker-js/faker'
 var inicio, fin
 
 export const login = async (page: Page) => {
-  await page.goto('http://localhost:3000/auth')
-  //await page.goto('https://caskr.app/auth')
+  // await page.goto('http://localhost:3000/auth')
+  await page.goto('https://caskr.app/auth')
   // await page.goto('https://dev.caskr.app/auth')
-  await page.getByTestId('inputCorreo').fill('majo3@cuenta.com')
+  
+  await page.getByTestId('inputCorreo').fill('prueba1@prueba.com')
   await page.getByTestId('inputPassword').fill('12345678')
+  await page.pause()
   await page.getByTestId('crearCuenta').click()
   inicio = Date.now()
   await page.locator('text=Inicio').waitFor({ state: 'visible' })
@@ -53,122 +55,11 @@ export const desactivar = async (page: Page) => {
   }
 }
 
-export const agregar_equipo = async (page: Page, n_equipo) => {
-  // Imagen
-  // var file = await page.locator('input[type="file"]')
-  // var random = Math.floor(Math.random() * 40) + 1
-  // var imagen = 'C:/Users/E015/Downloads/Imágenes/Escudos/escudo' + random + '.jpg'
-  // console.log(random)
-  // await file.setInputFiles(imagen)
-  // await page.pause()
-  var equipo = fakerES_MX.company.name()
-  n_equipo = equipo.replace(/[^a-zA-Z0-9]/g, ' ')
-  await page.locator('//input[@name="nombre"]').fill("Equipo " + n_equipo)
-  await page.locator('//input[@name="nombre_capitan"]').fill(fakerES_MX.person.firstName())
-  await page.locator('//input[@name="apellidos_capitan"]').fill(fakerES_MX.person.lastName())
-  await page.locator('//input[@name="telefono"]').fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
-  return n_equipo
-}
-
-export const agregar_arbitro = async (page: Page) => {
-  await page.getByRole('button', { name: 'Agregar árbitro' }).click({ force: true })
-  await page.locator('[data-modal-content="true"][role="dialog"]:visible').waitFor()
-  await page.locator('//input[@name="nombres"]').fill(faker.person.firstName())
-  await page.locator('//input[@name="apellidos"]').fill(faker.person.lastName())
-  await page.locator('//input[@name="telefono"]').fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
-  await page.locator('//input[@name="email"]').fill(faker.internet.email())
-}
-
-export const agregar_cancha = async (page: Page) => {
-  // Imagen
-  var file = await page.locator('input[type="file"]')
-  var imagen = 'C:/Users/E015/Downloads/cancha.jpg'
-  await file.setInputFiles(imagen)
-  await page.locator('//input[@name="nombre"]').fill("Cancha " + faker.location.city())
-  var lugar = ['Deportiva', "Calle", "Estadio", "Deportivo", "Puerto"]
-  var ubicacion = lugar[Math.floor(Math.random() * lugar.length)]
-  await page.getByPlaceholder('Ubicación').fill(ubicacion)
-  // var num = Math.floor(Math.random() * 4)
-  await page.pause()
-  await page.getByText(ubicacion).nth(1).click({ force: true })
-  await page.getByTestId('inputDescripcion').fill('Pasto sintético')
-}
-
-export const crear_torneo = async (page: Page) => {
-  await page.locator('//input[@name="nombre"]').fill('Liga')
-  var formato = ['Eliminación directa','Eliminación directa (ida y vuelta)','Liga','Liga (ida y vuelta)']
-  var t_formato = formato[Math.floor(Math.random() * formato.length)]
-  //console.log("Formato: " + t_formato)
-  await page.getByPlaceholder('Ej. Liga + Liguilla, Eliminacion directa').click()
-  await page.waitForTimeout(500)
-  await page.getByRole('option', { name: t_formato, exact: true }).click()
-  await page.waitForTimeout(500)
-
-  var sexo = ['Varonil', 'Femenil']
-  var categoria = sexo[Math.floor(Math.random() * sexo.length)]
-  //console.log("Categoría: " + categoria)
-  await page.getByPlaceholder('Ej. Varonil').click()
-  await page.waitForTimeout(500)
-  await page.getByRole('option', { name: categoria }).click()
-  await page.waitForTimeout(500);
-
-  await page.getByLabel('dd-mm-aaaa').click()
-  var fecha = new Date()
-  var dia = fecha.getDate() 
-  var mes = fecha.toLocaleString('es-ES', { month: 'long' }) 
-  await page.getByRole('cell', { name: dia + " " + mes }).first().click()
-  await page.locator('[aria-haspopup="listbox"]').nth(2).click({force: true})
-  await page.waitForTimeout(500)
-  var options = await page.locator('[data-combobox-option="true"][role="option"]:visible').all()
-  var random = Math.floor(Math.random() * options.length)
-  await options[random].click()
-  await page.waitForTimeout(500)
-  
-  await page.getByRole('button', { name: 'Siguiente' }).click()
-  await page.getByRole('button', { name: 'Se parece a este' }).first().click()
-
-  await page.getByPlaceholder('Seleccione la opción').click()
-  var options = await page.locator('[data-combobox-option="true"][role="option"]:visible').all()
-  var random = Math.floor(Math.random() * options.length)
-  await options[random].click()
-  await page.getByRole('button', { name: 'Siguiente' }).click()
-  await page.getByRole('button', { name: 'Siguiente' }).click()
-  await page.getByRole('button', { name: 'Siguiente' }).click()
-  await page.getByRole('button', { name: 'Siguiente' }).click()
-  await page.getByRole('button', { name: 'Finalizar Registro' }).click()
-}
-
-export const registrar_resultado = async (page: Page, registrar) => {
-  var num_btn = await registrar.count()
-  console.log("Botones: " + num_btn)
-
-  for(var i = 0; i < num_btn; i++){
-    await registrar.first().waitFor({ state: 'visible' })
-    var desactivado = await registrar.first().getAttribute('data-disabled') // true o null
-    console.log(i + ": " + desactivado)
-
-    if(desactivado === null){
-      registrar.first().click({ force: true })
-      await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
-      var random = [Math.floor(Math.random() * 10) + 1].toString()
-      await page.locator('input[name="puntos_local"]').fill(random)
-      random = [Math.floor(Math.random() * 10) + 1].toString()
-      await page.locator('input[name="puntos_visitante"]').fill(random)
-      await page.getByRole('button', { name: 'Guardar' }).click({ force: true })
-      inicio = Date.now()
-      await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
-      fin = Date.now()
-      console.log("Tiempo de registro de resultados: " + (fin - inicio) + "ms")
-    }
-  }
-}
-
 export const programar_partido = async (page: Page) => {
   await page.getByLabel('día').click({ force: true })
   var fecha1 = new Date()
   var mes = fecha1.toLocaleString('es-ES', { month: 'long' }) 
   var fecha = [Math.floor(Math.random() * 28) + 1].toString() + " " + mes 
-  //await page.getByRole('cell', { name: fecha, exact: false }).first().click({ force: true })
   await page.getByLabel(fecha).first().click({force: true})
   await page.waitForTimeout(1000)
 
@@ -186,34 +77,24 @@ export const programar_partido = async (page: Page) => {
   var cancha = await page.locator('[data-combobox-option="true"][role="option"]:visible').all()
   var random_c = Math.floor(Math.random() * cancha.length)
   await cancha[random_c].click()
-  // var n_cancha = await cancha.count()
-  // console.log("Canchas: " + n_cancha)
-  // var random = Math.floor(Math.random() * n_cancha) + 1
-  // await cancha.nth(random).click()
   await page.waitForTimeout(1000)
 
   await page.getByPlaceholder('Selecciona al árbitro').click({ force: true })
   var arbitro = await page.locator('[data-combobox-option="true"][role="option"]:visible').all()
   var random_a = Math.floor(Math.random() * arbitro.length)
   await arbitro[random_a].click()
-  // await page.waitForTimeout(1000)
-  // for(var y = 0; y < random; y++){
-  //   await page.getByPlaceholder('Selecciona al árbitro').press('ArrowDown')
-  //   await page.waitForTimeout(1000)
-  // }
-  // await page.getByPlaceholder('Selecciona al árbitro').press('Enter')
   await page.waitForTimeout(500)
 
-  // var save_send = await page.getByRole('button', { name: 'Guardar y enviar'})
-  // var enviar = await save_send.getAttribute('data-disabled')
+  var save_send = await page.getByRole('button', { name: 'Guardar y enviar'})
+  var enviar = await save_send.getAttribute('data-disabled')
 
-  // if(enviar)
+  if(enviar)
     await page.getByRole('button', { name: "Guardar enfrentamiento" }).click({ force: true })
 
-  // else{
-  //   await save_send.click({ force: true })
-  //   await page.getByRole('button', { name: 'Sí, envíales el mensaje' }).click({ force: true })
-  // }
+  else{
+    await save_send.click({ force: true })
+    await page.getByRole('button', { name: 'Sí, envíales el mensaje' }).click({ force: true })
+  }
   
   inicio = Date.now()
   await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
@@ -221,10 +102,7 @@ export const programar_partido = async (page: Page) => {
   console.log("Tiempo de programación de partido: " + (fin - inicio) + "ms")
 }
 
-export const registro_jugador = async (page: Page) => {
-  await page.getByPlaceholder('********').fill('12345678')
-  await page.getByRole('button', { name: 'Continuar' }).click()
-  await page.waitForTimeout(1000)
+export const jugador_existente = async (page: Page) => {
   await page.getByPlaceholder('Portero').click()
   await page.waitForTimeout(1000)
   var options = await page.locator('[data-combobox-option="true"][role="option"]:visible').all()
@@ -243,8 +121,11 @@ export const registro_jugador = async (page: Page) => {
     await page.locator('[inputmode="numeric"]').fill(num)
     await page.getByRole('button', { name: 'Continuar' }).click()
   }
+}
 
+export const registro_jugador = async (page: Page) => {
   var curp1 = await generar_curp(page)
+  console.log("CURP: " + curp1)
   await page.getByPlaceholder('ejemplo: AACM651123MTSLLR06').fill(curp1)
   await page.getByRole('button', { name: 'Continuar' }).click()
   await page.waitForTimeout(2000)

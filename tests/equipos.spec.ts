@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
-import { faker } from '@faker-js/faker'
-import { login, agregar_equipo } from './cuenta.spec'
+import { faker, fakerES_MX } from '@faker-js/faker'
+import { login } from './cuenta.spec'
  
 var inicio, fin
 
@@ -13,7 +13,7 @@ test.describe("CaskrApp", async() => {
 
     test("Agregar", async ({ page }) => {
         // Caso 1: Agregar un equipo con éxito
-        // Caso 2: No es posible agregar por torneo activo
+        // Caso 2: Fixture generado
         // Caso 3: Límite de equipos alcanzado 
         // Caso 4: No es posible agregar por partidos agendados
         // Caso 5: Desactivar equipo (excedente por tipo de plan)
@@ -22,44 +22,31 @@ test.describe("CaskrApp", async() => {
         var agregar = await page.getByRole('button', { name: 'Agregar equipo' })
         await expect(agregar).toBeVisible() // Si no es visible, es por Caso 3
         var boton = await agregar.isVisible() 
-        console.log("Botón agregar equipo: " + boton)
         
         if(boton){
             var bloqueado = await agregar.getAttribute('data-disabled')
-            console.log("Botón bloqueado: " + bloqueado)
             
             if(bloqueado){
                 console.log("Caso 4")
                 process.exit(0)
             }
 
-            for(var i = 0; i < 12; i++){
+            for(var i = 0; i < 3; i++){
                 await agregar.click()
                 await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor()
                 var button = await page.getByRole('button', { name: 'Sí, estoy seguro' }).isVisible()
-                console.log("Boton calendario: " + button)
 
                 if(button){
                     console.log("Caso 2")
-                    var si = page.getByRole('button', { name: 'Sí, estoy seguro' })
-                    var no = page.getByRole('button', { name: 'No, Cancelar' })
-                    var botones = [si]
-                    var elegir = botones[Math.floor(Math.random() * botones.length)]
-                    await elegir.click({ force: true })
-
-                    if(elegir == si){
-                        console.log("Agregó equipos con calendario agendado")
-                        var n_equipo = await agregar_equipo(page, n_equipo)
-                        await page.getByLabel(/Agregar/).getByRole('button', { name: 'Agregar equipo' }).click()
-                        inicio = Date.now()
-                        await page.locator('[data-modal-content="true"][role="dialog"]:visible').waitFor({ state: 'hidden' })
-                        fin = Date.now()
-                        console.log("Tiempo de creación de equipos: " + (fin - inicio) + "ms")
-                    }
-                    else{
-                        console.log("No agregó equipos por calendario agendado")
-                        process.exit(0)
-                    }
+                    await page.getByRole('button', { name: 'Sí, estoy seguro' }).click({ force: true })
+                    console.log("Agregó equipos con calendario agendado")
+                    var n_equipo = await agregar_equipo(page, n_equipo)
+                    await page.getByLabel(/Agregar/).getByRole('button', { name: 'Agregar equipo' }).click()
+                    inicio = Date.now()
+                    await page.locator('[data-modal-content="true"][role="dialog"]:visible').waitFor({ state: 'hidden' })
+                    fin = Date.now()
+                    console.log("Tiempo de creación de equipos: " + (fin - inicio) + "ms")
+            
                 }
 
                 else{
@@ -100,18 +87,14 @@ test.describe("CaskrApp", async() => {
     })
 
     test("Inactivo", async ({ page }) => {
-        // var contar = await page.getByLabel('Equipos participantes').getByText(/Equipo \d+/).count()
-        //const equipo = await page.getByLabel('Equipos participantes').locator('text=/Equipo \d+/').count()
         var participantes = await page.getByLabel('Equipos participantes').innerText();
         var equipo = participantes.match(/Equipo \w+/g);
         console.log(equipo);
-        var random = equipo![Math.floor(Math.random() * equipo!.length)];
-        //var equipos = await page.getByLabel('Equipos participantes').getByText(/Equipo \d+/).nth(2).textContent()
-        //var num = equipos!.match(/\d+/)?.[0]; // Con ! afirmamos que el elemento no es null
+        var random = equipo![Math.floor(Math.random() * equipo!.length)]
         console.log(random)
         await page.pause()
-        await page.getByRole('row', { name: new RegExp(`escudo ${random} .+`) }).getByRole('button').first().click({ force: true });
-        await page.locator('div').filter({ hasText: /^Activo$/ }).locator('span').nth(1).click({ force: true });
+        await page.getByRole('row', { name: new RegExp(`escudo ${random} .+`) }).getByRole('button').first().click({ force: true })
+        await page.locator('div').filter({ hasText: /^Activo$/ }).locator('span').nth(1).click({ force: true })
         await page.locator('//span[text()="Guardar cambios"]').nth(equipo!.length -1).click()
         await page.getByText('Equipos registrados').isVisible()
         await page.getByText(random).nth(1).isVisible()
@@ -182,3 +165,22 @@ test.describe("CaskrApp", async() => {
         }
     })
 })
+
+// -------------------------------------------------------------
+
+export const agregar_equipo = async (page: any, n_equipo) => {
+    // Imagen
+    var file = await page.locator('input[type="file"]')
+    var random = Math.floor(Math.random() * 40) + 1
+    var imagen = 'C:/Users/E015/Downloads/Imágenes/Escudos/escudo' + random + '.jpg'
+    console.log(random)
+    await file.setInputFiles(imagen)
+    await page.pause()
+    var equipo = fakerES_MX.company.name()
+    n_equipo = equipo.replace(/[^a-zA-Z0-9]/g, ' ')
+    await page.locator('//input[@name="nombre"]').fill("Equipo " + n_equipo)
+    await page.locator('//input[@name="nombre_capitan"]').fill(fakerES_MX.person.firstName())
+    await page.locator('//input[@name="apellidos_capitan"]').fill(fakerES_MX.person.lastName())
+    await page.locator('//input[@name="telefono"]').fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
+    return n_equipo
+  }

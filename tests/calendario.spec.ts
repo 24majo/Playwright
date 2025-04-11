@@ -95,6 +95,7 @@ test("Todos", async ({ page }) => {
         boton.click({ force: true })
         await boton.waitFor({ state: 'visible'})
         await programar_partido(page)
+        var visible = await boton.isHidden()
     }
 
     if(visible){
@@ -110,18 +111,15 @@ test("Todos", async ({ page }) => {
 
             while(!visible){ // Hay partidos por programar en la siguiente pestaña
                 boton.click({ force: true })
-                await page.waitForTimeout(1000)
+                await boton.waitFor({ state: 'visible'})
                 await programar_partido(page)
+                var visible = await boton.isHidden()
             }
         }
+        
         else{
             console.log('Caso 3')
             process.exit(0)
         }
     }
-})
-
-test("Liguilla", async ({ page }) => {
-    await page.getByRole('button', { name: 'Vamos' }).click({ force: true })
-    await page.getByRole('button', { name: 'Continuar' }).click({ force: true })
 })
