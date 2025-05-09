@@ -56,7 +56,7 @@ test("Jornada", async({ page }) => {
         for(var j = 1; j <= count; j++) {
             console.log("Botón: " + j)
             await page.getByRole('button', { name: 'Programar' }).nth(j - 1).click({ force: true })
-            await programar_partido(page)
+            await (page)
             if(j != count){
                 await page.getByRole('tab', { name: new RegExp(`J - ${i}`)}).first().click({ force: true })
                 await page.waitForTimeout(1000)
@@ -74,8 +74,62 @@ test("Rondas", async ({ page }) => {
 
     for(var i = 0; i <= count; i++){
         await btn_program.nth(i).click({ force: true })
+        await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
+        await page.waitForTimeout(1000)
         await programar_partido(page)
     }
+    await page.pause()
+})
+
+test("Flex_Regular", async ({ page }) => {
+    await page.pause()
+    // await page.getByRole('button', { name: 'Nueva jornada' }).click()
+    // await page.getByRole('menuitem', { name: 'Jornada regular' }).click()
+    // await page.getByRole('button', { name: 'Empezar a programar' }).click()
+    await page.getByRole('tab', { name: 'Por jornadas' }).click()
+    await page.getByRole('button', { name: 'Agregar partido' }).click()
+    await page.getByRole('textbox', { name: 'Selecciona equipo local' }).click()
+    var local = page.locator('[data-combobox-option="true"][role="option"]:visible')
+    var count_l = await local.count()
+    console.log("Contador local: " + count_l)
+    var count_v = count_l-2
+    console.log("Contador visitante: " + count_v)
+    for(var i = 0; i < count_l/2; i++){
+        await local.nth(i).click()
+        await page.getByRole('textbox', { name: 'Selecciona equipo visitante' }).click()
+        var visitante = page.locator('[data-combobox-option="true"][role="option"]:visible')
+        var count_vis = await visitante.count()
+        console.log(count_vis)
+        await visitante.nth(count_v).click()
+        await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
+        await page.waitForTimeout(1000)
+        await page.locator('form').getByRole('button').filter({ hasText: /^$/ }).click()
+        await programar_partido(page)
+        count_v--
+        console.log("Contador visitante actualizado: " + count_v)
+        await page.getByRole('button', { name: 'Agregar partido' }).click()
+        await page.getByRole('textbox', { name: 'Selecciona equipo local' }).click()
+        await page.pause()
+    }
+})
+
+test("Flex_Eliminacion", async ({ page }) => {
+    await page.getByRole('button', { name: 'Nueva jornada' }).click()
+    await page.getByRole('menuitem', { name: 'Eliminación directa' }).click()
+    await page.getByRole('textbox', { name: '¿Cúantos equipos quieres' }).fill('4')
+    await page.getByRole('radio', { name: 'ida', exact: true }).click()
+    // await page.getByRole('radio', { name: 'ida y vuelta' }).click()
+    await page.getByRole('button', { name: 'Empezar a programar' }).click()
+    await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
+    await page.getByRole('button', { name: 'Si, continuar' }).click()
+    await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
+    await page.getByRole('tab', { name: 'Por rondas' }).click()
+    var programar = page.locator('div').filter({ hasText: `.+Programar partido.+` }).getByRole('button')
+    var count_p = await programar.count()
+
+    // for(var i = 0; i < count_p; i++){
+    //     await programar.click(i)
+    // }
     await page.pause()
 })
 
@@ -94,6 +148,8 @@ test("Todos", async ({ page }) => {
     while(!visible){
         boton.click({ force: true })
         await boton.waitFor({ state: 'visible'})
+        await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
+        await page.waitForTimeout(1000)
         await programar_partido(page)
         var visible = await boton.isHidden()
     }
@@ -112,6 +168,8 @@ test("Todos", async ({ page }) => {
             while(!visible){ // Hay partidos por programar en la siguiente pestaña
                 boton.click({ force: true })
                 await boton.waitFor({ state: 'visible'})
+                await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
+                await page.waitForTimeout(1000)
                 await programar_partido(page)
                 var visible = await boton.isHidden()
             }
@@ -123,3 +181,11 @@ test("Todos", async ({ page }) => {
         }
     }
 })
+
+//------------------------------------------------------------------
+
+async function Random(boton) {
+    var count = await boton.count()
+    var random = Math.floor(Math.random() * count)
+    await boton.nth(random).click({force: true })
+}

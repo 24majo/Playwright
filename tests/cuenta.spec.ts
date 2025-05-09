@@ -4,13 +4,12 @@ import { faker, fakerES_MX } from '@faker-js/faker'
 var inicio, fin
 
 export const login = async (page: Page) => {
-  // await page.goto('http://localhost:3000/auth')
-  await page.goto('https://caskr.app/auth')
+  await page.goto('http://localhost:3000/auth')
+  // await page.goto('https://caskr.app/auth')
   // await page.goto('https://dev.caskr.app/auth')
   
-  await page.getByTestId('inputCorreo').fill('prueba1@prueba.com')
+  await page.getByTestId('inputCorreo').fill('majo3@cuenta.com')
   await page.getByTestId('inputPassword').fill('12345678')
-  await page.pause()
   await page.getByTestId('crearCuenta').click()
   inicio = Date.now()
   await page.locator('text=Inicio').waitFor({ state: 'visible' })
@@ -56,6 +55,8 @@ export const desactivar = async (page: Page) => {
 }
 
 export const programar_partido = async (page: Page) => {
+  await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
+  await page.waitForTimeout(1000)
   await page.getByLabel('día').click({ force: true })
   var fecha1 = new Date()
   var mes = fecha1.toLocaleString('es-ES', { month: 'long' }) 
@@ -85,21 +86,21 @@ export const programar_partido = async (page: Page) => {
   await arbitro[random_a].click()
   await page.waitForTimeout(500)
 
-  var save_send = await page.getByRole('button', { name: 'Guardar y enviar'})
-  var enviar = await save_send.getAttribute('data-disabled')
+  // var save_send = await page.getByRole('button', { name: 'Guardar y enviar'})
+  // var enviar = await save_send.getAttribute('data-disabled')
 
-  if(enviar)
-    await page.getByRole('button', { name: "Guardar enfrentamiento" }).click({ force: true })
+  // if(enviar)
+    await page.getByRole('button', { name: "Guardar enfrentamiento" }).dblclick({ force: true })
 
-  else{
-    await save_send.click({ force: true })
-    await page.getByRole('button', { name: 'Sí, envíales el mensaje' }).click({ force: true })
-  }
-  
-  inicio = Date.now()
+  // else{
+  //   await save_send.click({ force: true })
+  //   await page.getByRole('button', { name: 'Sí, envíales el mensaje' }).click({ force: true })
+  // }
+  // await page.waitForTimeout(1000)
+  // inicio = Date.now()
   await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
-  fin = Date.now()
-  console.log("Tiempo de programación de partido: " + (fin - inicio) + "ms")
+  // fin = Date.now()
+  // console.log("Tiempo de programación de partido: " + (fin - inicio) + "ms")
 }
 
 export const jugador_existente = async (page: Page) => {

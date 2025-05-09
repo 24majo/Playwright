@@ -147,12 +147,13 @@ export const crear_torneo = async (page: Page) => {
 async function Modalidad(page:Page, mod) {
     await page.getByRole('button', {name: 'Crear torneo'}).click({ force: true})
 
-    var formato = 'Liga (ida y vuelta)'
-    // var formato = 'Liga'
+    // var formato = 'Liga (ida y vuelta)'
+    var formato = 'Liga'
     // var formato = 'Eliminación directa (ida y vuelta)'
     // var formato = 'Eliminación directa'
+    // var formato = 'Grupos'
 
-    await page.locator('//input[@name="nombre"]').fill(formato)
+    await page.locator('//input[@name="nombre"]').fill(formato + '(12)')
     await page.getByPlaceholder('Ej. Liga + Liguilla, Eliminacion directa').click()
     await page.waitForTimeout(500)
     await page.getByRole('option', { name: formato, exact: true }).click()
@@ -179,11 +180,11 @@ async function Modalidad(page:Page, mod) {
     await page.getByRole('button', { name: 'Siguiente' }).click()
     await page.waitForTimeout(1000)
     await page.locator('input[type="checkbox"]').nth(1).check()
-    for(var i = 0; i < 1; i++)
+    for(var i = 0; i < 6; i++)
         await page.locator('input[type="checkbox"]').nth(i).check()
     await page.getByRole('button', { name: 'Siguiente' }).click()
     await page.locator('input[type="checkbox"]').nth(1).check()
-    for(var i = 0; i < 2; i++)
+    for(var i = 0; i < 4; i++)
         await page.locator('input[type="checkbox"]').nth(i).check()
     await page.getByRole('button', { name: 'Siguiente' }).click()
     await page.getByRole('button', { name: 'Siguiente' }).click()
