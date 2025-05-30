@@ -65,7 +65,6 @@ test("Active Delete", async ({ page }) => {
     await boton.nth(b_eliminar).click({force: true })
 
     await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
-    await page.pause()
     var modal1 = await page.getByRole('heading', { name: '¿Estás seguro de eliminar el' }).isVisible()
     console.log("Modal confirmar eliminar: " + modal1)
     var modal2 = await page.getByRole('heading', { name: 'No puedes eliminar este torneo' }).isVisible()
@@ -96,12 +95,17 @@ test("Inactivo Eli", async ({ page }) => {
 
 test("Formal", async ({ page }) => {
     var mod = await page.getByRole('button', { name: 'Se parece a este' }).first()
-    await Modalidad( page, mod )
+    await Modalidad( page, mod, 0 )
 })
 
 test("Flexible", async ({ page }) => {
     var mod = await page.getByRole('button', { name: 'Se parece a este' }).nth(1)
-    await Modalidad( page, mod )
+    await Modalidad( page, mod, 0 )
+})
+
+test("Groups", async ({ page }) => {
+    var mod = await page.getByRole('button', { name: 'Se parece a este' }).first()
+    await Modalidad (page, mod, 1)
 })
 
 // ------------------------------------------------------------------------------------------------
@@ -144,16 +148,23 @@ export const crear_torneo = async (page: Page) => {
     await page.getByRole('button', { name: 'Finalizar Registro' }).click()
 }
 
-async function Modalidad(page:Page, mod) {
+async function Modalidad(page:Page, mod, num) {
+    var formato = ""
+    var equipos = 0
     await page.getByRole('button', {name: 'Crear torneo'}).click({ force: true})
 
-    // var formato = 'Liga (ida y vuelta)'
-    var formato = 'Liga'
-    // var formato = 'Eliminación directa (ida y vuelta)'
-    // var formato = 'Eliminación directa'
-    // var formato = 'Grupos'
+    if(num === 0){
+        // formato = 'Liga (ida y vuelta)'
+        // formato = 'Liga'
+        // formato = 'Eliminación directa (ida y vuelta)'
+        formato = 'Eliminación directa'
+    }
 
-    await page.locator('//input[@name="nombre"]').fill(formato + '(12)')
+    if(num === 1){
+        formato = 'Grupos'
+    }
+
+    await page.locator('//input[@name="nombre"]').fill(formato)
     await page.getByPlaceholder('Ej. Liga + Liguilla, Eliminacion directa').click()
     await page.waitForTimeout(500)
     await page.getByRole('option', { name: formato, exact: true }).click()
@@ -180,14 +191,24 @@ async function Modalidad(page:Page, mod) {
     await page.getByRole('button', { name: 'Siguiente' }).click()
     await page.waitForTimeout(1000)
     await page.locator('input[type="checkbox"]').nth(1).check()
-    for(var i = 0; i < 6; i++)
+    for(var i = 0; i < equipos; i++){
         await page.locator('input[type="checkbox"]').nth(i).check()
+    }
     await page.getByRole('button', { name: 'Siguiente' }).click()
     await page.locator('input[type="checkbox"]').nth(1).check()
-    for(var i = 0; i < 4; i++)
+    for(var i = 0; i < 10; i++)
         await page.locator('input[type="checkbox"]').nth(i).check()
+    await page.waitForTimeout(500)
     await page.getByRole('button', { name: 'Siguiente' }).click()
     await page.getByRole('button', { name: 'Siguiente' }).click()
+
+    if(num === 1){
+        await page.getByRole('textbox', { name: 'Cantidad de equipos por grupo' }).click()
+        var opciones = page.locator('[data-combobox-option="true"][role="option"]:visible')
+        await Random(opciones)
+        await page.getByRole('button', { name: 'Siguiente' }).click()
+    }
+
     await page.getByRole('button', { name: 'Finalizar Registro' }).click()
     inicio = Date.now()
     await page.locator('text=Mis Torneos').waitFor({ state: 'visible' })

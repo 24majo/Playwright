@@ -11,7 +11,7 @@ test.beforeEach(async ({ page }) => {
 
 test("Agregar", async ({ page }) => {
     await page.pause()
-    for(var i = 0; i < 4; i++) {
+    for(var i = 0; i < 10; i++) {
         await agregar_arbitro(page)
         await page.click('//span[text()="Agregar arbitro"]')
         inicio = Date.now()

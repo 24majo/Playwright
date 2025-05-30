@@ -4,13 +4,13 @@
 
 **Caso 1:** Seleccionar equipos antes de crear el torneo.
 **Caso 2:** Crear un nuevo equipo (Añadir equipo desde "Equipos")
-   - **Caso 2.1:** Con fixture generado.
+   - **Caso 2.1:** Con fixture generado
 
 **Caso 3:** Actualización de equipos (Elegir equipo desde "Mis torneos")
-   - **Caso 3.1:** Con fixture generado.
+   - **Caso 3.1:** Con fixture generado
 
 **Caso 4:** Equipo inactivo
-   - **Caso 4.1:** Con fixture generado.
+   - **Caso 4.1:** Con fixture generado
 
 **Caso 5:** Crear torneos sin equipos y cambiar el formato a grupos.
 
@@ -40,9 +40,8 @@
    - **Caso 1.2:** Modificar después de haber creado el torneo.
 
 **Caso 2:** Modificar el formato
-   - **Caso 2.1:** Cambiar un torneo de cualquier formato a fase de grupos.
+   - **Caso 2.1:** Cambiar un torneo de cualquier formato a fase de grupos
    - **Caso 2.2:** Cambiar de fase de grupos a otro formato y volver a grupos.
-   - **Caso 2.3:** Cambiar de fase de grupos a cualquier otro formato.
 
 ---
 

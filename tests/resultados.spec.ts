@@ -82,21 +82,27 @@ export const registrar_resultado = async (page: any, registrar) => {
             await page.getByRole('button', { name: 'Guardar' }).click({ force: true })
 
             inicio = Date.now()
-            // await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'}).toHaveCount(1, { timeout: 5000 })
             await page.getByRole('dialog', { name: /Registro de/i }).waitFor({ state: 'hidden' })
             fin = Date.now()
             console.log("Tiempo de registro de resultados: " + (fin - inicio) + "ms")
 
             // Compartir jornada
-            var share = await page.getByRole('button', { name: 'Compartir la jornada' }).isVisible()
-            console.log(share)
-            if(share){
-                await page.getByRole('button', { name: 'Guardar para luego' }).click()
-                // share.click()
-                // inicio = Date.now()
-                // await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
-                // fin = Date.now()
-                // console.log("Tiempo de jornada compartida: " + (fin - inicio) + "ms")
+            // var num = Math.floor(Math.random() * 2)
+            var num = 1
+            var share = await page.getByRole('button', { name: 'Compartir la jornada' })
+            var share_v = share.isVisible()
+            if(share_v){
+                if(num === 0){
+                    await page.getByRole('button', { name: 'Guardar para luego' }).click()
+                }
+                
+                else{
+                    share.click()
+                    inicio = Date.now()
+                    await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
+                    fin = Date.now()
+                    console.log("Tiempo de jornada compartida: " + (fin - inicio) + "ms")
+                }
             }
         }
     }

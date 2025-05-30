@@ -5,16 +5,15 @@ import { faker } from '@faker-js/faker'
 var inicio: any, fin: any
 
 test.beforeEach("Iniciar", async ({ page }) => {
-
     // await page.goto('https://caskr.app/auth')
-    await page.goto('https://dev.caskr.app/auth')
-    // await page.goto('http://localhost:3000/auth')
+    // await page.goto('https://dev.caskr.app/auth')
+    await page.goto('http://localhost:3000/auth')
     await page.getByRole('button', { name: 'Crear cuenta' }).click()
 })
 
 test("Correo", async ({ page }) => {
     var n_cuenta = Math.floor(1 + Math.random() * 300).toString()
-    var cuenta = 'majo' + n_cuenta + '@prueba.com'
+    var cuenta = 'pruebas' + n_cuenta + '@dominio.com'
     await page.getByTestId('inputCorreo').fill(cuenta)
     await Cuenta( page, cuenta, "Correo" )
 })
@@ -27,7 +26,7 @@ test("Numero", async ({ page }) => {
     await Cuenta( page, cuenta, "Numero" )
 })
 
-async function Cuenta( page: any, cuenta: String, tipo:  String ) {
+async function Cuenta( page: any, cuenta: String, tipo: String ) {
     await page.getByTestId('inputPassword').fill('12345678')
     await page.pause()
     await page.getByTestId('crearCuenta').click()

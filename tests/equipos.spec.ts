@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { faker, fakerES_MX } from '@faker-js/faker'
 import { login } from './cuenta.spec'
- 
+
 var inicio, fin
 
 test.describe("CaskrApp", async() => {
@@ -31,7 +31,7 @@ test.describe("CaskrApp", async() => {
                 process.exit(0)
             }
 
-            for(var i = 0; i < 3; i++){
+            for(var i = 0; i < 16; i++){
                 await agregar.click()
                 await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor()
                 var button = await page.getByRole('button', { name: 'Sí, estoy seguro' }).isVisible()
@@ -138,7 +138,7 @@ test.describe("CaskrApp", async() => {
     test("Eliminar", async ({ page }) => {
         // Caso 1: Eliminar equipo con éxito
         // Caso 2: No eliminar equipo por pendientes de agenda
-        for(var i = 0; i < 12; i++){
+        for(var i = 0; i < 8; i++){
             var msj = page.locator('p:has-text("No puedes eliminar este")')
             var participantes = await page.getByLabel('Equipos participantes').innerText()
             var equipo = participantes.match(/Equipo \w+/g)
@@ -176,11 +176,11 @@ export const agregar_equipo = async (page: any, n_equipo) => {
     console.log(random)
     await file.setInputFiles(imagen)
     await page.pause()
-    var equipo = fakerES_MX.company.name()
+    var equipo = fakerES_MX.animal.petName()
     n_equipo = equipo.replace(/[^a-zA-Z0-9]/g, ' ')
     await page.locator('//input[@name="nombre"]').fill("Equipo " + n_equipo)
     await page.locator('//input[@name="nombre_capitan"]').fill(fakerES_MX.person.firstName())
     await page.locator('//input[@name="apellidos_capitan"]').fill(fakerES_MX.person.lastName())
     await page.locator('//input[@name="telefono"]').fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
     return n_equipo
-  }
+}

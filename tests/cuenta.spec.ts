@@ -8,8 +8,12 @@ export const login = async (page: Page) => {
   // await page.goto('https://caskr.app/auth')
   // await page.goto('https://dev.caskr.app/auth')
   
-  await page.getByTestId('inputCorreo').fill('majo3@cuenta.com')
+  await page.getByTestId('inputCorreo').fill('pruebas1@dominio.com')
+  // await page.getByTestId('inputCorreo').fill('majo3@cuenta.com')
+  // await page.getByTestId('inputCorreo').fill('majo175@prueba.com')
+    // await page.getByTestId('inputCorreo').fill('majo58@prueba.com')
   await page.getByTestId('inputPassword').fill('12345678')
+  // await page.pause()
   await page.getByTestId('crearCuenta').click()
   inicio = Date.now()
   await page.locator('text=Inicio').waitFor({ state: 'visible' })
@@ -30,10 +34,9 @@ export const desactivar = async (page: Page) => {
 
     for (var i = 0; i <= numero!; i++)
       await page.getByRole('checkbox', { name: 'Escudo equipo Equipo: ', exact: false }).nth(i).click()
-    
-    await page.getByRole('button', { name: 'Continuar' }).click()
-    await page.getByRole('button', { name: 'Si, continuar' }).click()
-    await page.pause()
+      await page.getByRole('button', { name: 'Continuar' }).click()
+      await page.getByRole('button', { name: 'Si, continuar' }).click()
+      await page.pause()
   }
 
   var torneos = await page.locator('text=Seleccionar los torneos').isVisible()
@@ -71,20 +74,30 @@ export const programar_partido = async (page: Page) => {
   var minuto = minutos.toString().padStart(2, '0')
   await page.locator('input[type="time"]').fill(hora + ':' + minuto)
   await page.waitForTimeout(500)
-  await page.getByPlaceholder('Selecciona la cancha').click({ force: true })
-  await page.waitForTimeout(500)
   
-  await page.getByRole('option', { name: new RegExp(`Cancha .+`)})
-  var cancha = await page.locator('[data-combobox-option="true"][role="option"]:visible').all()
-  var random_c = Math.floor(Math.random() * cancha.length)
-  await cancha[random_c].click()
-  await page.waitForTimeout(1000)
+  var cancha = await page.locator('input[aria-haspopup="listbox"]').nth(0)
+  var cancha_i = await cancha.isDisabled()
 
-  await page.getByPlaceholder('Selecciona al árbitro').click({ force: true })
-  var arbitro = await page.locator('[data-combobox-option="true"][role="option"]:visible').all()
-  var random_a = Math.floor(Math.random() * arbitro.length)
-  await arbitro[random_a].click()
-  await page.waitForTimeout(500)
+  if(!cancha_i){
+    await cancha.click({ force: true })
+    await page.waitForTimeout(500)
+    await page.getByRole('option', { name: new RegExp(`Cancha .+`)})
+    var data_c = await page.locator('[data-combobox-option="true"][role="option"]:visible').all()
+    var random_c = Math.floor(Math.random() * data_c.length)
+    await cancha[random_c].click()
+    await page.waitForTimeout(1000)
+  }
+
+  var arbitro_i = await page.locator('input[aria-haspopup="listbox"]').nth(1)
+  var arbitro_dis = await arbitro_i.isDisabled()
+
+  if(!arbitro_dis){
+    await arbitro_i.click({ force: true })
+    var arbitro = await page.locator('[data-combobox-option="true"][role="option"]:visible').all()
+    var random_a = Math.floor(Math.random() * arbitro.length)
+    await arbitro[random_a].click()
+    await page.waitForTimeout(500)
+  }
 
   // var save_send = await page.getByRole('button', { name: 'Guardar y enviar'})
   // var enviar = await save_send.getAttribute('data-disabled')
@@ -96,11 +109,11 @@ export const programar_partido = async (page: Page) => {
   //   await save_send.click({ force: true })
   //   await page.getByRole('button', { name: 'Sí, envíales el mensaje' }).click({ force: true })
   // }
-  // await page.waitForTimeout(1000)
-  // inicio = Date.now()
+  await page.waitForTimeout(1000)
+  inicio = Date.now()
   await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
-  // fin = Date.now()
-  // console.log("Tiempo de programación de partido: " + (fin - inicio) + "ms")
+  fin = Date.now()
+  console.log("Tiempo de programación de partido: " + (fin - inicio) + "ms")
 }
 
 export const jugador_existente = async (page: Page) => {
