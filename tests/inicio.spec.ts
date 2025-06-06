@@ -22,7 +22,7 @@ test("Jornada", async ({ page }) => {
             await dia.nth(j-1).click({ force: true })
             await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
             await page.waitForTimeout(1000)
-            programar_partido(page)
+            programar_partido(page, 0)
             await page.pause()
         }
         

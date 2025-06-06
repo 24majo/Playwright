@@ -76,7 +76,7 @@ test("Rondas", async ({ page }) => {
         await btn_program.nth(i).click({ force: true })
         await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
         await page.waitForTimeout(1000)
-        await programar_partido(page)
+        await programar_partido(page, 0)
     }
     await page.pause()
 })
@@ -102,7 +102,7 @@ test("Flex_Regular", async ({ page }) => {
         await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
         await page.waitForTimeout(1000)
         await page.locator('form').getByRole('button').filter({ hasText: /^$/ }).click()
-        await programar_partido(page)
+        await programar_partido(page, 1)
         count_v--
         await page.getByRole('button', { name: 'Agregar partido' }).click()
         await page.getByRole('textbox', { name: 'Selecciona equipo local' }).click()
@@ -147,7 +147,7 @@ test("Todos", async ({ page }) => {
         await boton.waitFor({ state: 'visible'})
         await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
         await page.waitForTimeout(1000)
-        await programar_partido(page)
+        await programar_partido(page, 0)
         var visible = await boton.isHidden()
     }
 
@@ -167,7 +167,7 @@ test("Todos", async ({ page }) => {
                 await boton.waitFor({ state: 'visible'})
                 await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
                 await page.waitForTimeout(1000)
-                await programar_partido(page)
+                await programar_partido(page, 0)
                 var visible = await boton.isHidden()
             }
         }

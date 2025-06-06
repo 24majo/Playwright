@@ -57,7 +57,7 @@ export const desactivar = async (page: Page) => {
   }
 }
 
-export const programar_partido = async (page: Page) => {
+export const programar_partido = async (page: Page, flexible: number) => {
   await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
   await page.waitForTimeout(1000)
   await page.getByLabel('día').click({ force: true })
@@ -73,9 +73,17 @@ export const programar_partido = async (page: Page) => {
   var hora = horas.toString().padStart(2, '0');
   var minuto = minutos.toString().padStart(2, '0')
   await page.locator('input[type="time"]').fill(hora + ':' + minuto)
-  await page.waitForTimeout(500)
+  await page.waitForTimeout(1000)
   
-  var cancha = await page.locator('input[aria-haspopup="listbox"]').nth(0)
+  var cancha: any
+  var arbitro_i: any
+
+  if(flexible === 1){
+    cancha = await page.locator('input[aria-haspopup="listbox"]').nth(2)
+  }else{
+    cancha = await page.locator('input[aria-haspopup="listbox"]').nth(0)
+  }
+  
   var cancha_i = await cancha.isDisabled()
 
   if(!cancha_i){
@@ -88,7 +96,12 @@ export const programar_partido = async (page: Page) => {
     await page.waitForTimeout(1000)
   }
 
-  var arbitro_i = await page.locator('input[aria-haspopup="listbox"]').nth(1)
+  if(flexible === 1){
+    arbitro_i = await page.locator('input[aria-haspopup="listbox"]').nth(3)
+  }else{
+    arbitro_i = await page.locator('input[aria-haspopup="listbox"]').nth(1)
+  }
+
   var arbitro_dis = await arbitro_i.isDisabled()
 
   if(!arbitro_dis){
@@ -226,4 +239,116 @@ export const EditInfo = async (page: Page) => {
 
   console.log("Caso 1")
   await page.pause()
+}
+
+export const crear_torneo = async (page: Page) => {
+    await page.locator('//input[@name="nombre"]').fill('Liga')
+    var formato = ['Eliminación directa','Eliminación directa (ida y vuelta)','Liga','Liga (ida y vuelta)']
+    var t_formato = formato[Math.floor(Math.random() * formato.length)]
+    await page.getByPlaceholder('Ej. Liga + Liguilla, Eliminacion directa').click()
+    await page.waitForTimeout(500)
+    await page.getByRole('option', { name: t_formato, exact: true }).click()
+    await page.waitForTimeout(500)
+    var sexo = ['Varonil', 'Femenil']
+    var categoria = sexo[Math.floor(Math.random() * sexo.length)]
+    await page.getByPlaceholder('Ej. Varonil').click()
+    await page.waitForTimeout(500)
+    await page.getByRole('option', { name: categoria }).click()
+    await page.waitForTimeout(500);
+    await page.getByLabel('dd-mm-aaaa').click()
+    var fecha = new Date()
+    var dia = fecha.getDate() 
+    var mes = fecha.toLocaleString('es-ES', { month: 'long' }) 
+    await page.getByRole('cell', { name: dia + " " + mes }).first().click()
+    await page.locator('[aria-haspopup="listbox"]').nth(2).click({force: true})
+    await page.waitForTimeout(500)
+    var options = await page.locator('[data-combobox-option="true"][role="option"]:visible').all()
+    var random = Math.floor(Math.random() * options.length)
+    await options[random].click()
+    await page.waitForTimeout(500)
+    await page.getByRole('button', { name: 'Siguiente' }).click()
+    await page.getByRole('button', { name: 'Se parece a este' }).first().click()
+    await page.getByPlaceholder('Seleccione la opción').click()
+    var options = await page.locator('[data-combobox-option="true"][role="option"]:visible').all()
+    var random = Math.floor(Math.random() * options.length)
+    await options[random].click()
+    await page.getByRole('button', { name: 'Siguiente' }).click()
+    await page.getByRole('button', { name: 'Siguiente' }).click()
+    await page.getByRole('button', { name: 'Siguiente' }).click()
+    await page.getByRole('button', { name: 'Siguiente' }).click()
+    await page.getByRole('button', { name: 'Finalizar Registro' }).click()
+}
+
+export const Modalidad = async (page:Page, mod: any, num: number, equipos: number, formato: string) => {
+  await page.getByRole('button', {name: 'Crear torneo'}).click({ force: true})
+
+  // if(num === 0){
+  //     formato = 'Liga (ida y vuelta)'
+  //     formato = 'Liga'
+  //     formato = 'Eliminación directa (ida y vuelta)'
+  //     formato = 'Eliminación directa'
+  // }
+
+  // if(num === 1){
+  //     formato = 'Grupos'
+  // }
+
+  await page.locator('//input[@name="nombre"]').fill(formato)
+  await page.getByPlaceholder('Ej. Liga + Liguilla, Eliminacion directa').click()
+  await page.waitForTimeout(500)
+  await page.getByRole('option', { name: formato, exact: true }).click()
+  await page.waitForTimeout(500)
+  await page.getByPlaceholder('Ej. Varonil').click()
+  var opciones = page.locator('[data-combobox-option="true"][role="option"]:visible')
+  await Random(opciones)
+  await page.waitForTimeout(500)
+  await page.getByLabel('dd-mm-aaaa').click()
+  var fecha = new Date()
+  var dia = fecha.getDate() 
+  var mes = fecha.toLocaleString('es-ES', { month: 'long' }) 
+  await page.getByRole('cell', { name: dia + " " + mes }).first().click()
+  await page.locator('[aria-haspopup="listbox"]').nth(2).click({force: true})
+  await page.waitForTimeout(500)
+  var opciones = page.locator('[data-combobox-option="true"][role="option"]:visible')
+  await Random(opciones)
+  await page.waitForTimeout(500)
+  await page.getByRole('button', { name: 'Siguiente' }).click()
+  await mod.click()
+  await page.getByPlaceholder('Seleccione la opción').click()
+  var opciones = page.locator('[data-combobox-option="true"][role="option"]:visible')
+  await Random(opciones)
+  await page.getByRole('button', { name: 'Siguiente' }).click()
+  await page.waitForTimeout(1000)
+  await page.locator('input[type="checkbox"]').nth(1).check()
+  for(var i = 0; i < equipos; i++){
+      await page.locator('input[type="checkbox"]').nth(i).check()
+  }
+  await page.getByRole('button', { name: 'Siguiente' }).click()
+  await page.locator('input[type="checkbox"]').nth(1).check()
+  for(var i = 0; i < 5; i++)
+      await page.locator('input[type="checkbox"]').nth(i).check()
+  await page.waitForTimeout(500)
+  await page.getByRole('button', { name: 'Siguiente' }).click()
+  await page.getByRole('button', { name: 'Siguiente' }).click()
+
+  if(num === 1){
+      await page.getByRole('textbox', { name: 'Cantidad de equipos por grupo' }).click()
+      var opciones = page.locator('[data-combobox-option="true"][role="option"]:visible')
+      await Random(opciones)
+      await page.getByRole('button', { name: 'Siguiente' }).click()
+  }
+
+  await page.getByRole('button', { name: 'Finalizar Registro' }).click()
+  inicio = Date.now()
+  await page.locator('text=Mis Torneos').waitFor({ state: 'visible' })
+  fin = Date.now()
+  console.log("Tiempo de creación de torneo: " + (fin - inicio) + "ms")
+  await page.waitForTimeout(2000)
+}
+
+async function Random(boton) {
+  var count = await boton.count()
+  var random = Math.floor(Math.random() * count)
+  console.log(random)
+  await boton.nth(random).click({force: true })
 }

@@ -1,5 +1,5 @@
 import { test } from '@playwright/test'
-import { crear_torneo } from './torneos.spec'
+import { crear_torneo } from './cuenta.spec'
 import { faker } from '@faker-js/faker'
 
 var inicio: any, fin: any

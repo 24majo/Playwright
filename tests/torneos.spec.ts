@@ -1,7 +1,9 @@
 import { test, expect, Page } from '@playwright/test'
-import { login, desactivar } from './cuenta.spec'
+import { login, desactivar, Modalidad, crear_torneo } from './cuenta.spec'
 
 var inicio, fin
+var formato: string
+var equipos: number
 
 test.beforeEach(async ({ page }) => {
     await login(page)
@@ -93,128 +95,29 @@ test("Inactivo Eli", async ({ page }) => {
     await page.pause()
 })
 
+formato = 'Liga (ida y vuelta)'
+formato = 'Liga'
+formato = 'Eliminación directa (ida y vuelta)'
+formato = 'Eliminación directa'
+formato = 'Grupos'
+equipos = 8
+
 test("Formal", async ({ page }) => {
     var mod = await page.getByRole('button', { name: 'Se parece a este' }).first()
-    await Modalidad( page, mod, 0 )
+    await Modalidad( page, mod, 0, equipos, formato )
 })
 
 test("Flexible", async ({ page }) => {
     var mod = await page.getByRole('button', { name: 'Se parece a este' }).nth(1)
-    await Modalidad( page, mod, 0 )
+    await Modalidad( page, mod, 0, equipos, formato )
 })
 
 test("Groups", async ({ page }) => {
     var mod = await page.getByRole('button', { name: 'Se parece a este' }).first()
-    await Modalidad (page, mod, 1)
+    await Modalidad (page, mod, 1, equipos, formato )
 })
 
 // ------------------------------------------------------------------------------------------------
-
-export const crear_torneo = async (page: Page) => {
-    await page.locator('//input[@name="nombre"]').fill('Liga')
-    var formato = ['Eliminación directa','Eliminación directa (ida y vuelta)','Liga','Liga (ida y vuelta)']
-    var t_formato = formato[Math.floor(Math.random() * formato.length)]
-    await page.getByPlaceholder('Ej. Liga + Liguilla, Eliminacion directa').click()
-    await page.waitForTimeout(500)
-    await page.getByRole('option', { name: t_formato, exact: true }).click()
-    await page.waitForTimeout(500)
-    var sexo = ['Varonil', 'Femenil']
-    var categoria = sexo[Math.floor(Math.random() * sexo.length)]
-    await page.getByPlaceholder('Ej. Varonil').click()
-    await page.waitForTimeout(500)
-    await page.getByRole('option', { name: categoria }).click()
-    await page.waitForTimeout(500);
-    await page.getByLabel('dd-mm-aaaa').click()
-    var fecha = new Date()
-    var dia = fecha.getDate() 
-    var mes = fecha.toLocaleString('es-ES', { month: 'long' }) 
-    await page.getByRole('cell', { name: dia + " " + mes }).first().click()
-    await page.locator('[aria-haspopup="listbox"]').nth(2).click({force: true})
-    await page.waitForTimeout(500)
-    var options = await page.locator('[data-combobox-option="true"][role="option"]:visible').all()
-    var random = Math.floor(Math.random() * options.length)
-    await options[random].click()
-    await page.waitForTimeout(500)
-    await page.getByRole('button', { name: 'Siguiente' }).click()
-    await page.getByRole('button', { name: 'Se parece a este' }).first().click()
-    await page.getByPlaceholder('Seleccione la opción').click()
-    var options = await page.locator('[data-combobox-option="true"][role="option"]:visible').all()
-    var random = Math.floor(Math.random() * options.length)
-    await options[random].click()
-    await page.getByRole('button', { name: 'Siguiente' }).click()
-    await page.getByRole('button', { name: 'Siguiente' }).click()
-    await page.getByRole('button', { name: 'Siguiente' }).click()
-    await page.getByRole('button', { name: 'Siguiente' }).click()
-    await page.getByRole('button', { name: 'Finalizar Registro' }).click()
-}
-
-async function Modalidad(page:Page, mod, num) {
-    var formato = ""
-    var equipos = 0
-    await page.getByRole('button', {name: 'Crear torneo'}).click({ force: true})
-
-    if(num === 0){
-        // formato = 'Liga (ida y vuelta)'
-        // formato = 'Liga'
-        // formato = 'Eliminación directa (ida y vuelta)'
-        formato = 'Eliminación directa'
-    }
-
-    if(num === 1){
-        formato = 'Grupos'
-    }
-
-    await page.locator('//input[@name="nombre"]').fill(formato)
-    await page.getByPlaceholder('Ej. Liga + Liguilla, Eliminacion directa').click()
-    await page.waitForTimeout(500)
-    await page.getByRole('option', { name: formato, exact: true }).click()
-    await page.waitForTimeout(500)
-    await page.getByPlaceholder('Ej. Varonil').click()
-    var opciones = page.locator('[data-combobox-option="true"][role="option"]:visible')
-    await Random(opciones)
-    await page.waitForTimeout(500)
-    await page.getByLabel('dd-mm-aaaa').click()
-    var fecha = new Date()
-    var dia = fecha.getDate() 
-    var mes = fecha.toLocaleString('es-ES', { month: 'long' }) 
-    await page.getByRole('cell', { name: dia + " " + mes }).first().click()
-    await page.locator('[aria-haspopup="listbox"]').nth(2).click({force: true})
-    await page.waitForTimeout(500)
-    var opciones = page.locator('[data-combobox-option="true"][role="option"]:visible')
-    await Random(opciones)
-    await page.waitForTimeout(500)
-    await page.getByRole('button', { name: 'Siguiente' }).click()
-    await mod.click()
-    await page.getByPlaceholder('Seleccione la opción').click()
-    var opciones = page.locator('[data-combobox-option="true"][role="option"]:visible')
-    await Random(opciones)
-    await page.getByRole('button', { name: 'Siguiente' }).click()
-    await page.waitForTimeout(1000)
-    await page.locator('input[type="checkbox"]').nth(1).check()
-    for(var i = 0; i < equipos; i++){
-        await page.locator('input[type="checkbox"]').nth(i).check()
-    }
-    await page.getByRole('button', { name: 'Siguiente' }).click()
-    await page.locator('input[type="checkbox"]').nth(1).check()
-    for(var i = 0; i < 10; i++)
-        await page.locator('input[type="checkbox"]').nth(i).check()
-    await page.waitForTimeout(500)
-    await page.getByRole('button', { name: 'Siguiente' }).click()
-    await page.getByRole('button', { name: 'Siguiente' }).click()
-
-    if(num === 1){
-        await page.getByRole('textbox', { name: 'Cantidad de equipos por grupo' }).click()
-        var opciones = page.locator('[data-combobox-option="true"][role="option"]:visible')
-        await Random(opciones)
-        await page.getByRole('button', { name: 'Siguiente' }).click()
-    }
-
-    await page.getByRole('button', { name: 'Finalizar Registro' }).click()
-    inicio = Date.now()
-    await page.locator('text=Mis Torneos').waitFor({ state: 'visible' })
-    fin = Date.now()
-    console.log("Tiempo de creación de torneo: " + (fin - inicio) + "ms")
-}
 
 async function Random(boton) {
     var count = await boton.count()
