@@ -15,31 +15,31 @@ test.beforeEach(async ({ page }) => {
 test("1. Liga", async ({ page }) => {
     await FormatMod(page, "Formal", 0, 8, 'Liga')
     await Formato(page, 0, "Formal")
-    await ResultadoLiga(page, 0)
+    await Results(page, 0, "Liga")
 })
 
 test("2. Liga vuelta", async ({ page }) => {
     await FormatMod(page, "Formal", 0, 8, 'Liga (ida y vuelta)')
     await Formato(page, 0, "Formal")
-    await ResultadoLiga(page, 0)
+    await Results(page, 0, "Liga")
 })
 
 test("3. Eliminacion directa", async ({ page }) => {
     await FormatMod(page, "Formal", 0, 8, 'Eliminación directa')
     await Formato(page, 0, "Formal")
-    await ResultadoEliminacion(page)
+    await Results(page, 0, "Eliminación directa")
 })
 
 test("4. Eliminacion directa vuelta", async ({ page }) => {
     await FormatMod(page, "Formal", 0, 8, 'Eliminación directa (ida y vuelta)')
     await Formato(page, 0, "Formal")
-    await ResultadoEliminacionVuelta(page)
+    await Results(page, 0, "Eliminación directa (ida y vuelta)")
 })
 
 test("5. Grupos", async ({ page }) => {
     await FormatMod(page, "Formal", 1, 8, "Grupos")
     await Formato(page, 1, "Formal")
-    await ResultadoLiga(page, 1)
+    await Results(page, 1, "Liga")
 })
 
 // --------------------- Torneos Flexibles -----------------------------
@@ -47,27 +47,25 @@ test("5. Grupos", async ({ page }) => {
 test("6. Eliminación Flexible", async ({ page }) => {
     await FormatMod(page, "Flexible", 0, 8, 'Eliminación directa')
     await Formato(page, 0, "Flexible")
-    await ResultadoEliminacion(page)
+    await Results(page, 0, "Eliminación directa")
 })
 
 test("7. Eliminación Flexible vuelta", async ({ page }) => {
     await FormatMod(page, "Flexible", 0, 8, 'Eliminación directa (ida y vuelta)')
     await Formato(page, 0, "Flexible")
-    await ResultadoEliminacionVuelta(page)
+    await Results(page, 0, "Eliminación directa (ida y vuelta)")
 })
 
 test("8. Liga Flexible", async ({ page }) => {
     await FormatMod(page, "Flexible", 0, 8, 'Liga')
     await Formato(page, 0, "Flex_Liga")
-    await ResultadoLiga(page, 0)
-    await page.pause()
+    await Results(page, 0, "Liga")
 })
 
 test("9. Liga Flexible vuelta", async ({ page }) => {
     await FormatMod(page, "Flexible", 0, 8, 'Liga (ida y vuelta)')
     await Formato(page, 0, "Flex_Liga")
-    await ResultadoLiga(page, 0)
-    await page.pause()
+    await Results(page, 0, "Liga")
 })
 
 // ---------------------------------------------------------------------
@@ -84,27 +82,22 @@ async function FormatMod(page: any, modalidad: String, Group: number, equipos: n
     await page.getByRole('tab', { name: 'Torneos activos' }).waitFor({ state: 'visible' })
 }
 
-async function ResultadoLiga(page: any, Group: number) {
-    await page.getByRole('link', { name: 'Resultados' }).click({ force: true })
-    await page.getByRole('tab', { name: 'Resultados' }).waitFor({ state: 'visible' })
-    await page.getByRole('row', { name: new RegExp(`.+ Registrar`)}).getByRole('button').first().click({ force: true })
-    await Results(page, Group)
-}
-
-async function ResultadoEliminacion(page: any) {
-    await page.getByRole('link', { name: 'Resultados' }).click({ force: true })
-    await page.getByRole('button', { name: 'Registrar' }).first().click({ force: true })
-    await Results(page, 0) 
-}
-
-async function ResultadoEliminacionVuelta(page: any) {
+async function Results(page:any, Group: number, formato: string) {
     await page.getByRole('link', { name: 'Resultados' }).click()
     await page.locator('text=Registro de resultados').waitFor({ state: 'visible' })
-    await page.getByRole('button', { name: 'Registrar Ida' }).first().click({ force: true })
-    await Results(page, 0)
-}
 
-async function Results(page:any, Group: number) {
+    if(formato == "Liga"){
+        await page.getByRole('row', { name: new RegExp(`.+ Registrar`)}).getByRole('button').first().click({ force: true })
+    }
+
+    if(formato == "Eliminación directa") {
+        await page.getByRole('button', { name: 'Registrar' }).first().click({ force: true })
+    }
+
+    if(formato == "Eliminación directa (ida y vuelta)") {
+        await page.getByRole('button', { name: 'Registrar Ida' }).first().click({ force: true })
+    }
+
     await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
     var random = [Math.floor(Math.random() * 10) + 1].toString()
     await page.locator('input[name="puntos_local"]').fill(random)
@@ -214,24 +207,7 @@ async function OpcionesTorneo(page: any, Group: number) {
     await page.waitForTimeout(2000)
     var btn_Agregar = await page.getByRole('button', { name: 'Agregar equipo' })
     var Agr_dis = await btn_Agregar.getAttribute('data-disabled')
-    
-    if (Agr_dis) {
-        console.log("1. Botón 'Agregar equipo' deshabilitado")
-    }
-    else {
-        console.log("1. Botón 'Agregar equipo' habilitado") 
-        await btn_Agregar.click({ force: true })
-        await page.waitForTimeout(1000)
-
-        var cancel = await page.getByRole('button', { name: 'No, Cancelar' })
-        var cancel_visible = await cancel.isVisible()
-        
-        if(cancel_visible){
-            await cancel.click({ force: true })
-        }else{
-            await page.getByRole('banner').getByRole('button').click({ force: true })
-        }
-    }
+    await Elements(page, Agr_dis, "Agregar equipo")
 
     await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden' })
     await page.waitForTimeout(1000)
@@ -259,37 +235,16 @@ async function OpcionesTorneo(page: any, Group: number) {
     await page.waitForTimeout(2000)
     var formato = await page.locator('input[data-testid="selectFormatoCompetencia"]')
     var formato_dis = await formato.getAttribute('data-disabled')
-    
-    if (formato_dis) {
-        console.log("3. Input 'Formato del torneo' deshabilitado")
-    }
-    else {
-        console.log("3. Input 'Formato del torneo' habilitado")
-        await formato.click({ force: true })
-    }
+    await Elements(page, formato_dis, "Formato del torneo")
 
     var modalidad = await page.locator('input[placeholder="Ej. Formal, Flexible"]')
     var modal_dis = await modalidad.getAttribute('data-disabled')
-    
-    if(modal_dis) {
-        console.log("4. Input 'Modalidad' deshabilitado")
-    }
-    else{
-        console.log("4. Input 'Modalidad' habilitado")
-        await modalidad.click({ force: true })
-    }
+    await Elements(page, modal_dis, "Modalidad")
 
     await page.waitForTimeout(1000)
     var select_equipo = await page.locator('input[placeholder="Selecciona los equipos"]')
     var select_dis = await select_equipo.getAttribute('data-disabled')
-
-    if (select_dis) {   
-        console.log("5. Input 'Añadir equipos' deshabilitado")
-    }
-    else {
-        console.log("5. Input 'Añadir equipos' habilitado")
-        await select_equipo.click({ force: true })
-    }
+    await Elements(page, select_dis, "Añadir equipos")
     
     await page.waitForTimeout(2000)
     await page.getByRole('banner').getByRole('button').click({ force: true })
@@ -308,5 +263,30 @@ async function OpcionesTorneo(page: any, Group: number) {
         }
 
         await page.waitForTimeout(2000)
+    }
+}
+
+// ---------------------------------------------------------------------
+
+async function Elements(page: any, elemento: any, mensaje: string) {
+    var element_dis = await elemento.getAttribute('data-disabled')
+
+    if (element_dis) {   
+        console.log("5. Input '"+ mensaje + "' deshabilitado")
+    }
+    else {
+        console.log("5. Input '"+ mensaje + "' habilitado")
+        await elemento.click({ force: true })
+
+        if(mensaje === "Agregar equipo") {
+            var cancel = await page.getByRole('button', { name: 'No, Cancelar' })
+            var cancel_visible = await cancel.isVisible()
+            
+            if(cancel_visible){
+                await cancel.click({ force: true })
+            }else{
+                await page.getByRole('banner').getByRole('button').click({ force: true })
+            }
+        }
     }
 }
