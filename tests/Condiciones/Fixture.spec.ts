@@ -1,6 +1,4 @@
-// Objetivo: Verifica que los elementos que puedan eliminar el Fixture generen
-// o no un modal de advertencia de que el fixture será eliminado. Aplican ciertas
-// condiciones de acuerdo con la modalidad y el formato del torneo.
+// Objetivo: Verifica que los elementos que puedan eliminar el Fixture generen o no un modal de advertencia de que el fixture será eliminado. Aplican ciertas condiciones de acuerdo con la modalidad y el formato del torneo.
 
 import { test } from '@playwright/test'
 import { login, Modalidad } from '../cuenta.spec'

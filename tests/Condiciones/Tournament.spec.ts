@@ -1,3 +1,5 @@
+//Objetivo: Verificar que los elementos que eliminan un fixture se comporten correctamente al crear, programar partidos y registrar resultados.
+
 import { test } from '@playwright/test'
 import { login } from "../cuenta.spec";
 import { Modalidad, programar_partido } from "../cuenta.spec"
@@ -193,7 +195,6 @@ async function Formato(page: any, Group: number, modalidad: string) {
         await programar_partido(page, 1)
     }
     
-    // Después de programar un partido y antes de registrar un resultado, las opciones deben estar habilitadas
     console.log("")
     console.log("Después de programar un partido")
     await OpcionesTorneo(page, Group)
@@ -220,10 +221,10 @@ async function OpcionesTorneo(page: any, Group: number) {
     var is_active = await check_active.isDisabled()
 
     if (is_active) {
-        console.log("2. Input 'Estatus' deshabilitado")
+        console.log("Input 'Estatus' deshabilitado")
     }
     else{
-        console.log("2. Input 'Estatus' habilitado")
+        console.log("Input 'Estatus' habilitado")
         await check_active.click({ force: true })
     }
 
@@ -257,9 +258,9 @@ async function OpcionesTorneo(page: any, Group: number) {
         var eliminar_dis = await eliminar.isVisible()
 
         if(eliminar_dis){
-            console.log("6. Botón 'Eliminar Grupos' visible")
+            console.log("Botón 'Eliminar Grupos' visible")
         }else{
-            console.log("6. Botón 'Eliminar Grupos' invisible")
+            console.log("Botón 'Eliminar Grupos' invisible")
         }
 
         await page.waitForTimeout(2000)

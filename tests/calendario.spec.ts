@@ -33,7 +33,6 @@ test("Generar", async ({ page }) => {
             await page.getByRole('tab', { name: 'Por jornadas' }).waitFor({ state: 'visible' })
             fin = Date.now()
             console.log("Tiempo de generación de calendario: " + (fin - inicio) + "ms")
-            
         }
     }
 })
