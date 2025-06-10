@@ -17,6 +17,7 @@ export const login = async (page: Page) => {
   await page.getByTestId('crearCuenta').click()
   inicio = Date.now()
   await page.locator('text=Inicio').waitFor({ state: 'visible' })
+  await page.getByRole('button', { name: 'Compartir Torneo' }).waitFor({ state: 'visible' })  
   fin = Date.now()
   console.log("Tiempo de inicio de sesión: " + (fin - inicio) + "ms")
   await desactivar(page)

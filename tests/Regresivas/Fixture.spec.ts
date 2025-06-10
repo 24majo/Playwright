@@ -6,7 +6,6 @@ import { login, Modalidad } from '../cuenta.spec'
 test.beforeEach(async ({ page }) => {  
     await login(page)
     await page.pause()
-    await page.getByRole('button', { name: 'Compartir Torneo' }).waitFor({ state: 'visible' })  
     await page.getByRole('link', { name: 'Mis torneos' }).click({ force: true })
     await page.getByRole('tab', { name: 'Torneos activos' }).waitFor({ state: 'visible' })
 })

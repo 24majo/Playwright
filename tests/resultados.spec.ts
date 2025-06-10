@@ -49,19 +49,45 @@ test("Liga", async ({ page }) => {
 })
 
 // Test al generar liguilla
-test("LiguillaIda", async ({ page }) => {
-    await page.getByRole('button', { name: 'Vamos' }).click({ force: true })
-    await page.getByRole('textbox', { name: '¿Cúantos equipos quieres' }).fill('8')
-    await page.getByRole('radio', { name: 'ida', exact: true }).click()
-    await page.getByRole('button', { name: 'Empezar a programar' }).click({ force: true })
+
+test("1. Liguilla", async ({ page }) => {
+    await page.pause()
+    await Liguilla(page, await page.getByRole('radio', { name: 'ida', exact: true }))
 })
 
-test("LiguillaVuelta", async ({ page }) => {
-    await page.getByRole('button', { name: 'Vamos' }).click({ force: true })
-    await page.getByRole('textbox', { name: '¿Cúantos equipos quieres' }).fill('4')
-    await page.getByRole('radio', { name: 'ida y vuelta' }).click()
-    await page.getByRole('button', { name: 'Empezar a programar' }).click({ force: true })
+test("2. Liguilla (ida y vuelta)", async ({ page }) => {
+    await page.pause()
+    await Liguilla(page, await page.getByRole('radio', { name: 'ida y vuelta' }))
 })
+
+async function Liguilla(page:any, radio: any) {
+    await page.getByRole('button', { name: 'Vamos' }).click({ force: true })
+    await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible' })
+    await page.getByRole('textbox', { name: '¿Cuántos equipos quieres' }).click()
+    var teams = page.locator('[data-combobox-option="true"][role="option"]:visible')
+    await teams.nth(0).waitFor({ state: 'visible' })
+    var count_t = await teams.count()
+    await teams.nth(Math.floor(Math.random() * count_t)).click()
+    await radio.click()
+    await page.getByRole('button', { name: 'Empezar a programar' }).click({ force: true })
+    await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden' })
+}
+
+
+// Ya no sirven para la nueva versión de la página
+// test("LiguillaIda", async ({ page }) => {
+//     await page.getByRole('button', { name: 'Vamos' }).click({ force: true })
+//     await page.getByRole('textbox', { name: '¿Cúantos equipos quieres' }).fill('8')
+//     await page.getByRole('radio', { name: 'ida', exact: true }).click()
+//     await page.getByRole('button', { name: 'Empezar a programar' }).click({ force: true })
+// })
+
+// test("LiguillaVuelta", async ({ page }) => {
+//     await page.getByRole('button', { name: 'Vamos' }).click({ force: true })
+//     await page.getByRole('textbox', { name: '¿Cúantos equipos quieres' }).fill('4')
+//     await page.getByRole('radio', { name: 'ida y vuelta' }).click()
+//     await page.getByRole('button', { name: 'Empezar a programar' }).click({ force: true })
+// })
 
 // --------------------------------------------------------------------
 
