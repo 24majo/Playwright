@@ -321,21 +321,21 @@ export const Modalidad = async (page:Page, mod: any, num: number, equipos: numbe
   await page.waitForTimeout(1000)
   await page.locator('input[type="checkbox"]').nth(1).check()
   for(var i = 0; i < equipos; i++){
-      await page.locator('input[type="checkbox"]').nth(i).check()
+    await page.locator('input[type="checkbox"]').nth(i).check()
   }
   await page.getByRole('button', { name: 'Siguiente' }).click()
   await page.locator('input[type="checkbox"]').nth(1).check()
   for(var i = 0; i < 5; i++)
-      await page.locator('input[type="checkbox"]').nth(i).check()
+    await page.locator('input[type="checkbox"]').nth(i).check()
   await page.waitForTimeout(500)
   await page.getByRole('button', { name: 'Siguiente' }).click()
   await page.getByRole('button', { name: 'Siguiente' }).click()
 
   if(num === 1){
-      await page.getByRole('textbox', { name: 'Cantidad de equipos por grupo' }).click()
-      var opciones = page.locator('[data-combobox-option="true"][role="option"]:visible')
-      await Random(opciones)
-      await page.getByRole('button', { name: 'Siguiente' }).click()
+    await page.getByRole('textbox', { name: 'Cantidad de equipos por grupo' }).click()
+    var opciones = page.locator('[data-combobox-option="true"][role="option"]:visible')
+    await Random(opciones)
+    await page.getByRole('button', { name: 'Siguiente' }).click()
   }
 
   await page.getByRole('button', { name: 'Finalizar Registro' }).click()
@@ -344,6 +344,57 @@ export const Modalidad = async (page:Page, mod: any, num: number, equipos: numbe
   fin = Date.now()
   console.log("Tiempo de creación de torneo: " + (fin - inicio) + "ms")
   await page.waitForTimeout(2000)
+}
+
+export const registrar_resultado = async (page: any, registrar) => {
+  var num_btn = await registrar.count()
+
+  for(var i = 0; i < num_btn; i++){
+    await registrar.first().waitFor({ state: 'visible' })
+    var desactivado = await registrar.first().getAttribute('data-disabled') // true o null
+
+    if(desactivado === null){
+      registrar.first().click({ force: true })
+      await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
+      var random = [Math.floor(Math.random() * 10) + 1].toString()
+      await page.locator('input[name="puntos_local"]').fill(random)
+      random = [Math.floor(Math.random() * 10) + 1].toString()
+      await page.locator('input[name="puntos_visitante"]').fill(random)
+      await page.getByRole('button', { name: 'Guardar' }).click({ force: true })
+
+      var msg = await page.getByText('El partido no puede quedar')
+      await page.waitForTimeout(500)
+      if(msg.isVisible()){
+        random = [Math.floor(Math.random() * 10) + 1].toString()
+        await page.locator('input[name="puntos_visitante"]').fill(random)
+        await page.getByRole('button', { name: 'Guardar' }).click({ force: true })
+      }
+
+      inicio = Date.now()
+      await page.getByRole('dialog', { name: /Registro de/i }).waitFor({ state: 'hidden' })
+      fin = Date.now()
+      console.log("Tiempo de registro de resultados: " + (fin - inicio) + "ms")
+
+      // Compartir jornada
+      // var num = Math.floor(Math.random() * 2)
+      var num = 1
+      var share = await page.getByRole('button', { name: 'Compartir la jornada' })
+      var share_v = share.isVisible()
+      if(share_v){
+        if(num === 0){
+          await page.getByRole('button', { name: 'Guardar para luego' }).click()
+        }
+        
+        else{
+          share.click()
+          inicio = Date.now()
+          await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
+          fin = Date.now()
+          console.log("Tiempo de jornada compartida: " + (fin - inicio) + "ms")
+        }
+      }
+    }
+  }
 }
 
 async function Random(boton) {

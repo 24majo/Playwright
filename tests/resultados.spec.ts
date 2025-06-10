@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test'
-import { login } from './cuenta.spec'
+import { test } from '@playwright/test'
+import { login, registrar_resultado } from './cuenta.spec'
 
 var inicio: any
 var fin: any
@@ -65,45 +65,3 @@ test("LiguillaVuelta", async ({ page }) => {
 
 // --------------------------------------------------------------------
 
-export const registrar_resultado = async (page: any, registrar) => {
-    var num_btn = await registrar.count()
-
-    for(var i = 0; i < num_btn; i++){
-        await registrar.first().waitFor({ state: 'visible' })
-        var desactivado = await registrar.first().getAttribute('data-disabled') // true o null
-
-        if(desactivado === null){
-            registrar.first().click({ force: true })
-            await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
-            var random = [Math.floor(Math.random() * 10) + 1].toString()
-            await page.locator('input[name="puntos_local"]').fill(random)
-            random = [Math.floor(Math.random() * 10) + 1].toString()
-            await page.locator('input[name="puntos_visitante"]').fill(random)
-            await page.getByRole('button', { name: 'Guardar' }).click({ force: true })
-
-            inicio = Date.now()
-            await page.getByRole('dialog', { name: /Registro de/i }).waitFor({ state: 'hidden' })
-            fin = Date.now()
-            console.log("Tiempo de registro de resultados: " + (fin - inicio) + "ms")
-
-            // Compartir jornada
-            // var num = Math.floor(Math.random() * 2)
-            var num = 1
-            var share = await page.getByRole('button', { name: 'Compartir la jornada' })
-            var share_v = share.isVisible()
-            if(share_v){
-                if(num === 0){
-                    await page.getByRole('button', { name: 'Guardar para luego' }).click()
-                }
-                
-                else{
-                    share.click()
-                    inicio = Date.now()
-                    await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden'})
-                    fin = Date.now()
-                    console.log("Tiempo de jornada compartida: " + (fin - inicio) + "ms")
-                }
-            }
-        }
-    }
-}

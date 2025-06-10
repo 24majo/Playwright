@@ -33,6 +33,22 @@ test("5. Grupos", async ({ page }) => {
     await Tournament(page, "Formal", 1, 8, "Grupos")
 })
 
+test("6. Liga", async ({ page }) => {
+    await Tournament(page, "Flexible", 0, 9, "Liga")
+})
+
+test("7. Liga (ida y vuelta)", async ({ page }) => {
+    await Tournament(page, "Flexible", 0, 9, "Liga (ida y vuelta)")
+})
+
+test("8. Eliminación directa", async ({ page }) => {
+    await Tournament(page, "Flexible", 0, 8, "Eliminación directa")
+})  
+
+test("9. Eliminación directa (ida y vuelta)", async ({ page }) => {
+    await Tournament(page, "Flexible", 0, 8, "Eliminación directa (ida y vuelta)")
+})  
+
 // -------------------------------- Funciones --------------------------------
 
 async function Tournament(page: any, modalidad: string, Group: number, equipos: number, formato: string) {
@@ -48,12 +64,12 @@ async function Tournament(page: any, modalidad: string, Group: number, equipos: 
     
     console.log("")
     console.log("Al crear el torneo")
-    await Elements(page, formato)
+    await Elements(page, formato, equipos)
 
     console.log("")
     console.log("Al crear el fixture")
-    await Calendar(page, formato)
-    await Elements(page, formato)
+    await Calendar(page, formato, modalidad)
+    await Elements(page, formato, equipos)
 
     await page.getByRole('link', { name: 'Equipos' }).click({ force: true })
     var btn_equipo = await page.getByRole('button', { name: 'Agregar equipo' })
@@ -68,36 +84,56 @@ async function Tournament(page: any, modalidad: string, Group: number, equipos: 
     await page.waitForTimeout(1000)
     await check_active.click({ force: true })
     await page.getByRole('button', { name: 'Guardar cambios' }).click({ force: true })
-    var accept = await page.getByRole('button', { name: 'Sí, actualizar' })
-    await accept.waitFor({ state: 'visible' })
-    await accept.click({ force: true })
+
+    if(modalidad == "Formal") {
+        var accept = await page.getByRole('button', { name: 'Sí, actualizar' })
+        await accept.waitFor({ state: 'visible' })
+        await accept.click({ force: true })
+    }
+    
     await page.locator('[aria-modal="true"][role="dialog"]:visible').nth(0).waitFor({ state: 'hidden' })
 
     console.log("")
     console.log("Al eliminar el fixture")
-    await Elements(page, formato)
+    await Elements(page, formato, equipos)
     await page.pause()
 }
 
-async function Calendar(page: any, formato: string) {
-    var tab
+async function Calendar(page: any, formato: string, modalildad: string) {
     await page.getByRole('link', { name: 'Calendario' }).click({ force: true })
-    var cal = await page.getByRole('button', { name: 'Crear el calendario' })
-    await page.getByRole('img', { name: 'Silbato' }).waitFor({ state: 'visible' })
-    await page.waitForTimeout(1000)
-    await cal.click({ force: true })
 
     if(formato == "Grupos") {
         await page.getByRole('button', { name: 'Si, continuar' }).click({ force: true })
         await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden' })
     }
 
+    if(modalildad == "Flexible" && (formato == "Liga" || formato == "Liga (ida y vuelta)")) {
+        var jornada = await page.getByRole('button', { name: 'Nueva jornada' })
+        await jornada.waitFor({ state: 'visible' })
+        await jornada.click()
+        await page.getByRole('menuitem', { name: 'Jornada regular' }).click()
+        await page.locator('[data-truncate="end"]').waitFor({ state: 'visible' })
+        await page.getByRole('button', { name: 'Empezar a programar' }).click()
+    }
+
+    else{
+        var cal = await page.getByRole('button', { name: 'Crear el calendario' })
+        await page.getByRole('img', { name: 'Silbato' }).waitFor({ state: 'visible' })
+        await page.waitForTimeout(1000)
+        await cal.click({ force: true })
+    }
+
     var tab = await page.getByRole('tab', { name: 'Calendario' })
     await tab.waitFor({ state: 'visible' })
-    await tab.hover()
+    if(formato == "Liga" || formato == "Liga (ida y vuelta)") {
+        await page.getByRole('tab', { name: 'Por jornadas' }).click({ force: true })
+    }
+    else{
+        await page.getByRole('tab', { name: 'Por rondas' }).click({ force: true })
+    }
 }
 
-async function Elements(page: any, formato: string) {
+async function Elements(page: any, formato: string, equipos: number) {
     var btn_res: any
     await page.getByRole('link', { name: 'Resultados' }).click({ force: true })
     await page.waitForTimeout(2000)
@@ -114,6 +150,19 @@ async function Elements(page: any, formato: string) {
         await page.waitForTimeout(5000)
         var btn_pdf = await page.getByRole('link', { name: 'Descargar PDF' })
         await elementsVisible(page, btn_pdf, "Descargar PDF")
+        var column = await page.locator('[role="gridcell"][col-id="pos"][aria-colindex="1"]')
+        var count_col = await column.count()
+        if(count_col > 0) {
+            await column.nth(equipos - 1).hover()
+        }
+        await page.pause()
+
+        if(count_col == equipos) {
+            console.log("Misma cantidad de equipos en la tabla de posiciones")
+        }
+        else{
+            console.log("Cantidad de equipos no coincide con cantidad en la tabla de posiciones")
+        }
     }
 
     if(formato == "Eliminación directa" || formato == "Eliminación directa (ida y vuelta)") {
