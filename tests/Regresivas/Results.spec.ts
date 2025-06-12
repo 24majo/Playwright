@@ -1,81 +1,94 @@
-import { test } from '@playwright/test';
-import { login, Modalidad, programar_partido, registrar_resultado } from '../cuenta.spec';
-import { table } from 'console';
+import { test } from '@playwright/test'
+import { login, Modalidad, programar_partido, registrar_resultado } from '../cuenta.spec'
 
 test.beforeEach(async ({ page }) => {
-    await login(page);
-    await page.pause();
-    await page.getByRole('link', { name: 'Mis torneos' }).click({ force: true });
-    await page.getByRole('tab', { name: 'Torneos activos' }).waitFor({ state: 'visible' });
+    await login(page)
+    await page.pause()
+    await page.getByRole('link', { name: 'Mis torneos' }).click({ force: true })
+    await page.getByRole('tab', { name: 'Torneos activos' }).waitFor({ state: 'visible' })
 })
 
 test("1. Liga", async ({ page }) => {
-    await FunctionsLiga(page, await page.getByRole('button', { name: 'Se parece a este' }).first(), "Liga", 0);
+    await FunctionsLiga(page, await page.getByRole('button', { name: 'Se parece a este' }).first(), "Liga", 0, "Formal")
 })
 
 test("2. Liga (ida y vuelta)", async ({ page }) => {
-    await FunctionsLiga(page, await page.getByRole('button', { name: 'Se parece a este' }).first(), "Liga (ida y vuelta)", 0);
+    await FunctionsLiga(page, await page.getByRole('button', { name: 'Se parece a este' }).first(), "Liga (ida y vuelta)", 0, "Formal");
 })
 
 test("3. Eliminacion directa", async ({ page }) => {
-    await FunctionsElimination(page, await page.getByRole('button', { name: 'Se parece a este' }).first(), "Eliminación directa", 0);
+    await FunctionsElimination(page, await page.getByRole('button', { name: 'Se parece a este' }).first(), "Eliminación directa", 0, "Formal")
 })
 
 test("4. Eliminacion directa (ida y vuelta)", async ({ page }) => {
-    await FunctionsElimination(page, await page.getByRole('button', { name: 'Se parece a este' }).first(), "Eliminación directa (ida y vuelta)", 0);
+    await FunctionsElimination(page, await page.getByRole('button', { name: 'Se parece a este' }).first(), "Eliminación directa (ida y vuelta)", 0, "Formal")
 })
 
 test("5. Grupo", async ({ page }) => {
-    await FunctionsLiga(page, await page.getByRole('button', { name: 'Se parece a este' }).first(), "Grupo", 0);
+    await FunctionsLiga(page, await page.getByRole('button', { name: 'Se parece a este' }).first(), "Grupo", 0, "Formal")
 })
 
 // ------------------------------- Flexible ---------------------------------------
 test("6. Liga Flexible", async ({ page }) => {
-    await FunctionsLiga(page, await page.getByRole('button', { name: 'Se parece a este' }).nth(1), "Liga", 0);
+    await FunctionsLiga(page, await page.getByRole('button', { name: 'Se parece a este' }).nth(1), "Liga", 0, "Flexible")
 })
 
 test("7. Liga (ida y vuelta) Flexible", async ({ page }) => {
-    await FunctionsLiga(page, await page.getByRole('button', { name: 'Se parece a este' }).nth(1), "Liga (ida y vuelta)", 0);
+    await FunctionsLiga(page, await page.getByRole('button', { name: 'Se parece a este' }).nth(1), "Liga (ida y vuelta)", 0, "Flexible")
 })  
 
 test("8. Eliminacion directa Flexible", async ({ page }) => {
-    await FunctionsElimination(page, await page.getByRole('button', { name: 'Se parece a este' }).nth(1), "Eliminación directa", 0);
+    await FunctionsElimination(page, await page.getByRole('button', { name: 'Se parece a este' }).nth(1), "Eliminación directa", 0, "Flexible")
 })
 
 test("9. Eliminacion directa (ida y vuelta) Flexible", async ({ page }) => {
-    await FunctionsElimination(page, await page.getByRole('button', { name: 'Se parece a este' }).nth(1), "Eliminación directa (ida y vuelta)", 0);
+    await FunctionsElimination(page, await page.getByRole('button', { name: 'Se parece a este' }).nth(1), "Eliminación directa (ida y vuelta)", 0, "Flexible")
 })
 
-test("Prueba", async ({ page }) => {
-    await page.pause()
-})
+// --------------------------Funciones para modalidad ---------------------------
 
-// --------------------------Funciones para modalidad ------------------------------
-
-async function FunctionsLiga(page: any, modalidad: any, formato: string, grupo: number) {
+async function FunctionsLiga(page: any, modalidad: any, formato: string, grupo: number, mod: string) {
     await Modalidad(page, modalidad, grupo, 4, formato) // Crear torneo
-    await Enfrentamientos(page) // Programar partidos
-    await ResultsLiga(page) // Registrar resultados de la liga
+    await Create_Fixture(page, mod, grupo, formato) // Crear fixture
+    await ResultsLiga(page, mod) // Registrar resultados de la liga
     var table_ganador = await Ganador(page) // Ganador en tabla de posiciones
     await GanadorInicio(page, formato, table_ganador) // Ganador en inicio
     await page.pause()
 }
 
-async function FunctionsElimination(page: any, modalidad: any, formato: string, grupo: number) {
+async function FunctionsElimination(page: any, modalidad: any, formato: string, grupo: number, mod: string) {
     await Modalidad(page, modalidad, grupo, 8, formato) // Crear torneo
-    await Enfrentamientos(page) // Programar partidos
-    await ResultsEliminacion(page) // Registrar resultados de la eliminacion
-
+    await Create_Fixture(page, mod, grupo, formato)
+    
+    if(formato == "Eliminación directa")
+        await ResultsEliminacion(page, mod) // Registrar resultados de la eliminacion
+    else
+        await ResultsEliminacionVuelta(page, mod)
 }
 
-// ------------------------------- Funciones generales ----------------------------
+// ------------------------ Funciones para fixture ----------------------------
 
-async function Enfrentamientos(page: any) {
-    await page.getByRole('link', { name: 'Calendario' }).click()
-    var calendario = await page.getByRole('button', { name: 'Crear el calendario' })
-    await calendario.waitFor({ state: 'visible' })
-    await page.waitForTimeout(1000)
-    await calendario.click({ force: true })
+async function Create_Fixture(page: any, modalidad: any, grupo: number, formato: string) {
+    if(modalidad == "Flexible" && (formato == "Liga (ida y vuelta)" || formato == "Liga")){
+        var jornada = await page.getByRole('button', { name: 'Nueva jornada' })
+        await jornada.waitFor({ state: 'visible' })
+        await jornada.click()
+        await page.getByRole('menuitem', { name: 'Jornada regular' }).click()
+        await page.locator('[data-truncate="end"]').first().waitFor({ state: 'visible' })
+        await page.getByRole('button', { name: 'Empezar a programar' }).click()
+    }
+
+    else {
+        await page.getByRole('link', { name: 'Calendario' }).click()
+        var calendario = await page.getByRole('button', { name: 'Crear el calendario' })
+        await calendario.waitFor({ state: 'visible' })
+        await page.waitForTimeout(1000)
+        await calendario.click({ force: true })
+        await Enfrentamientos(page, modalidad)
+    }
+}
+
+async function Enfrentamientos(page: any, modalidad: any) {
     var tab = await page.getByRole('tab', { name: 'Todos los partidos' })
     await tab.waitFor({ state: 'visible' })
     await tab.click({ force: true })
@@ -83,13 +96,25 @@ async function Enfrentamientos(page: any) {
     var boton = page.getByRole('row', { name: new RegExp(`.+ NO PROGRAMADO .+`) }).getByRole('button').first()
     await page.pause()
     var visible = await boton.isHidden()
-    console.log("Botón programar oculto: " + visible)
 
     while(!visible){
         boton.click({ force: true })
         await boton.waitFor({ state: 'visible'})
         await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
         await page.waitForTimeout(1000)
+
+        if(modalidad == "Flexible"){
+            await page.getByRole('textbox', { name: 'Selecciona equipo local' }).click()
+            var local = page.locator('[data-combobox-option="true"][role="option"]:visible')
+            var count_l = await local.count()
+            var count_v = count_l-2
+            await local.nth(1).click()
+            await page.getByRole('textbox', { name: 'Selecciona equipo visitante' }).click()
+            var visitante = page.locator('[data-combobox-option="true"][role="option"]:visible')
+            await visitante.nth(count_v).click()
+            await page.waitForTimeout(1000)
+        }
+
         await programar_partido(page, 0)
         visible = await boton.isHidden()
     }
@@ -115,17 +140,35 @@ async function Enfrentamientos(page: any) {
     }
 }
 
+// -------------------------- Funciones generales ----------------------------
+
+async function Rounds(page: any, registrar: any, modalidad: string) {
+    var registrar_disabled = await registrar.getAttribute('data-disabled')
+    if(registrar_disabled == 'true'){
+        await page.getByRole('link', { name: 'Calendario' }).click()
+        await Enfrentamientos(page, modalidad) // Programar partidos de la siguiente ronda
+        
+        await page.getByRole('link', { name: 'Resultados' }).click()
+        registrar = page.getByRole('button', { name: 'Registrar' })
+        await registrar.first().waitFor({ state: 'visible' })
+        var registrar_count = await registrar.count()
+        
+        for(var i = 0; i < registrar_count; i++)
+            await Results(page, registrar.first(), Math.floor(Math.random() * 10), Math.floor(Math.random() * 10), modalidad)
+    }
+}
+
 // -------------------------- Funciones de resultados ----------------------------
 
-async function ResultsLiga(page: any) {
+async function ResultsLiga(page: any, modalidad: string) {
     await page.getByRole('link', { name: 'Resultados' }).click()
     await page.locator('text=Registro de resultados').waitFor({ state: 'visible' })
     var registrar = page.getByRole('row', { name: new RegExp(`.+ Registrar`)}).getByRole('button')
     await registrar.nth(0).waitFor({ state: 'visible' })
-    await Results(page, registrar, 5, 3) 
+    await Results(page, registrar, 5, 3, modalidad) 
     var count_registrar = await registrar.count()
     for( var i = 0; i < count_registrar; i++ ){
-        await Results(page, registrar, Math.floor(Math.random() * 10), Math.floor(Math.random() * 10))
+        await Results(page, registrar, Math.floor(Math.random() * 10), Math.floor(Math.random() * 10), modalidad)
     }
 
     await page.waitForTimeout(1000)
@@ -140,12 +183,15 @@ async function ResultsLiga(page: any) {
     }
 }
 
-async function ResultsEliminacion(page: any) {
+async function ResultsEliminacion(page: any, modalidad: string) {
     await page.getByRole('link', { name: 'Resultados' }).click()
     await page.locator('text=Registro de resultados').waitFor({ state: 'visible' })
     var registrar = page.getByRole('button', { name: 'Registrar' }).first()
     await registrar.waitFor({ state: 'visible' })
-    await Results(page, registrar, 5, 3) // Registro correcto
+
+    console.log("")
+    console.log("Registro correcto")
+    await Results(page, registrar, 5, 3, modalidad) // Registro correcto
 
     // Confirmar que al tener al primer ganador, genera una nueva card de enfrentamiento
     await page.waitForTimeout(1000)
@@ -158,28 +204,38 @@ async function ResultsEliminacion(page: any) {
         console.log("Card de nuevo enfrentamiento no visible")
     }
 
-    await Results(page, registrar, 5, 5) // Registro empate
+    console.log("")
+    console.log("Registro empate")
+    await Results(page, registrar, 5, 5, modalidad) // Registro empate
 
+    console.log("")
+    console.log("Edición de resultado a empate")	
     // Edición de resultado a empate
-    await Results(page, registrar, 1, 2) 
+    await Results(page, registrar, 1, 2, modalidad) 
     var editar = await page.locator('div').filter({hasText: /Editar$/}).getByRole('button').last()
     await editar.waitFor({ state: 'visible' })
-    await Results(page, editar, 7, 7) 
+    await Results(page, editar, 7, 7, modalidad) 
 
+    console.log("")
+    console.log("Cambiar ganador de partido")
     // Cambio de ganador de partido
-    await Results(page, registrar, 3, 1) 
-    var editar = await page.locator('div').filter({hasText: /Editar$/}).getByRole('button').last()
+    await Results(page, registrar, 3, 1, modalidad) 
+    editar = await page.locator('div').filter({hasText: /Editar$/}).getByRole('button').last()
     await editar.waitFor({ state: 'visible' })
-    await Results(page, editar, 1, 8)
+    await Results(page, editar, 1, 8, modalidad)
 
+    console.log("")
+    console.log("Confirmar ganador")
+    var result_win = await GanadorEliminacion(page)
+    await GanadorInicio(page, "Eliminación directa", result_win) // Confirmar ganador en inicio
     await page.pause()
 }
 
-async function ResultsEliminacionVuelta(page: any) {
+async function ResultsEliminacionVuelta(page: any, modalidad: any) {
 
 }
 
-async function Results(page: any, registrar: any, local: number, visitante: number) {
+async function Results(page: any, registrar: any, local: number, visitante: number, modalidad: string) {
     registrar.click({ force: true })
     await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
     await page.locator('input[name="puntos_local"]').fill(local.toString())
@@ -219,6 +275,10 @@ async function Results(page: any, registrar: any, local: number, visitante: numb
         await page.getByRole('button', { name: 'Guardar para luego' }).click()
         await share.waitFor({ state: 'hidden'})
     }
+
+    var registrar_visible = await registrar.isVisible()
+    if(registrar_visible == true)
+        await Rounds(page, registrar, modalidad) // Registrar resultados de la siguiente ronda
 }
 
 // ------------- Funcion para conocer al ganador -----------------
@@ -232,6 +292,34 @@ async function Ganador(page: any) {
     await page.pause()
     return nombre_ganador
 }
+
+async function GanadorEliminacion(page: any) {
+    var divs = await page.locator('div', { hasText: /Equipo/ }).all()
+    var matched: { div: any; img: any; text: string }[] = []
+
+    for (const div of divs) {
+        const img = div.getByRole('img')
+        if (await img.count() > 0) {
+            const text = (await div.textContent())?.trim() ?? ''
+            matched.push({ div, img, text })
+        }
+    }
+
+    var ganador = matched.slice(-2).map(({ div, img, text }) => {
+        var match = text.match(/^(.*?)(\d+)$/);
+        return {
+            fullText: text,
+            text: match?.[1].trim() ?? text,
+            number: match ? Number(match[2]) : null,
+            divLocator: div,
+            imgLocator: img
+        }
+    })
+
+    return ganador[0].number! < ganador[1].number!
+        ? ganador[1].text
+        : ganador[0].text
+}      
 
 async function GanadorInicio(page: any, formato: string, equipo: string) {
     await page.getByRole('link', { name: 'Inicio' }).click({ force: true })

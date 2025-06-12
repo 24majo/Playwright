@@ -62,21 +62,15 @@ export const programar_partido = async (page: Page, flexible: number) => {
   await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
   await page.waitForTimeout(1000)
   await page.getByLabel('día').click({ force: true })
-
-  // var fecha1 = new Date()
-  // var mes = fecha1.toLocaleString('es-ES', { month: 'long' }) 
-  // var fecha = [Math.floor(Math.random() * 28) + 1].toString() + " " + mes 
-  // await page.getByLabel(fecha).first().click({force: true})
-
   await page.locator('[data-dates-dropdown="true"]').waitFor({ state: 'visible' })
   var date = await page.locator('button.mantine-DatePickerInput-day:not(:disabled)')
   var count_date = await date.count()
   await date.nth(Math.floor(Math.random() * count_date)).click({ force: true })
   await page.waitForTimeout(1000)
 
-  var fechaAleatoria = faker.date.recent()
-  var horas = fechaAleatoria.getHours()
-  var minutos = fechaAleatoria.getMinutes()
+  var random_date = faker.date.recent()
+  var horas = random_date.getHours()
+  var minutos = random_date.getMinutes()
   var hora = horas.toString().padStart(2, '0');
   var minuto = minutos.toString().padStart(2, '0')
   await page.locator('input[type="time"]').fill(hora + ':' + minuto)
@@ -85,12 +79,11 @@ export const programar_partido = async (page: Page, flexible: number) => {
   var cancha: any
   var arbitro_i: any
 
-  if(flexible === 1){
+  if(flexible === 1)
     cancha = await page.locator('input[aria-haspopup="listbox"]').nth(2)
-  }else{
+  else
     cancha = await page.locator('input[aria-haspopup="listbox"]').nth(0)
-  }
-  
+
   var cancha_i = await cancha.isDisabled()
 
   if(!cancha_i){
@@ -103,12 +96,11 @@ export const programar_partido = async (page: Page, flexible: number) => {
     await page.waitForTimeout(1000)
   }
 
-  if(flexible === 1){
+  if(flexible === 1)
     arbitro_i = await page.locator('input[aria-haspopup="listbox"]').nth(3)
-  }else{
+  else
     arbitro_i = await page.locator('input[aria-haspopup="listbox"]').nth(1)
-  }
-
+  
   var arbitro_dis = await arbitro_i.isDisabled()
 
   if(!arbitro_dis){
@@ -288,18 +280,6 @@ export const crear_torneo = async (page: Page) => {
 
 export const Modalidad = async (page:Page, mod: any, num: number, equipos: number, formato: string) => {
   await page.getByRole('button', {name: 'Crear torneo'}).click({ force: true})
-
-  // if(num === 0){
-  //     formato = 'Liga (ida y vuelta)'
-  //     formato = 'Liga'
-  //     formato = 'Eliminación directa (ida y vuelta)'
-  //     formato = 'Eliminación directa'
-  // }
-
-  // if(num === 1){
-  //     formato = 'Grupos'
-  // }
-
   await page.locator('//input[@name="nombre"]').fill(formato)
   await page.getByPlaceholder('Ej. Liga + Liguilla, Eliminacion directa').click()
   await page.waitForTimeout(500)
@@ -327,14 +307,15 @@ export const Modalidad = async (page:Page, mod: any, num: number, equipos: numbe
   await page.getByRole('button', { name: 'Siguiente' }).click()
   await page.waitForTimeout(1000)
   await page.locator('input[type="checkbox"]').nth(1).check()
-  for(var i = 0; i < equipos; i++){
+  
+  for(var i = 0; i < equipos; i++)
     await page.locator('input[type="checkbox"]').nth(i).check()
-  }
+  
   await page.getByRole('button', { name: 'Siguiente' }).click()
-  await page.locator('input[type="checkbox"]').nth(1).check()
-  for(var i = 0; i < 5; i++)
-    await page.locator('input[type="checkbox"]').nth(i).check()
-  await page.waitForTimeout(500)
+  // await page.locator('input[type="checkbox"]').nth(1).check()
+  // for(var i = 0; i < 5; i++)
+  //   await page.locator('input[type="checkbox"]').nth(i).check()
+  // await page.waitForTimeout(500)
   await page.getByRole('button', { name: 'Siguiente' }).click()
   await page.getByRole('button', { name: 'Siguiente' }).click()
 
