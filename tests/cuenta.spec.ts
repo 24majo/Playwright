@@ -62,10 +62,16 @@ export const programar_partido = async (page: Page, flexible: number) => {
   await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
   await page.waitForTimeout(1000)
   await page.getByLabel('día').click({ force: true })
-  var fecha1 = new Date()
-  var mes = fecha1.toLocaleString('es-ES', { month: 'long' }) 
-  var fecha = [Math.floor(Math.random() * 28) + 1].toString() + " " + mes 
-  await page.getByLabel(fecha).first().click({force: true})
+
+  // var fecha1 = new Date()
+  // var mes = fecha1.toLocaleString('es-ES', { month: 'long' }) 
+  // var fecha = [Math.floor(Math.random() * 28) + 1].toString() + " " + mes 
+  // await page.getByLabel(fecha).first().click({force: true})
+
+  await page.locator('[data-dates-dropdown="true"]').waitFor({ state: 'visible' })
+  var date = await page.locator('button.mantine-DatePickerInput-day:not(:disabled)')
+  var count_date = await date.count()
+  await date.nth(Math.floor(Math.random() * count_date)).click({ force: true })
   await page.waitForTimeout(1000)
 
   var fechaAleatoria = faker.date.recent()
@@ -352,7 +358,7 @@ export const registrar_resultado = async (page: any, registrar) => {
 
   for(var i = 0; i < num_btn; i++){
     await registrar.first().waitFor({ state: 'visible' })
-    var desactivado = await registrar.first().getAttribute('data-disabled') // true o null
+    var desactivado = await registrar.first().getAttribute('data-disabled')
 
     if(desactivado === null){
       registrar.first().click({ force: true })
@@ -378,7 +384,7 @@ export const registrar_resultado = async (page: any, registrar) => {
 
       // Compartir jornada
       // var num = Math.floor(Math.random() * 2)
-      var num = 1
+      var num = 0
       var share = await page.getByRole('button', { name: 'Compartir la jornada' })
       var share_v = share.isVisible()
       if(share_v){
