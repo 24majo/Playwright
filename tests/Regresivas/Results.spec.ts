@@ -1,5 +1,6 @@
 import { test } from '@playwright/test'
 import { login, Modalidad, programar_partido, registrar_resultado } from '../cuenta.spec'
+import { format } from 'path'
 
 test.beforeEach(async ({ page }) => {
     await login(page)
@@ -50,7 +51,7 @@ test("9. Eliminacion directa (ida y vuelta) Flexible", async ({ page }) => {
 async function FunctionsLiga(page: any, modalidad: any, formato: string, grupo: number, mod: string) {
     await Modalidad(page, modalidad, grupo, 4, formato) // Crear torneo
     await Create_Fixture(page, mod, grupo, formato) // Crear fixture
-    await ResultsLiga(page, mod) // Registrar resultados de la liga
+    await ResultsLiga(page, mod, formato) // Registrar resultados de la liga
     var table_ganador = await Ganador(page) // Ganador en tabla de posiciones
     await GanadorInicio(page, formato, table_ganador) // Ganador en inicio
     await page.pause()
@@ -61,9 +62,9 @@ async function FunctionsElimination(page: any, modalidad: any, formato: string, 
     await Create_Fixture(page, mod, grupo, formato)
     
     if(formato == "Eliminación directa")
-        await ResultsEliminacion(page, mod) // Registrar resultados de la eliminacion
+        await ResultsEliminacion(page, mod, formato) // Registrar resultados de la eliminacion
     else
-        await ResultsEliminacionVuelta(page, mod)
+        await ResultsEliminacionVuelta(page, mod, formato)
 }
 
 // ------------------------ Funciones para fixture ----------------------------
@@ -142,33 +143,50 @@ async function Enfrentamientos(page: any, modalidad: any) {
 
 // -------------------------- Funciones generales ----------------------------
 
-async function Rounds(page: any, registrar: any, modalidad: string) {
+async function Rounds(page: any, registrar: any, modalidad: string, formato: string) {
     var registrar_disabled = await registrar.getAttribute('data-disabled')
     if(registrar_disabled == 'true'){
         await page.getByRole('link', { name: 'Calendario' }).click()
         await Enfrentamientos(page, modalidad) // Programar partidos de la siguiente ronda
         
         await page.getByRole('link', { name: 'Resultados' }).click()
-        registrar = page.getByRole('button', { name: 'Registrar' })
-        await registrar.first().waitFor({ state: 'visible' })
-        var registrar_count = await registrar.count()
+
+        if(formato == "Eliminación directa") {
+            registrar = await page.getByRole('button', { name: 'Registrar' })
+            await registrar.first().waitFor({ state: 'visible' })
+            var registrar_count = await registrar.count()
+            for(var i = 0; i < registrar_count; i++)
+                await Results(page, registrar.first(), Math.floor(Math.random() * 10), Math.floor(Math.random() * 10), modalidad, formato)
+        }
         
-        for(var i = 0; i < registrar_count; i++)
-            await Results(page, registrar.first(), Math.floor(Math.random() * 10), Math.floor(Math.random() * 10), modalidad)
+        else {
+            var ida = await page.getByRole('button', { name: 'Registrar Ida'})
+            await ida.first().waitFor({ state: 'visible' })
+            var registrar_count = await ida.count()
+            for(var i = 0; i < registrar_count; i++)
+                await Results(page, ida.first(), Math.floor(Math.random() * 10), Math.floor(Math.random() * 10), modalidad, formato)
+
+            var vuelta = await page.getByRole('button', { name: 'Registrar vuelta' })
+            await vuelta.first().waitFor({ state: 'visible' })
+            var registrar_count = await vuelta.count()
+            for(var i = 0; i < registrar_count; i++)
+                await Results(page, vuelta.first(), Math.floor(Math.random() * 10), Math.floor(Math.random() * 10), modalidad, formato)
+        } 
+        
     }
 }
 
 // -------------------------- Funciones de resultados ----------------------------
 
-async function ResultsLiga(page: any, modalidad: string) {
+async function ResultsLiga(page: any, modalidad: string, formato: string) {
     await page.getByRole('link', { name: 'Resultados' }).click()
     await page.locator('text=Registro de resultados').waitFor({ state: 'visible' })
     var registrar = page.getByRole('row', { name: new RegExp(`.+ Registrar`)}).getByRole('button')
     await registrar.nth(0).waitFor({ state: 'visible' })
-    await Results(page, registrar, 5, 3, modalidad) 
+    await Results(page, registrar.first(), 5, 3, modalidad, formato) 
     var count_registrar = await registrar.count()
     for( var i = 0; i < count_registrar; i++ ){
-        await Results(page, registrar, Math.floor(Math.random() * 10), Math.floor(Math.random() * 10), modalidad)
+        await Results(page, registrar.first(), Math.floor(Math.random() * 10), Math.floor(Math.random() * 10), modalidad, formato)
     }
 
     await page.waitForTimeout(1000)
@@ -183,7 +201,7 @@ async function ResultsLiga(page: any, modalidad: string) {
     }
 }
 
-async function ResultsEliminacion(page: any, modalidad: string) {
+async function ResultsEliminacion(page: any, modalidad: string, formato: string) {
     await page.getByRole('link', { name: 'Resultados' }).click()
     await page.locator('text=Registro de resultados').waitFor({ state: 'visible' })
     var registrar = page.getByRole('button', { name: 'Registrar' }).first()
@@ -191,7 +209,7 @@ async function ResultsEliminacion(page: any, modalidad: string) {
 
     console.log("")
     console.log("Registro correcto")
-    await Results(page, registrar, 5, 3, modalidad) // Registro correcto
+    await Results(page, registrar, 5, 3, modalidad, formato) // Registro correcto
 
     // Confirmar que al tener al primer ganador, genera una nueva card de enfrentamiento
     await page.waitForTimeout(1000)
@@ -206,23 +224,23 @@ async function ResultsEliminacion(page: any, modalidad: string) {
 
     console.log("")
     console.log("Registro empate")
-    await Results(page, registrar, 5, 5, modalidad) // Registro empate
+    await Results(page, registrar, 5, 5, modalidad, formato) // Registro empate
 
     console.log("")
     console.log("Edición de resultado a empate")	
     // Edición de resultado a empate
-    await Results(page, registrar, 1, 2, modalidad) 
+    await Results(page, registrar, 1, 2, modalidad, formato) 
     var editar = await page.locator('div').filter({hasText: /Editar$/}).getByRole('button').last()
     await editar.waitFor({ state: 'visible' })
-    await Results(page, editar, 7, 7, modalidad) 
+    await Results(page, editar, 7, 7, modalidad, formato) 
 
     console.log("")
     console.log("Cambiar ganador de partido")
     // Cambio de ganador de partido
-    await Results(page, registrar, 3, 1, modalidad) 
+    await Results(page, registrar, 3, 1, modalidad, formato) 
     editar = await page.locator('div').filter({hasText: /Editar$/}).getByRole('button').last()
     await editar.waitFor({ state: 'visible' })
-    await Results(page, editar, 1, 8, modalidad)
+    await Results(page, editar, 1, 8, modalidad, formato)
 
     console.log("")
     console.log("Confirmar ganador")
@@ -231,11 +249,55 @@ async function ResultsEliminacion(page: any, modalidad: string) {
     await page.pause()
 }
 
-async function ResultsEliminacionVuelta(page: any, modalidad: any) {
+async function ResultsEliminacionVuelta(page: any, modalidad: any, formato: string) {
+    await page.getByRole('link', { name: 'Resultados' }).click()
+    await page.locator('text=Registro de resultados').waitFor({ state: 'visible' })
 
+    var ida = await page.getByRole('button', { name: 'Registrar Ida' })
+    var vuelta = await page.getByRole('button', { name: 'Registrar vuelta' })
+    var act_ida = await page.getByRole('button', { name: 'Actualizar ida' }).last()
+    var act_vuelta = await page.getByRole('button', { name: 'Actualizar vuelta' }).last()
+
+    await ida.waitFor({ state: 'visible' })
+
+    // Registro de ida y vuelta correctas
+    console.log("")
+    console.log("Registro correcto")
+    await Results(page, ida, 5, 3, modalidad, formato) 
+    await Results(page, vuelta, 4, 6, modalidad, formato)
+
+    // Confirmar que al tener al primer ganador, genera una nueva card de enfrentamiento
+    await page.waitForTimeout(1000)
+    var card = await page.getByText('Fecha por definir').first()
+    var visible_card = await card.isVisible()
+    if(visible_card == true){
+        console.log("Card de nuevo enfrentamiento visible")
+    }
+    else{
+        console.log("Card de nuevo enfrentamiento no visible")
+    }
+
+    // Resultados de ida y vuelta en empates
+    console.log("")
+    console.log("Registro empate")
+    await Results(page, ida, 3, 3, modalidad, formato)
+    await Results(page, vuelta, 6, 6, modalidad, formato)
+
+    // Actualizar ida y vuelta a empates
+    console.log("Edición de ida y vuelta a empates")
+    await Results(page, act_ida, 5, 5, modalidad, formato)
+    await Results(page, act_vuelta, 4, 4, modalidad, formato)
+
+    // Modificar ganador
+    console.log("")
+    console.log("Cambiar ganador de partido")
+    // Cambio de ganador de partido
+    await Results(page, ida, 3, 1, modalidad,formato) 
+    await Results(page, vuelta, 2, 3, modalidad, formato)
+    await Results(page, act_ida, 1, 2, modalidad, formato)
 }
 
-async function Results(page: any, registrar: any, local: number, visitante: number, modalidad: string) {
+async function Results(page: any, registrar: any, local: number, visitante: number, modalidad: string, formato: string) {
     registrar.click({ force: true })
     await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'visible'})
     await page.locator('input[name="puntos_local"]').fill(local.toString())
@@ -278,7 +340,7 @@ async function Results(page: any, registrar: any, local: number, visitante: numb
 
     var registrar_visible = await registrar.isVisible()
     if(registrar_visible == true)
-        await Rounds(page, registrar, modalidad) // Registrar resultados de la siguiente ronda
+        await Rounds(page, registrar, modalidad, formato) // Registrar resultados de la siguiente ronda
 }
 
 // ------------- Funcion para conocer al ganador -----------------
