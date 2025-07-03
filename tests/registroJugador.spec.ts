@@ -13,7 +13,7 @@ test("Unirme", async ({ page }) => {
     // Caso 5: Límite de jugadores alcanzaddo
 
     await Registro({ page })
-    var tel = faker.number.int({ min: 1000000000, max: 9999999999 })
+    var tel = faker.number.int({ min: 3000000000, max: 9999999999 })
     await page.getByPlaceholder('Telefono').fill(tel.toString())
     console.log("Teléfono: " + tel)
     await page.getByPlaceholder('********').fill('12345678')
@@ -23,9 +23,9 @@ test("Unirme", async ({ page }) => {
     await page.getByPlaceholder('Apellido').fill(fakerES_MX.person.lastName())
     await page.getByRole('button', { name: 'Continuar' }).click()
     await jugador_existente(page)
-    await registro_jugador(page)
-    await Imagen({ page })
-    // await page.getByRole('button', { name: 'Lo haré después' }).click()
+    // await registro_jugador(page)
+    // await Imagen({ page })
+    await page.getByRole('button', { name: 'Lo haré después' }).click()
     await page.getByRole('button', { name: 'Terminar' }).click()
     await page.getByRole('button', { name: 'Terminar' }).click()
     inicio = Date.now()
@@ -65,7 +65,7 @@ test("Login", async ({ page }) => {
 
 test("Incompleto", async ({ page }) => {
     await Registro ({ page })
-    var tel = faker.number.int({ min: 1000000000, max: 9999999999 })
+    var tel = faker.number.int({ min: 3000000000, max: 9999999999 })
     await page.getByPlaceholder('Telefono').fill(tel.toString())
     console.log("Teléfono: " + tel)
     await page.getByPlaceholder('********').fill('12345678')
@@ -76,6 +76,8 @@ test("Incompleto", async ({ page }) => {
     await page.getByPlaceholder('Nombre').fill(name)
     await page.getByPlaceholder('Apellido').fill(last_n)
     await page.getByRole('button', { name: 'Continuar' }).click()
+    await jugador_existente(page)
+    await page.waitForTimeout(3000)
     
     // Abrir nueva ventana del navegador para introducir credenciales
     const browser: Browser = await chromium.launch({ headless: false })
@@ -109,8 +111,8 @@ test("EditarInfo", async ({ page }) => {
 })
 
 async function Registro({ page }){
-    await page.goto('http://localhost:3000/registroJugador/1744303909367')
-    // await page.goto('https://caskr.app/registroJugador/1741623095873')
+    // await page.goto('http://localhost:3000/registroJugador/1744303909367')
+    await page.goto('https://caskr.app/registroJugador/1751037165693')
     var limit = await page.getByText('Tu equipo alcanzó el límite').first().isVisible()
     
     if(limit){

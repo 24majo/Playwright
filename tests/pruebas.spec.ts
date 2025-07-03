@@ -1,34 +1,11 @@
 import { test, expect } from '@playwright/test'
 import { login, generar_curp } from './cuenta.spec'
-import { faker } from '@faker-js/faker'
+import { fakerES_MX, faker } from '@faker-js/faker'
 
 test("Cuenta", async ({  page }) => {
-    // const numero = Math.random();
-    // console.log(numero);
-
-    // var n_cuenta = Math.floor(Math.random() * 100).toString()
-    // console.log('majo' + n_cuenta + '@prueba.com')
-    // await page.goto('http://localhost:3000/auth');
-    // await page.pause()
-
-    // var fecha = new Date()
-    // var dia = fecha.getDate() // Para obtener el día en número
-    // var mes = fecha.toLocaleString('es-ES', { month: 'long' }) // nombre del mes
-    // console.log(dia + " " + mes)
-
-    // for(var i = 0; i < 8; i++){
-    //     var numero = faker.number.int({ min: 1000000000, max: 9999999999 }).toString()
-    //     console.log("Núm: " + numero)
-    // }
-
     await page.goto('http://localhost:3000/auth')
     await login(page)
     await page.pause()
-
-    // for(var i = 0; i < 10; i++){
-    //     var email = faker.internet.email()
-    //     console.log(email)
-    // }
 })
 
 test("Inicio", async ({ page }) => {
@@ -56,3 +33,10 @@ test("Produccion", async ({ page }) => {
     await page.pause()
 })
 
+test("Datos", async ({ page }) => {
+    for(var i = 0; i < 10; i++){
+        console.log("Nombre: " + fakerES_MX.person.firstName() + " " + fakerES_MX.person.lastName())
+        console.log("Número: " + faker.number.int({ min: 4790000000, max: 9999999999 }))
+        console.log("Correo: " + fakerES_MX.internet.email())
+    }
+})

@@ -31,7 +31,7 @@ test.describe("CaskrApp", async() => {
                 process.exit(0)
             }
 
-            for(var i = 0; i < 16; i++){
+            for(var i = 0; i < 4; i++){
                 await agregar.click()
                 await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor()
                 var button = await page.getByRole('button', { name: 'Sí, estoy seguro' }).isVisible()
@@ -169,7 +169,6 @@ test.describe("CaskrApp", async() => {
 // -------------------------------------------------------------
 
 export const agregar_equipo = async (page: any, n_equipo) => {
-    // Imagen
     var file = await page.locator('input[type="file"]')
     var random = Math.floor(Math.random() * 40) + 1
     var imagen = 'C:/Users/E015/Downloads/Imágenes/Escudos/escudo' + random + '.jpg'

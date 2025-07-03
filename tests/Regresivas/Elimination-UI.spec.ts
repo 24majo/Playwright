@@ -74,26 +74,26 @@ test("11. Flexible Eliminación vuelta seleccion de equipos en torneos", async (
     await TeamTournament( page, mod, equipo, "Eliminación directa (ida y vuelta)")
 })
 
-test("12. Flexible Eliminación vuelta agregar nuevo equipo", async ({ page }) => {
-    // Pendiente de implementar
-})  
+// test("12. Flexible Eliminación vuelta agregar nuevo equipo", async ({ page }) => {
+//     // Pendiente de implementar
+// })  
 
 // ----------------------------------------------------------------------------------
 
 async function Seleccion(page:any, mod:any, formato:string) {
     await Tournament(page, mod, 16, formato)
-    await Options(page, 16, true)
-    await Equipos(page, 16)
+    await Options(page, 16, false)
+    await Equipos(page)
 }
 
 async function TeamTournament(page:any, mod:any, equipo: number, formato: string) {
     await Tournament( page, mod, equipo, formato)
-    await Equipos(page, equipo)
+    await Equipos(page)
     //Seleccionar equipos registrados hasta llegar a 16
     console.log("")
     console.log("Seleccionando equipos registrados hasta llegar a 16")
-    await Options(page, equipo, false)
-    await Equipos(page, equipo)
+    await Options(page, equipo, true)
+    await Equipos(page)
 }
 
 // ----------------------------------------------------------------------------------
@@ -106,13 +106,13 @@ async function Options(page, num_equipo: number, select_team: boolean) {
     var select_equipo = await page.locator('input[placeholder="Selecciona los equipos"]')
     var select_dis = await select_equipo.getAttribute('data-disabled')
 
-    if (select_dis) {   
+    if (select_dis == "true") {   
         console.log("- Input 'Añadir equipos' deshabilitado")
     }
     else {
         console.log("- Input 'Añadir equipos' habilitado")
         
-        if (select_team === true) {
+        if (select_team == true) {
             await select_equipo.click({ force: true })
             var opciones = await page.locator('[data-combobox-option="true"][role="option"]:visible')
             await opciones.first().waitFor({ state: 'visible' })
@@ -134,7 +134,7 @@ async function Options(page, num_equipo: number, select_team: boolean) {
 
     await page.waitForTimeout(2000)
 
-    if( select_team === true) {
+    if( select_team == true) {
         await page.getByRole('button', { name: 'Guardar cambios' }).click({ force: true })
         await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden' })
         await page.locator('role=row', { name: /^formal.*/ }).last().getByRole('button').nth(1).click({ force: true })
@@ -144,7 +144,7 @@ async function Options(page, num_equipo: number, select_team: boolean) {
         await page.waitForTimeout(2000)
         var select_dis = await select_equipo.getAttribute('data-disabled')
 
-        if (select_dis) 
+        if (select_dis == "true") 
             console.log("- Input 'Añadir equipos' deshabilitado")
         else 
             console.log("- Input 'Añadir equipos' habilitado")
@@ -160,14 +160,14 @@ async function Options(page, num_equipo: number, select_team: boolean) {
 }
 
 // Función de equipos
-async function Equipos(page:any, num_equipo: number) {
+async function Equipos(page:any) {
     await page.getByRole('link', { name: 'Equipos' }).click({ force: true })
     await page.getByRole('tab', { name: 'Equipos participantes' }).waitFor({ state: 'visible' })
     await page.waitForTimeout(2000)
     var btn_Agregar = await page.getByRole('button', { name: 'Agregar equipo' })
     var Agr_dis = await btn_Agregar.getAttribute('data-disabled')
     
-    if (Agr_dis) {
+    if (Agr_dis == "true") {
         console.log("- Botón 'Agregar equipo' deshabilitado")
     }
     else {
@@ -184,7 +184,7 @@ async function Equipos(page:any, num_equipo: number) {
     var check_active = await page.locator('div').filter({ hasText: /^Activo$/ }).locator('span').nth(1)
     var is_active = await check_active.isDisabled()
 
-    if (is_active) {
+    if (is_active == true) {
         console.log("- Input 'Estatus' deshabilitado")
     }
     else{
@@ -237,7 +237,7 @@ async function Tournament (page:any, mod: any, equipos: number, formato: string)
         var notificacion = await page.locator('role=alert').first()
         var not_visible = await notificacion.isVisible()
 
-        if (not_visible) {
+        if (not_visible == true) {
             console.log("- Notificación visible")
         } else {
             console.log("- Error: No se mostró la notificación")

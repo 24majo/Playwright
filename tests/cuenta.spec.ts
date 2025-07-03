@@ -8,10 +8,15 @@ export const login = async (page: Page) => {
   // await page.goto('https://caskr.app/auth')
   // await page.goto('https://dev.caskr.app/auth')
   
-  await page.getByTestId('inputCorreo').fill('pruebas1@dominio.com')
-  // await page.getByTestId('inputCorreo').fill('majo3@cuenta.com')
-  // await page.getByTestId('inputCorreo').fill('majo175@prueba.com')
-    // await page.getByTestId('inputCorreo').fill('majo58@prueba.com')
+  var correo = await page.getByTestId('inputCorreo')
+  await correo.waitFor({state: 'visible'})
+  await correo.fill('pruebas1@dominio.com')
+  // await correo.fill('majo3@cuenta.com')
+  // await correo.fill('majo175@prueba.com')
+
+  // await correo.fill('prueba101@cuenta.com')
+  // await correo.fill('majo58@prueba.com')
+  // await correo.fill('usuario@pruebas.com')
   await page.getByTestId('inputPassword').fill('12345678')
   // await page.pause()
   await page.getByTestId('crearCuenta').click()
@@ -86,13 +91,15 @@ export const programar_partido = async (page: Page, flexible: number) => {
 
   var cancha_i = await cancha.isDisabled()
 
-  if(!cancha_i){
+  if(cancha_i == false){
     await cancha.click({ force: true })
     await page.waitForTimeout(500)
     await page.getByRole('option', { name: new RegExp(`Cancha .+`)})
-    var data_c = await page.locator('[data-combobox-option="true"][role="option"]:visible').all()
-    var random_c = Math.floor(Math.random() * data_c.length)
-    await cancha[random_c].click()
+    var data_c = await page.locator('[data-combobox-option="true"][role="option"]:visible')
+    await data_c.first().waitFor({ state: 'visible' })
+    // var random_c = Math.floor(Math.random() * data_c.length)
+    // await cancha[random_c].click()
+    await Random(data_c)
     await page.waitForTimeout(1000)
   }
 
@@ -187,7 +194,7 @@ export const generar_curp = async (page: Page) => {
   var paternoF = paterno.slice(0, 1) + vocalP
   var maternoF = materno.slice(0, 1)
   var nombre = name.slice(0, 1)
-  var date = faker.date.past({ years: 10 })
+  var date = faker.date.past({ years: 25 })
   var fecha = `${date.getFullYear().toString().slice(-2)}${(date.getMonth() + 1).toString().padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}`
   var sexo = faker.helpers.arrayElement(['H', 'M'])
   var entidades = [
@@ -281,24 +288,51 @@ export const crear_torneo = async (page: Page) => {
 export const Modalidad = async (page:Page, mod: any, num: number, equipos: number, formato: string) => {
   await page.getByRole('button', {name: 'Crear torneo'}).click({ force: true})
   await page.locator('//input[@name="nombre"]').fill(formato)
-  await page.getByPlaceholder('Ej. Liga + Liguilla, Eliminacion directa').click()
+  await page.getByRole('textbox', { name: '¿Cuál es el formato del' }).click()
   await page.waitForTimeout(500)
-  await page.getByRole('option', { name: formato, exact: true }).click()
+
+  if (formato == 'Liga' || formato == "Liga (ida y vuelta)"){
+    await page.getByRole('option', { name: `${formato} + Liguilla`}).click()
+  }
+
+  else if(num === 1){
+    await page.getByRole('option', { name: `${formato} + Eliminatorias`}).click()
+  }
+
+  else {
+    await page.getByRole('option', { name: formato, exact: true }).click()
+  }
+  
   await page.waitForTimeout(500)
   await page.getByPlaceholder('Ej. Varonil').click()
   var opciones = page.locator('[data-combobox-option="true"][role="option"]:visible')
   await Random(opciones)
   await page.waitForTimeout(500)
-  await page.getByLabel('dd-mm-aaaa').click()
+  await page.getByRole('textbox', { name: 'Limite de edad' }).click({force: true})
+  var limit_option = page.locator('[data-combobox-option="true"][role="option"]:visible')
+  await Random(limit_option)
+  await page.waitForTimeout(500)
+  await page.getByLabel('dd-mm-aaaa').first().click()
   var fecha = new Date()
-  var dia = fecha.getDate() 
+  var dia = fecha.getDate() + 1
   var mes = fecha.toLocaleString('es-ES', { month: 'long' }) 
   await page.getByRole('cell', { name: dia + " " + mes }).first().click()
-  await page.locator('[aria-haspopup="listbox"]').nth(2).click({force: true})
+
+  await page.getByRole('button', { name: 'dd-mm-aaaa' }).click()
+  await page.locator('[type="button"][data-today="true"]').click({force: true})
   await page.waitForTimeout(500)
-  var opciones = page.locator('[data-combobox-option="true"][role="option"]:visible')
-  await Random(opciones)
-  await page.waitForTimeout(500)
+
+  await page.getByRole('textbox', { name: '¿Qué tipo de fútbol se juega?' }).click()
+  var type_option = page.locator('[data-combobox-option="true"][role="option"]:visible')
+  await Random(type_option)
+
+  await page.locator('[inputmode="numeric"]').fill(faker.number.int({ min: 10, max: 90 }).toString())
+
+  // await page.locator('[aria-haspopup="listbox"]').nth(2).click({force: true})
+  // await page.waitForTimeout(500)
+  // var opciones = page.locator('[data-combobox-option="true"][role="option"]:visible')
+  // await Random(opciones)
+  // await page.waitForTimeout(500)
   await page.getByRole('button', { name: 'Siguiente' }).click()
   await mod.click()
   await page.getByPlaceholder('Seleccione la opción').click()
@@ -312,10 +346,10 @@ export const Modalidad = async (page:Page, mod: any, num: number, equipos: numbe
     await page.locator('input[type="checkbox"]').nth(i).check()
   
   await page.getByRole('button', { name: 'Siguiente' }).click()
-  // await page.locator('input[type="checkbox"]').nth(1).check()
-  // for(var i = 0; i < 5; i++)
-  //   await page.locator('input[type="checkbox"]').nth(i).check()
-  // await page.waitForTimeout(500)
+  await page.locator('input[type="checkbox"]').nth(1).check()
+  for(var i = 0; i < 5; i++)
+    await page.locator('input[type="checkbox"]').nth(i).check()
+  await page.waitForTimeout(500)
   await page.getByRole('button', { name: 'Siguiente' }).click()
   await page.getByRole('button', { name: 'Siguiente' }).click()
 
@@ -368,7 +402,7 @@ export const registrar_resultado = async (page: any, registrar) => {
       var num = 0
       var share = await page.getByRole('button', { name: 'Compartir la jornada' })
       var share_v = share.isVisible()
-      if(share_v){
+      if(share_v == true){
         if(num === 0){
           await page.getByRole('button', { name: 'Guardar para luego' }).click()
         }

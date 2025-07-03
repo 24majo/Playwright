@@ -95,14 +95,14 @@ test("Inactivo Eli", async ({ page }) => {
     await page.pause()
 })
 
-formato = 'Liga (ida y vuelta)'
-formato = 'Liga'
+// formato = 'Liga (ida y vuelta)'
+// formato = 'Liga'
 formato = 'Eliminación directa (ida y vuelta)'
-formato = 'Eliminación directa'
-formato = 'Grupos'
+// formato = 'Eliminación directa'
 equipos = 8
 
 test("Formal", async ({ page }) => {
+    await page.pause()
     var mod = await page.getByRole('button', { name: 'Se parece a este' }).first()
     await Modalidad( page, mod, 0, equipos, formato )
 })
@@ -114,6 +114,7 @@ test("Flexible", async ({ page }) => {
 
 test("Groups", async ({ page }) => {
     var mod = await page.getByRole('button', { name: 'Se parece a este' }).first()
+    formato = 'Grupos'
     await Modalidad (page, mod, 1, equipos, formato )
 })
 

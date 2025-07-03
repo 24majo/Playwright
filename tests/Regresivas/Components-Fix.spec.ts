@@ -102,11 +102,15 @@ async function Calendar(page: any, formato: string, modalildad: string) {
     await page.getByRole('link', { name: 'Calendario' }).click({ force: true })
 
     if(formato == "Grupos") {
+        var cal = await page.getByRole('button', { name: 'Crear el calendario' })
+        await page.getByRole('img', { name: 'Silbato' }).waitFor({ state: 'visible' })
+        await page.waitForTimeout(1000)
+        await cal.click({ force: true })
         await page.getByRole('button', { name: 'Si, continuar' }).click({ force: true })
         await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor({ state: 'hidden' })
     }
 
-    if(modalildad == "Flexible" && (formato == "Liga" || formato == "Liga (ida y vuelta)")) {
+    else if(modalildad == "Flexible" && (formato == "Liga" || formato == "Liga (ida y vuelta)")) {
         var jornada = await page.getByRole('button', { name: 'Nueva jornada' })
         await jornada.waitFor({ state: 'visible' })
         await jornada.click()
@@ -124,7 +128,7 @@ async function Calendar(page: any, formato: string, modalildad: string) {
 
     var tab = await page.getByRole('tab', { name: 'Calendario' })
     await tab.waitFor({ state: 'visible' })
-    if(formato == "Liga" || formato == "Liga (ida y vuelta)") {
+    if(formato == "Liga" || formato == "Liga (ida y vuelta)" || formato == "Grupos") {
         await page.getByRole('tab', { name: 'Por jornadas' }).click({ force: true })
     }
     else{
@@ -213,7 +217,7 @@ async function Elements(page: any, formato: string, equipos: number) {
         await page.getByRole('link', { name: 'Tabla de posiciones' }).click({ force: true })
         await page.getByRole('tab', { name: 'Grupos' }).waitFor({ state: 'visible' })
         var group = await page.getByText('Grupo A')
-        await elementsVisible(page, group, "Registrar")
+        await elementsVisible(page, group, "Tabla de posiciones")
     }
 }
 

@@ -272,10 +272,10 @@ async function Elements(page: any, elemento: any, mensaje: string) {
     var element_dis = await elemento.getAttribute('data-disabled')
 
     if (element_dis) {   
-        console.log("5. Input '"+ mensaje + "' deshabilitado")
+        console.log("Input '"+ mensaje + "' deshabilitado")
     }
     else {
-        console.log("5. Input '"+ mensaje + "' habilitado")
+        console.log("Input '"+ mensaje + "' habilitado")
         await elemento.click({ force: true })
 
         if(mensaje === "Agregar equipo") {

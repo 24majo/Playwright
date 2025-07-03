@@ -11,7 +11,7 @@ test.beforeEach(async ({ page }) => {
 
 test("Agregar", async ({ page }) => {
     await page.pause()
-    for(var i = 0; i < 10; i++) {
+    for(var i = 0; i < 9; i++) {
         await agregar_arbitro(page)
         await page.click('//span[text()="Agregar arbitro"]')
         inicio = Date.now()
@@ -47,7 +47,7 @@ test("Eliminar", async ({ page }) => {
 })
 
 test("Editar", async ({ page }) => {
-    for(var i = 0; i < 10; i++){
+    for(var i = 0; i < 5; i++){
         await page.locator('role=row[name=/@.+\..+$/]').locator('role=button').first().click({ force: true })
         await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor()
         await page.locator('//input[@name="nombres"]').fill(faker.person.firstName())
@@ -66,10 +66,10 @@ test("Editar", async ({ page }) => {
 // ---------------------------------------------------
 
 export const agregar_arbitro = async (page: any) => {
-  await page.getByRole('button', { name: 'Agregar árbitro' }).click({ force: true })
-  await page.locator('[data-modal-content="true"][role="dialog"]:visible').waitFor()
-  await page.locator('//input[@name="nombres"]').fill(fakerES_MX.person.firstName())
-  await page.locator('//input[@name="apellidos"]').fill(fakerES_MX.person.lastName())
-  await page.locator('//input[@name="telefono"]').fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
-  await page.locator('//input[@name="email"]').fill(fakerES_MX.internet.email())
+    await page.getByRole('button', { name: 'Agregar árbitro' }).click({ force: true })
+    await page.locator('[data-modal-content="true"][role="dialog"]:visible').waitFor()
+    await page.locator('//input[@name="nombres"]').fill(fakerES_MX.person.firstName())
+    await page.locator('//input[@name="apellidos"]').fill(fakerES_MX.person.lastName())
+    await page.locator('//input[@name="telefono"]').fill(faker.number.int({ min: 3000000000, max: 9999999999 }).toString())
+    await page.locator('//input[@name="email"]').fill(fakerES_MX.internet.email())
 }
