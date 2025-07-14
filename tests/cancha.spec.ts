@@ -11,7 +11,8 @@ test.describe("CaskrApp", async() => {
     })
 
     test("Agregar", async ({ page }) => {
-        for(var i = 0; i < 5; i++){
+        await page.pause()
+        for(var i = 0; i < 10; i++){
             await page.click('//span[text()="Agregar cancha"]')
             await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor()
             await agregar_cancha(page)

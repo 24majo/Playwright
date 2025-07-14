@@ -11,6 +11,8 @@ export const login = async (page: Page) => {
   var correo = await page.getByTestId('inputCorreo')
   await correo.waitFor({state: 'visible'})
   await correo.fill('pruebas1@dominio.com')
+  // await correo.fill('marketing@caskrapp.com')
+  
   // await correo.fill('majo3@cuenta.com')
   // await correo.fill('majo175@prueba.com')
 
@@ -73,21 +75,26 @@ export const programar_partido = async (page: Page, flexible: number) => {
   await date.nth(Math.floor(Math.random() * count_date)).click({ force: true })
   await page.waitForTimeout(1000)
 
-  var random_date = faker.date.recent()
-  var horas = random_date.getHours()
-  var minutos = random_date.getMinutes()
-  var hora = horas.toString().padStart(2, '0');
-  var minuto = minutos.toString().padStart(2, '0')
-  await page.locator('input[type="time"]').fill(hora + ':' + minuto)
+  // Eliminado de la nueva versión
+  // var random_date = faker.date.recent()
+  // var horas = random_date.getHours()
+  // var minutos = random_date.getMinutes()
+  // var hora = horas.toString().padStart(2, '0');
+  // var minuto = minutos.toString().padStart(2, '0')
+  // await page.locator('input[type="time"]').fill(hora + ':' + minuto)
+
+  await page.locator('input[placeholder="Hora"]').click({ force: true })
+  var hora = await page.locator('[data-combobox-option="true"][role="option"]:visible')
+  await Random(hora)
   await page.waitForTimeout(1000)
   
   var cancha: any
   var arbitro_i: any
 
   if(flexible === 1)
-    cancha = await page.locator('input[aria-haspopup="listbox"]').nth(2)
+    cancha = await page.locator('input[aria-haspopup="listbox"]').nth(3)
   else
-    cancha = await page.locator('input[aria-haspopup="listbox"]').nth(0)
+    cancha = await page.locator('input[aria-haspopup="listbox"]').nth(1)
 
   var cancha_i = await cancha.isDisabled()
 
@@ -104,9 +111,9 @@ export const programar_partido = async (page: Page, flexible: number) => {
   }
 
   if(flexible === 1)
-    arbitro_i = await page.locator('input[aria-haspopup="listbox"]').nth(3)
+    arbitro_i = await page.locator('input[aria-haspopup="listbox"]').nth(4)
   else
-    arbitro_i = await page.locator('input[aria-haspopup="listbox"]').nth(1)
+    arbitro_i = await page.locator('input[aria-haspopup="listbox"]').nth(2)
   
   var arbitro_dis = await arbitro_i.isDisabled()
 
@@ -319,7 +326,7 @@ export const Modalidad = async (page:Page, mod: any, num: number, equipos: numbe
   await page.getByRole('cell', { name: dia + " " + mes }).first().click()
 
   await page.getByRole('button', { name: 'dd-mm-aaaa' }).click()
-  await page.locator('[type="button"][data-today="true"]').click({force: true})
+  await page.locator('[type="button"][data-today="true"]').nth(1).click({force: true})
   await page.waitForTimeout(500)
 
   await page.getByRole('textbox', { name: '¿Qué tipo de fútbol se juega?' }).click()

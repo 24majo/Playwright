@@ -95,9 +95,9 @@ test("Inactivo Eli", async ({ page }) => {
     await page.pause()
 })
 
-// formato = 'Liga (ida y vuelta)'
+formato = 'Liga (ida y vuelta)'
 // formato = 'Liga'
-formato = 'Eliminación directa (ida y vuelta)'
+// formato = 'Eliminación directa (ida y vuelta)'
 // formato = 'Eliminación directa'
 equipos = 8
 

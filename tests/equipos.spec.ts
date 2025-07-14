@@ -8,7 +8,7 @@ test.describe("CaskrApp", async() => {
     test.beforeEach(async ({ page }) => {
         await login(page)
         await page.getByRole('link', { name: 'Equipos' }).click()
-        await page.locator('text=Equipos').waitFor({ state: 'visible' })
+        await page.locator('text=Equipos').nth(0).waitFor({ state: 'visible' })
     })
 
     test("Agregar", async ({ page }) => {
@@ -31,7 +31,7 @@ test.describe("CaskrApp", async() => {
                 process.exit(0)
             }
 
-            for(var i = 0; i < 4; i++){
+            for(var i = 0; i < 16; i++){
                 await agregar.click()
                 await page.locator('[aria-modal="true"][role="dialog"]:visible').waitFor()
                 var button = await page.getByRole('button', { name: 'Sí, estoy seguro' }).isVisible()
@@ -172,14 +172,14 @@ export const agregar_equipo = async (page: any, n_equipo) => {
     var file = await page.locator('input[type="file"]')
     var random = Math.floor(Math.random() * 40) + 1
     var imagen = 'C:/Users/E015/Downloads/Imágenes/Escudos/escudo' + random + '.jpg'
-    console.log(random)
     await file.setInputFiles(imagen)
-    await page.pause()
     var equipo = fakerES_MX.animal.petName()
     n_equipo = equipo.replace(/[^a-zA-Z0-9]/g, ' ')
     await page.locator('//input[@name="nombre"]').fill("Equipo " + n_equipo)
-    await page.locator('//input[@name="nombre_capitan"]').fill(fakerES_MX.person.firstName())
-    await page.locator('//input[@name="apellidos_capitan"]').fill(fakerES_MX.person.lastName())
-    await page.locator('//input[@name="telefono"]').fill(faker.number.int({ min: 1000000000, max: 9999999999 }).toString())
+    await page.locator('label').filter({ hasText: 'Añadir datos del DT' }).locator('span').nth(1).click()
+    await page.waitForTimeout(1000)
+    await page.getByRole('textbox', { name: 'Nombre(s)' }).fill(fakerES_MX.person.firstName())
+    await page.getByRole('textbox', { name: 'Apellido(s)' }).fill(fakerES_MX.person.lastName())
+    await page.getByRole('textbox', { name: 'Telefono' }).fill(faker.number.int({ min: 3000000000, max: 9999999999 }).toString())
     return n_equipo
 }
