@@ -18,7 +18,6 @@ test("Generar", async ({ page }) => {
 
     if(visible){
         var disponible = await boton.getAttribute('data-disabled')
-        console.log("Deshabilitado: " + disponible)
         await page.waitForTimeout(500)
 
         if(disponible){
@@ -50,10 +49,10 @@ test("Jornada", async({ page }) => {
         await btn_j.click({ force: true })
         var programar = page.getByRole('button', { name: 'Programar' })
         var count = await programar.count()
-        console.log("Botones totales: " + count)
+        // console.log("Botones totales: " + count)
 
         for(var j = 1; j <= count; j++) {
-            console.log("Botón: " + j)
+            // console.log("Botón: " + j)
             await page.getByRole('button', { name: 'Programar' }).nth(j - 1).click({ force: true })
             await (page)
             if(j != count){
