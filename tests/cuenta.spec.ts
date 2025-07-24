@@ -296,7 +296,7 @@ export const EditInfo = async (page: Page) => {
   await page.getByRole("link", { name: "Mis datos" }).click();
   await page.getByRole("button", { name: "Editar mi información" }).click();
   var file = await page.locator('input[type="file"]');
-  var random = Math.floor(Math.random() * 14) + 1;
+  var random = Math.floor(Math.random() * 116) + 1;
   var imagen =
     "C:/Users/E015/Downloads/Imágenes/Personas/persona" + random + ".jpg";
   console.log(random);
