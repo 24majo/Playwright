@@ -64,7 +64,7 @@ test("1. Select photo random", async ({ page }) => {
     .contentFrame()
     .getByTestId("stBaseButton-primary")
     .click();
-  inicio = Date.now();
+  await page.waitForTimeout(100);
   await page
     .locator('iframe[title="editor-anime-futbol-caskar"]')
     .contentFrame()
@@ -72,9 +72,5 @@ test("1. Select photo random", async ({ page }) => {
     .contentFrame()
     .getByText("Aplicando la magia... ¡Tu")
     .waitFor({ state: "hidden" });
-  fin = Date.now();
-  console.log("Inicio: " + inicio);
-  console.log("Fin: " + fin);
-  console.log("Tiempo de carga de imágenes: " + (fin - inicio) + "ms");
   await page.pause();
 });
