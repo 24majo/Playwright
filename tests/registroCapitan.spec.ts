@@ -32,7 +32,7 @@ test("Unirme", async ({ page }) => {
 
 test("1. Sin documentos", async ({ page }) => {
   await Sesion(page);
-  for (var i = 0; i < 3; i++) {
+  for (var i = 0; i < 5; i++) {
     await Player(page);
     await page.getByRole("button", { name: "Guardar cambios" }).click();
     await page
@@ -44,7 +44,7 @@ test("1. Sin documentos", async ({ page }) => {
 
 test("2. CURP", async ({ page }) => {
   await Sesion(page);
-  for (var i = 0; i < 3; i++) {
+  for (var i = 0; i < 5; i++) {
     await Player(page);
     await CURP(page);
     await page.getByRole("button", { name: "Guardar cambios" }).click();
@@ -57,7 +57,7 @@ test("2. CURP", async ({ page }) => {
 
 test("3. Acta", async ({ page }) => {
   await Sesion(page);
-  for (var i = 0; i < 3; i++) {
+  for (var i = 0; i < 5; i++) {
     await Player(page);
     await Acta(page);
     await page.getByRole("button", { name: "Guardar cambios" }).click();
@@ -70,7 +70,7 @@ test("3. Acta", async ({ page }) => {
 
 test("4. Constancia", async ({ page }) => {
   await Sesion(page);
-  for (var i = 0; i < 3; i++) {
+  for (var i = 0; i < 5; i++) {
     await Player(page);
     await Constancia(page);
     await page.getByRole("button", { name: "Guardar cambios" }).click();
@@ -83,7 +83,7 @@ test("4. Constancia", async ({ page }) => {
 
 test("5. CURP y Acta", async ({ page }) => {
   await Sesion(page);
-  for (var i = 0; i < 3; i++) {
+  for (var i = 0; i < 5; i++) {
     await Player(page);
     await CURP(page);
     await Acta(page);
@@ -97,7 +97,7 @@ test("5. CURP y Acta", async ({ page }) => {
 
 test("6. CURP y Constancia", async ({ page }) => {
   await Sesion(page);
-  for (var i = 0; i < 3; i++) {
+  for (var i = 0; i < 5; i++) {
     await Player(page);
     await CURP(page);
     await Constancia(page);
@@ -111,7 +111,7 @@ test("6. CURP y Constancia", async ({ page }) => {
 
 test("7. Acta y Constancia", async ({ page }) => {
   await Sesion(page);
-  for (var i = 0; i < 3; i++) {
+  for (var i = 0; i < 5; i++) {
     await Player(page);
     await Acta(page);
     await Constancia(page);
@@ -143,12 +143,12 @@ test("8. All Documents", async ({ page }) => {
 
 async function Sesion(page: any) {
   await page.goto("http://localhost:3000/auth");
-  // await page.goto('https://caskr.app/auth')
+  // await page.goto("https://caskr.app/auth");
 
   var telefono = await page.locator("label").filter({ hasText: "Teléfono" });
   await telefono.waitFor({ state: "visible" });
   await telefono.click();
-  await page.getByRole("textbox", { name: "Teléfono" }).fill("763 123 4643");
+  await page.getByRole("textbox", { name: "Teléfono" }).fill("854 452 6892");
   await page.getByTestId("inputPassword").fill("12345678");
   await page.pause();
   await page.getByTestId("crearCuenta").click();
@@ -164,7 +164,7 @@ async function Sesion(page: any) {
 async function Player(page: any) {
   await page.getByRole("link", { name: "Resumen" }).click();
   await page.getByRole("button", { name: "Nuevo jugador" }).click();
-  // await Imagen(page)
+  // await Imagen(page);
   await page
     .getByRole("textbox", { name: "Nombre" })
     .fill(fakerES_MX.person.firstName());
