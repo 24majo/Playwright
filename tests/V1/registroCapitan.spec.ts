@@ -1,5 +1,5 @@
 import { test } from "@playwright/test";
-import { jugador_existente, EditInfo, generar_curp } from "./cuenta.spec";
+import { jugador_existente, EditInfo, generar_curp } from "../V1/cuenta.spec";
 import { fakerES_MX } from "@faker-js/faker";
 
 var inicio: any, fin: any;
