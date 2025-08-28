@@ -4,21 +4,20 @@ import { faker, fakerES_MX } from "@faker-js/faker";
 var inicio, fin;
 
 export const login = async (page: Page) => {
-  // await page.goto('http://localhost:3000/auth')
-  await page.goto("https://caskr.app/auth");
+  await page.goto("http://localhost:3000/auth");
+  // await page.goto("https://caskr.app/auth");
   // await page.goto('https://dev.caskr.app/auth')
 
   var correo = await page.getByTestId("inputCorreo");
   await correo.waitFor({ state: "visible" });
-  // await correo.fill('pruebas1@dominio.com')
+  await correo.fill("pruebas1@dominio.com");
   // await correo.fill('marketing@caskrapp.com')
-
   // await correo.fill('majo3@cuenta.com')
   // await correo.fill('majo175@prueba.com')
-
   // await correo.fill('prueba101@cuenta.com')
-  await correo.fill("majo58@prueba.com");
+  // await correo.fill("majo58@prueba.com");
   // await correo.fill('usuario@pruebas.com')
+
   await page.getByTestId("inputPassword").fill("12345678");
   await page.pause();
   await page.getByTestId("crearCuenta").click();
