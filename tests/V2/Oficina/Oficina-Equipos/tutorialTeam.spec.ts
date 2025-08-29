@@ -1,5 +1,6 @@
 import { test } from "@playwright/test";
 import { login } from "../../../V1/cuenta.spec";
+import { beforeTest } from "./functions.spec";
 
 test.beforeEach(async ({ page }) => {
   await login(page);
