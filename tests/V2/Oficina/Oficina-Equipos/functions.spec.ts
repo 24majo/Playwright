@@ -1,4 +1,5 @@
 import { login } from "../../../V1/cuenta.spec";
+import { fakerES_MX } from "@faker-js/faker";
 
 export async function beforeTest(page) {
   await login(page);
@@ -51,4 +52,72 @@ export async function viewTeam(page: any, nombre: any) {
   } else {
     console.log("Error en creación de equipo");
   }
+}
+
+export async function errorsTeam(page: any, button: any) {
+  await TeamData(page, "C:/Users/E015/Downloads/cancha.jpg", "");
+  await dtData(page, "", "", "");
+  await button.click();
+  await page.waitForTimeout(500);
+
+  const team = await page.getByText("El nombre del equipo es").isVisible();
+  const name = await page.getByText("El nombre es necesario.").isVisible();
+  const lastname = await page
+    .getByText("El apellido es necesario.")
+    .isVisible();
+  const tel = await page.getByText("El teléfono es obligatorio.").isVisible();
+
+  if (team === true && name === true && lastname === true && tel === true) {
+    console.log("Validación de campos obligatorios correcta");
+  } else {
+    console.log("Error de validación de datos obligatorios");
+  }
+
+  TeamData(
+    page,
+    "C:/Users/E015/Downloads/cancha.jpg",
+    fakerES_MX.lorem.words()
+  );
+  dtData(page, "Pedro2", "Pérez3", "123");
+
+  await button.click();
+  await page.waitForTimeout(700);
+
+  const dataName = await page
+    .getByText("El nombre solo puede contener")
+    .isVisible();
+  console.log(dataName);
+  const dataLastName = await page
+    .getByText("El apellido solo puede")
+    .isVisible();
+  console.log(dataLastName);
+  const dataTel = await page
+    .getByText("El formato del teléfono es")
+    .isVisible();
+  console.log(dataTel);
+
+  if (dataName === true && dataLastName === true && dataTel === true) {
+    console.log("Validación de formato de campos correcta");
+  } else {
+    console.log("Error en validación de formato de campos");
+  }
+}
+
+export async function deleteTeam(page: any) {
+  await page
+    .locator('[aria-modal="true"][role="dialog"]:visible')
+    .waitFor({ state: "visible" });
+  await page
+    .getByRole("button", { name: "Editar información del equipo" })
+    .click();
+  const deleteTeam = await page.getByRole("button", {
+    name: "Desafiliar equipo",
+  });
+  await deleteTeam.waitFor({ state: "visible" });
+  await deleteTeam.click();
+  await deleteTeam.click();
+  await page.getByRole("button", { name: "Lo haré después" }).click();
+  await page
+    .locator('[aria-modal="true"][role="dialog"]:visible')
+    .waitFor({ state: "hidden" });
 }

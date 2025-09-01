@@ -1,6 +1,12 @@
 import { test } from "@playwright/test";
 import { faker, fakerES_MX } from "@faker-js/faker";
-import { beforeTest, dtData, TeamData, viewTeam } from "./functions.spec";
+import {
+  beforeTest,
+  dtData,
+  TeamData,
+  viewTeam,
+  errorsTeam,
+} from "./functions.spec";
 
 test.beforeEach(async ({ page }) => {
   await beforeTest(page);
@@ -71,49 +77,6 @@ test("3. Validación de errores", async ({ page }) => {
     .locator("span")
     .first()
     .click();
-
-  await page.getByRole("button", { name: "Afiliar equipo" }).click();
-  await page.waitForTimeout(500);
-
-  const team = await page.getByText("El nombre del equipo es").isVisible();
-  const name = await page.getByText("El nombre es necesario.").isVisible();
-  const lastname = await page
-    .getByText("El apellido es necesario.")
-    .isVisible();
-  const tel = await page.getByText("El teléfono es obligatorio.").isVisible();
-
-  if (team === true && name === true && lastname === true && tel === true) {
-    console.log("Validación de campos obligatorios correcta");
-  } else {
-    console.log("Error de validación de datos obligatorios");
-  }
-
-  TeamData(
-    page,
-    "C:/Users/E015/Downloads/cancha.jpg",
-    fakerES_MX.lorem.words()
-  );
-  dtData(page, "Pedro2", "Pérez3", "123");
-
-  await page.getByRole("button", { name: "Afiliar equipo" }).click();
-  await page.waitForTimeout(500);
-
-  const dataName = await page
-    .getByText("El nombre solo puede contener")
-    .isVisible();
-  console.log(dataName);
-  const dataLastName = await page
-    .getByText("El apellido solo puede")
-    .isVisible();
-  console.log(dataLastName);
-  const dataTel = await page
-    .getByText("El formato del teléfono es")
-    .isVisible();
-  console.log(dataTel);
-
-  if (dataName === true && dataLastName === true && dataTel === true) {
-    console.log("Validación de formato de campos correcta");
-  } else {
-    console.log("Error en validación de formato de campos");
-  }
+  const button = await page.getByRole("button", { name: "Afiliar equipo" });
+  await errorsTeam(page, button);
 });

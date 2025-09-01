@@ -1,6 +1,12 @@
 import { test } from "@playwright/test";
 import { faker, fakerES_MX } from "@faker-js/faker";
-import { beforeTest, dtData, TeamData, viewTeam } from "./functions.spec";
+import {
+  beforeTest,
+  dtData,
+  TeamData,
+  viewTeam,
+  errorsTeam,
+} from "./functions.spec";
 
 test.beforeEach(async ({ page }) => {
   await beforeTest(page);
@@ -72,7 +78,7 @@ test("1. Validación de actualización ", async ({ page }) => {
   ) {
     console.log("No es posible editar. DT completó ru registro.");
   } else {
-    const nameTeam = fakerES_MX.string.alphanumeric();
+    const nameTeam = fakerES_MX.lorem.word();
     await TeamData(page, "C:/Users/E015/Downloads/cancha.jpg", nameTeam);
     await dtData(
       page,
@@ -117,4 +123,25 @@ test("1. Validación de actualización ", async ({ page }) => {
       console.log("Visualización correcta de modificación de equipos");
     }
   }
+});
+
+test("2. Validación de formato de errores al editar", async ({ page }) => {
+  await page.pause();
+  var number = Math.floor(Math.random() * 4) + 1;
+  var cardTeam = await page.getByRole("button", {
+    name: `Logo del equipo Equipo ${number} #`,
+  });
+  await cardTeam.click();
+  await page
+    .locator('[aria-modal="true"][role="dialog"]:visible')
+    .waitFor({ state: "visible" });
+  const team = await page.getByText(`Equipo ${number}`).first().isVisible();
+  await page
+    .getByRole("button", { name: "Editar información del equipo" })
+    .click();
+  const button = await page.getByRole("button", {
+    name: "Editar equipo",
+  });
+  await page.waitForTimeout(500);
+  await errorsTeam(page, button);
 });
